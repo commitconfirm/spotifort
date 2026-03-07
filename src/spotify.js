@@ -75,3 +75,4 @@ export function extractArtistIds(tracks) {
   log.info(`Extracted ${artistIds.size} unique artist IDs from liked songs`);
   return artistIds;
 }
+

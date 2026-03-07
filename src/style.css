@@ -142,23 +142,30 @@ main {
   list-style: none;
 }
 
-.artist-list li {
+.artist-item {
   padding: 0.5rem 0;
   border-bottom: 1px solid #eee;
 }
 
-.artist-list li:last-child {
+.artist-item:last-child {
   border-bottom: none;
 }
 
-.artist-link {
+.artist-row {
   display: flex;
   align-items: center;
-  text-decoration: none;
-  color: var(--black);
 }
 
-.artist-link:hover {
+.artist-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.artist-toggle:hover {
   opacity: 0.7;
 }
 
@@ -169,8 +176,74 @@ main {
   color: var(--black);
 }
 
+.artist-name-link {
+  color: var(--black);
+  text-decoration: none;
+}
+
+.artist-name-link:hover {
+  text-decoration: underline;
+}
+
 .artist-name {
-  flex: 1;
+  color: var(--black);
+}
+
+/* Related Artists (Expandable Sub-list) */
+.artist-related {
+  margin-left: 2rem;
+  margin-top: 0.5rem;
+}
+
+.related-list {
+  list-style: none;
+  padding-left: 0.5rem;
+  border-left: 2px solid #ddd;
+}
+
+.related-list li {
+  padding: 0.25rem 0;
+  padding-left: 0.5rem;
+}
+
+.related-artist-link {
+  color: var(--black);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.related-artist-link:hover {
+  text-decoration: underline;
+}
+
+.related-loading,
+.related-empty,
+.related-error {
+  font-size: 0.875rem;
+  color: #666;
+  font-style: italic;
+  padding: 0.25rem 0;
+}
+
+.shared-genres {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.related-error {
+  color: #c00;
+}
+
+/* Legacy artist-link class (for lineup page) */
+.artist-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--black);
+}
+
+.artist-link:hover {
+  opacity: 0.7;
 }
 
 /* Empty State */
@@ -290,6 +363,248 @@ footer {
   .list-placeholder {
     min-height: 100px;
   }
+}
+
+/* Setup Section (BYOCID) */
+#setup-section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  border: var(--border-width) solid var(--black);
+}
+
+#setup-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.setup-intro {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.setup-steps {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.setup-steps h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+}
+
+.setup-steps ol {
+  margin-left: 1.5rem;
+  line-height: 1.8;
+}
+
+.setup-steps ol ul {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  list-style-type: disc;
+}
+
+.setup-steps code {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 0.125rem 0.375rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.setup-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.setup-input {
+  margin-bottom: 1rem;
+}
+
+.setup-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.setup-input input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--black);
+  font-size: 1rem;
+  font-family: monospace;
+  margin-bottom: 0.75rem;
+}
+
+.setup-input input:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.setup-input button {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--black);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.setup-input button:hover {
+  opacity: 0.8;
+}
+
+.setup-error {
+  color: #c00;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.setup-note {
+  font-size: 0.875rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* Setup Guide Page */
+#setup-guide {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.guide-intro,
+.guide-steps,
+.guide-troubleshooting {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: var(--border-width) solid var(--black);
+}
+
+.guide-intro h2,
+.guide-steps h2,
+.guide-troubleshooting h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--black);
+}
+
+.guide-intro p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.guide-step {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.guide-step:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.guide-step h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+}
+
+.guide-step p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.guide-step ul {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.guide-step code {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 0.125rem 0.375rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.guide-step code.important {
+  background: #fffde7;
+  border-color: #ffc107;
+}
+
+.guide-step .warning {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.screenshot-placeholder {
+  background: #f0f0f0;
+  border: 2px dashed #ccc;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  margin: 1rem 0;
+}
+
+.guide-troubleshooting h3 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.guide-troubleshooting h3:first-of-type {
+  margin-top: 0;
+}
+
+.guide-troubleshooting p,
+.guide-troubleshooting ul {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.guide-troubleshooting ul {
+  margin-left: 1.5rem;
+}
+
+.guide-troubleshooting code {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 0.125rem 0.375rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.guide-cta {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.btn-primary {
+  display: inline-block;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding: 1rem 2rem;
+  background-color: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.8;
 }
 
 .hidden {

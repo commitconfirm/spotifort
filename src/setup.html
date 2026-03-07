@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup Guide — Spotifort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>Spotifort Setup Guide</h1>
+        <p class="tagline">Create your Spotify Developer app in 5 minutes</p>
+      </header>
+
+      <main>
+        <section id="setup-guide">
+          <div class="back-link">
+            <a href="/">&larr; Back to Spotifort</a>
+          </div>
+
+          <div class="guide-intro">
+            <h2>Why is this needed?</h2>
+            <p>
+              Spotify limits "Development Mode" apps to 5 users each. To work around this,
+              each Spotifort user creates their own Spotify Developer app. You become the
+              sole user of your own app, which means no limits.
+            </p>
+            <p>
+              <strong>Requirements:</strong> A Spotify Premium account. Free accounts cannot
+              create Developer apps.
+            </p>
+          </div>
+
+          <div class="guide-steps">
+            <h2>Step-by-Step Instructions</h2>
+
+            <div class="guide-step">
+              <h3>Step 1: Go to the Spotify Developer Dashboard</h3>
+              <p>
+                Open <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener noreferrer">developer.spotify.com/dashboard</a>
+                in a new tab and log in with your Spotify account.
+              </p>
+              <div class="screenshot-placeholder">[Screenshot: Spotify Developer Dashboard login page]</div>
+            </div>
+
+            <div class="guide-step">
+              <h3>Step 2: Create a new app</h3>
+              <p>
+                Click the <strong>Create app</strong> button in the top right corner.
+              </p>
+              <div class="screenshot-placeholder">[Screenshot: Dashboard with "Create app" button highlighted]</div>
+            </div>
+
+            <div class="guide-step">
+              <h3>Step 3: Fill in the app details</h3>
+              <p>Enter the following information:</p>
+              <ul>
+                <li><strong>App name:</strong> Anything you like (e.g., "My Spotifort", "Treefort Matcher")</li>
+                <li><strong>App description:</strong> Anything (e.g., "Personal use")</li>
+                <li><strong>Website:</strong> Leave blank or enter <code>https://spotifort.com</code></li>
+                <li><strong>Redirect URI:</strong> <code class="important">https://spotifort.com/callback</code></li>
+              </ul>
+              <p class="warning">
+                <strong>Important:</strong> The Redirect URI must be exactly
+                <code>https://spotifort.com/callback</code> — no trailing slash,
+                no typos. This is required for the authentication to work.
+              </p>
+              <div class="screenshot-placeholder">[Screenshot: Create app form with fields filled in]</div>
+            </div>
+
+            <div class="guide-step">
+              <h3>Step 4: Select Web API and save</h3>
+              <p>
+                Under "Which API/SDKs are you planning to use?", check <strong>Web API</strong>.
+              </p>
+              <p>
+                Check the box agreeing to Spotify's Developer Terms of Service, then
+                click <strong>Save</strong>.
+              </p>
+              <div class="screenshot-placeholder">[Screenshot: API selection and terms checkbox]</div>
+            </div>
+
+            <div class="guide-step">
+              <h3>Step 5: Copy your Client ID</h3>
+              <p>
+                After creating the app, you'll be taken to your app's dashboard.
+                Click <strong>Settings</strong> in the top right.
+              </p>
+              <p>
+                You'll see your <strong>Client ID</strong> — a 32-character string of
+                letters and numbers. Click the copy button or select and copy it.
+              </p>
+              <div class="screenshot-placeholder">[Screenshot: App settings showing Client ID with copy button]</div>
+            </div>
+
+            <div class="guide-step">
+              <h3>Step 6: Paste into Spotifort</h3>
+              <p>
+                Go back to <a href="/">Spotifort</a>, paste your Client ID into the
+                input field, and click <strong>Save & Continue</strong>.
+              </p>
+              <p>
+                That's it! You can now connect your Spotify account and find your
+                Treefort artists.
+              </p>
+            </div>
+          </div>
+
+          <div class="guide-troubleshooting">
+            <h2>Troubleshooting</h2>
+
+            <h3>"Invalid redirect URI" error</h3>
+            <p>
+              Double-check that your Redirect URI is exactly
+              <code>https://spotifort.com/callback</code>. Common mistakes:
+            </p>
+            <ul>
+              <li>Trailing slash: <code>https://spotifort.com/callback/</code> (wrong)</li>
+              <li>HTTP instead of HTTPS: <code>http://spotifort.com/callback</code> (wrong)</li>
+              <li>Typo in domain: <code>https://spotifot.com/callback</code> (wrong)</li>
+            </ul>
+
+            <h3>"Invalid Client ID" error</h3>
+            <p>
+              Make sure you copied the <strong>Client ID</strong>, not the Client Secret.
+              The Client ID is 32 characters and is visible without clicking "View client secret".
+            </p>
+
+            <h3>Need help?</h3>
+            <p>
+              Open an issue on <a href="https://github.com/commitconfirm/spotifort/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.
+            </p>
+          </div>
+
+          <div class="guide-cta">
+            <a href="/" class="btn-primary">Return to Spotifort</a>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p class="disclaimer">Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.</p>
+        <p class="footer-links">
+          <a href="/">Spotifort Home</a>
+          <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

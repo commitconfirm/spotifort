@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Fetch and clean Treefort 2026 lineup
+ * Fetch Treefort 2026 lineup and enrich with Spotify data
  *
  * Pipeline:
- *   1. Prompt for Spotify access token
- *   2. Fetch all tracks from Treefort playlist, extract unique artists with Spotify IDs
- *   3. Fetch Treefort website lineup (ground truth)
- *   4. Cross-reference: keep only website artists, attach Spotify IDs where available
- *   5. Write cleaned result to public/lineup.json
+ *   1. Fetch artist names from Treefort website (ground truth)
+ *   2. Search Spotify for each artist to get Spotify ID and URL
+ *   3. Fetch genres for each artist with a Spotify ID
+ *   4. Write result to public/lineup.json
  *
  * Usage:
  *   node scripts/fetch-lineup.js
@@ -22,9 +21,10 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_PATH = join(__dirname, '..', 'public', 'lineup.json');
 
-const PLAYLIST_ID = '5VHdkLixppY5lhqTUSpIXX';
 const TREEFORT_LINEUP_URL = 'https://treefortmusicfest.com/lineup/';
 const API_BASE = 'https://api.spotify.com/v1';
+const REQUEST_DELAY = 300; // ms between API calls
+const MAX_RETRIES = 3;
 
 /**
  * Prompt user for input
@@ -44,136 +44,41 @@ function prompt(question) {
 }
 
 /**
- * Fetch all tracks from a Spotify playlist (handles pagination)
+ * Sleep for a given number of milliseconds
  */
-async function fetchPlaylistTracks(accessToken, playlistId) {
-  const tracks = [];
-  let url = `${API_BASE}/playlists/${playlistId}/tracks?limit=50`;
-
-  console.log('Fetching Spotify playlist tracks...');
-
-  while (url) {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Spotify API error: ${error.error?.message || response.status}`);
-    }
-
-    const data = await response.json();
-    tracks.push(...data.items);
-    process.stdout.write(`\r  Fetched ${tracks.length} tracks...`);
-
-    url = data.next;
-  }
-
-  console.log('');
-  return tracks;
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
- * Extract unique artists from playlist tracks
+ * Fetch with retry and rate limit handling
  */
-function extractArtistsFromPlaylist(tracks) {
-  const artistMap = new Map();
+async function fetchWithRetry(url, options, retries = MAX_RETRIES) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const response = await fetch(url, options);
 
-  for (const item of tracks) {
-    const track = item.track;
-    if (!track || !track.artists) continue;
-
-    for (const artist of track.artists) {
-      if (!artistMap.has(artist.id)) {
-        artistMap.set(artist.id, {
-          name: artist.name,
-          spotifyId: artist.id,
-          spotifyUrl: artist.external_urls?.spotify || `https://open.spotify.com/artist/${artist.id}`,
-        });
-      }
+    if (response.status === 429) {
+      // Rate limited - use exponential backoff, cap at 30 seconds
+      const backoff = Math.min(30, Math.pow(2, attempt + 1));
+      console.log(`\n  Rate limited. Waiting ${backoff}s before retry ${attempt}/${retries}...`);
+      await sleep(backoff * 1000);
+      continue;
     }
+
+    return response;
   }
 
-  return artistMap;
+  // All retries exhausted
+  return { ok: false, status: 429, text: async () => 'Rate limit exceeded after retries' };
 }
 
 /**
  * Fetch artist names from Treefort website
+ * Note: HTML parsing is unreliable, so we use the cached list directly
  */
 async function fetchWebsiteLineup() {
-  console.log('Fetching Treefort website lineup...');
-
-  const response = await fetch(TREEFORT_LINEUP_URL);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch website: ${response.status}`);
-  }
-
-  const html = await response.text();
-
-  // Extract artist names from the HTML
-  // The lineup page has artist names in specific elements
-  const artists = [];
-
-  // Match artist names from the lineup grid/list
-  // Looking for patterns like <h3>Artist Name</h3> or similar heading elements
-  // and also data in lineup card elements
-
-  // Try multiple patterns to extract artist names
-  const patterns = [
-    // Artist cards with titles
-    /<h[1-6][^>]*class="[^"]*artist[^"]*"[^>]*>([^<]+)</gi,
-    // Lineup item headings
-    /<h[1-6][^>]*>([^<]{2,50})<\/h[1-6]>/gi,
-    // Artist links
-    /<a[^>]*class="[^"]*artist[^"]*"[^>]*>([^<]+)</gi,
-    // Span/div with artist class
-    /<(?:span|div)[^>]*class="[^"]*(?:artist-name|lineup-artist)[^"]*"[^>]*>([^<]+)</gi,
-  ];
-
-  const foundNames = new Set();
-
-  for (const pattern of patterns) {
-    let match;
-    while ((match = pattern.exec(html)) !== null) {
-      const name = match[1].trim();
-      if (name.length > 1 && name.length < 100 && !name.includes('<')) {
-        foundNames.add(name);
-      }
-    }
-  }
-
-  // If we didn't find many artists with patterns, try a more aggressive approach
-  // Look for the main content area and extract text that looks like artist names
-  if (foundNames.size < 50) {
-    // Extract from common lineup markup patterns
-    const altPatterns = [
-      /data-artist="([^"]+)"/gi,
-      /title="([^"]+)"\s*class="[^"]*artist/gi,
-      /"name":\s*"([^"]+)"/gi,
-    ];
-
-    for (const pattern of altPatterns) {
-      let match;
-      while ((match = pattern.exec(html)) !== null) {
-        const name = match[1].trim();
-        if (name.length > 1 && name.length < 100) {
-          foundNames.add(name);
-        }
-      }
-    }
-  }
-
-  console.log(`  Found ${foundNames.size} artists from website HTML parsing`);
-
-  // If parsing failed, fall back to the known list
-  if (foundNames.size < 50) {
-    console.log('  HTML parsing insufficient, using cached lineup data...');
-    return getCachedWebsiteLineup();
-  }
-
-  return Array.from(foundNames);
+  console.log('Using cached Treefort lineup (HTML parsing is unreliable)...');
+  return getCachedWebsiteLineup();
 }
 
 /**
@@ -235,72 +140,100 @@ function getCachedWebsiteLineup() {
 }
 
 /**
- * Normalize artist name for comparison
+ * Search Spotify for an artist by name
+ * Returns { spotifyId, spotifyUrl, genres } or null if not found
+ * Note: Search API returns genres directly, no separate call needed
  */
-function normalize(name) {
-  return name
-    .toLowerCase()
-    .replace(/[^\w\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+let firstErrorLogged = false;
+async function searchSpotifyArtist(accessToken, artistName, debug = false) {
+  const query = encodeURIComponent(artistName);
+  const url = `${API_BASE}/search?type=artist&q=${query}&limit=1`;
+
+  const response = await fetchWithRetry(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    if (!firstErrorLogged) {
+      console.log(`\n  ERROR: Search API returned ${response.status}`);
+      const text = await response.text();
+      console.log(`  Response: ${text}`);
+      console.log('');
+      firstErrorLogged = true;
+    }
+    return null;
+  }
+
+  const data = await response.json();
+  const artists = data.artists?.items;
+
+  if (!artists || artists.length === 0) {
+    return null;
+  }
+
+  const artist = artists[0];
+
+  // Debug: log first artist's full response to see what fields are available
+  if (debug) {
+    console.log('\n  DEBUG - First artist search response:');
+    console.log('  Keys:', Object.keys(artist).join(', '));
+    console.log('  genres:', JSON.stringify(artist.genres));
+    console.log('');
+  }
+
+  return {
+    spotifyId: artist.id,
+    spotifyUrl: artist.external_urls?.spotify || `https://open.spotify.com/artist/${artist.id}`,
+    genres: artist.genres || [],
+  };
 }
 
 /**
- * Cross-reference playlist artists with website lineup
+ * Process all artists: search Spotify (genres included in search response)
  */
-function crossReference(playlistArtists, websiteArtists) {
-  // Create normalized lookup from playlist
-  const spotifyLookup = new Map();
-  for (const [id, artist] of playlistArtists) {
-    spotifyLookup.set(normalize(artist.name), artist);
-  }
+async function processArtists(accessToken, artistNames) {
+  const artists = [];
+  const total = artistNames.length;
 
-  // Create normalized map of website artists
-  const websiteNormalized = new Map();
-  for (const name of websiteArtists) {
-    websiteNormalized.set(normalize(name), name);
-  }
+  console.log(`Processing ${total} artists...`);
+  console.log('');
 
-  // Build final lineup
-  const finalArtists = [];
-  let kept = 0;
-  let added = 0;
-  let removed = 0;
+  for (let i = 0; i < artistNames.length; i++) {
+    const name = artistNames[i];
+    const num = i + 1;
 
-  // Process website artists
-  for (const [normalizedName, originalName] of websiteNormalized) {
-    const spotifyArtist = spotifyLookup.get(normalizedName);
+    process.stdout.write(`\r  Processing artist ${num}/${total}: ${name.padEnd(50).slice(0, 50)}`);
 
-    if (spotifyArtist) {
-      finalArtists.push({
-        name: originalName,
-        spotifyId: spotifyArtist.spotifyId,
-        spotifyUrl: spotifyArtist.spotifyUrl,
+    // Search for artist on Spotify (includes genres in response)
+    // Debug first artist to see response structure
+    const spotifyData = await searchSpotifyArtist(accessToken, name, i === 0);
+    await sleep(REQUEST_DELAY);
+
+    if (spotifyData) {
+      artists.push({
+        name,
+        spotifyId: spotifyData.spotifyId,
+        spotifyUrl: spotifyData.spotifyUrl,
         notOnSpotify: false,
+        genres: spotifyData.genres,
       });
-      kept++;
     } else {
-      finalArtists.push({
-        name: originalName,
+      artists.push({
+        name,
         spotifyId: null,
         spotifyUrl: null,
         notOnSpotify: true,
+        genres: [],
       });
-      added++;
     }
   }
 
-  // Count removed (in playlist but not on website)
-  for (const [id, artist] of playlistArtists) {
-    if (!websiteNormalized.has(normalize(artist.name))) {
-      removed++;
-    }
-  }
+  console.log('');
+  console.log('');
 
-  // Sort alphabetically
-  finalArtists.sort((a, b) => a.name.localeCompare(b.name));
-
-  return { artists: finalArtists, kept, added, removed };
+  return artists;
 }
 
 /**
@@ -311,15 +244,17 @@ async function main() {
   console.log('Treefort 2026 Lineup Fetcher');
   console.log('============================');
   console.log('');
-  console.log('This script builds a clean lineup by:');
-  console.log('  1. Fetching artists from the Treefort Spotify playlist');
-  console.log('  2. Cross-referencing with the official Treefort website');
-  console.log('  3. Keeping only confirmed performing artists');
+  console.log('This script builds the lineup by:');
+  console.log('  1. Fetching artist names from the Treefort website');
+  console.log('  2. Searching Spotify for each artist');
+  console.log('  3. Fetching genres for matched artists');
   console.log('');
   console.log('To get an access token:');
   console.log('  1. Run the Spotifort app (npm run dev)');
   console.log('  2. Connect your Spotify account');
   console.log('  3. Copy the token from browser console: [spotifort] Access token: <token>');
+  console.log('');
+  console.log('Note: If you hit rate limits (429), wait 30-60 seconds before retrying.');
   console.log('');
 
   const accessToken = await prompt('Paste your access token: ');
@@ -330,48 +265,55 @@ async function main() {
   }
 
   try {
-    // Step 1: Fetch playlist tracks
-    const tracks = await fetchPlaylistTracks(accessToken, PLAYLIST_ID);
-    console.log(`  Total tracks in playlist: ${tracks.length}`);
-
-    // Step 2: Extract unique artists from playlist
-    const playlistArtists = extractArtistsFromPlaylist(tracks);
-    console.log(`  Unique artists in playlist: ${playlistArtists.size}`);
-
-    // Step 3: Fetch website lineup
-    const websiteArtists = await fetchWebsiteLineup();
-    console.log(`  Artists on website: ${websiteArtists.length}`);
-
-    // Step 4: Cross-reference
+    // Test API access first
+    console.log('Testing Spotify API access...');
+    const testResult = await searchSpotifyArtist(accessToken, 'Built to Spill', true);
+    if (!testResult) {
+      console.error('ERROR: Search API is not working. Check your access token.');
+      process.exit(1);
+    }
+    console.log(`  Test passed: Found "${testResult.spotifyId}"`);
     console.log('');
-    console.log('Cross-referencing...');
-    const { artists, kept, added, removed } = crossReference(playlistArtists, websiteArtists);
 
-    // Step 5: Write to file
+    // Step 1: Fetch website lineup
+    const artistNames = await fetchWebsiteLineup();
+    console.log(`  Total artists: ${artistNames.length}`);
+    console.log('');
+
+    // Step 2 & 3: Search Spotify and fetch genres
+    const artists = await processArtists(accessToken, artistNames);
+
+    // Sort alphabetically
+    artists.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Step 4: Write to file
     const lineup = {
       lastUpdated: new Date().toISOString().split('T')[0],
-      artists: artists,
+      artists,
     };
 
     writeFileSync(OUTPUT_PATH, JSON.stringify(lineup, null, 2) + '\n');
 
     // Summary
-    console.log('');
+    const withSpotify = artists.filter(a => !a.notOnSpotify);
+    const withoutSpotify = artists.filter(a => a.notOnSpotify);
+    const withGenres = artists.filter(a => a.genres && a.genres.length > 0);
+    const allGenres = new Set(artists.flatMap(a => a.genres || []));
+
     console.log('Summary');
     console.log('-------');
-    console.log(`  Kept (website + Spotify):    ${kept}`);
-    console.log(`  Added (website, no Spotify): ${added}`);
-    console.log(`  Removed (not on website):    ${removed}`);
+    console.log(`  Total artists:          ${artists.length}`);
+    console.log(`  Found on Spotify:       ${withSpotify.length}`);
+    console.log(`  Not found on Spotify:   ${withoutSpotify.length}`);
+    console.log(`  Artists with genres:    ${withGenres.length}`);
+    console.log(`  Unique genres:          ${allGenres.size}`);
     console.log('');
-    console.log(`Final lineup: ${artists.length} artists`);
     console.log(`Written to: ${OUTPUT_PATH}`);
 
-    if (added > 0) {
+    if (withoutSpotify.length > 0) {
       console.log('');
-      console.log('Artists without Spotify data:');
-      artists
-        .filter(a => a.notOnSpotify)
-        .forEach(a => console.log(`  - ${a.name}`));
+      console.log('Artists not found on Spotify:');
+      withoutSpotify.forEach(a => console.log(`  - ${a.name}`));
     }
 
     console.log('');
