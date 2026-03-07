@@ -1,10 +1,12 @@
 // Spotify PKCE Auth Flow
 // Access token lives in memory only — never persisted to storage
-// Code verifier is temporarily stored in sessionStorage during auth flow only
+// Code verifier and Client ID are temporarily stored in sessionStorage during auth flow only
 
 import { log } from './main.js';
 
-const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+// Environment variable Client ID (for dev builds)
+const ENV_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+
 const REDIRECT_URI = import.meta.env.DEV
   ? 'http://127.0.0.1:9090/callback'
   : 'https://spotifort.com/callback';
@@ -12,9 +14,64 @@ const SCOPES = 'user-library-read';
 const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const VERIFIER_KEY = 'spotifort_pkce_verifier';
+const CLIENT_ID_KEY = 'spotifort_client_id';
 
-// In-memory storage for access token (never persisted)
+// In-memory storage (never persisted beyond session)
 let accessToken = null;
+let userClientId = null;
+
+/**
+ * Check if a Client ID is available (either from env or user-provided)
+ * @returns {boolean}
+ */
+export function hasClientId() {
+  return !!(ENV_CLIENT_ID || userClientId || sessionStorage.getItem(CLIENT_ID_KEY));
+}
+
+/**
+ * Get the current Client ID (env takes priority, then user-provided)
+ * @returns {string|null}
+ */
+export function getClientId() {
+  // Env variable takes priority (for dev builds)
+  if (ENV_CLIENT_ID) {
+    return ENV_CLIENT_ID;
+  }
+  // Then check in-memory user-provided value
+  if (userClientId) {
+    return userClientId;
+  }
+  // Finally check sessionStorage (survives redirect during auth flow)
+  return sessionStorage.getItem(CLIENT_ID_KEY);
+}
+
+/**
+ * Set the user-provided Client ID
+ * @param {string} clientId - Spotify Client ID
+ */
+export function setClientId(clientId) {
+  userClientId = clientId;
+  // Also store in sessionStorage to survive the auth redirect
+  sessionStorage.setItem(CLIENT_ID_KEY, clientId);
+  log.info('Client ID set');
+}
+
+/**
+ * Clear the user-provided Client ID
+ */
+export function clearClientId() {
+  userClientId = null;
+  sessionStorage.removeItem(CLIENT_ID_KEY);
+  log.info('Client ID cleared');
+}
+
+/**
+ * Check if using env Client ID vs user-provided
+ * @returns {boolean} - True if using env variable
+ */
+export function isUsingEnvClientId() {
+  return !!ENV_CLIENT_ID;
+}
 
 /**
  * Generate a cryptographically random string for PKCE code verifier
@@ -72,8 +129,10 @@ async function generateCodeChallenge(verifier) {
  * Redirects the user to Spotify's authorization page
  */
 export async function initiateAuth() {
-  if (!CLIENT_ID) {
-    log.error('VITE_SPOTIFY_CLIENT_ID is not set. Create .env.local with your Spotify Client ID.');
+  const clientId = getClientId();
+
+  if (!clientId) {
+    log.error('No Spotify Client ID available');
     throw new Error('Missing Spotify Client ID');
   }
 
@@ -91,7 +150,7 @@ export async function initiateAuth() {
 
   // Build authorization URL
   const params = new URLSearchParams({
-    client_id: CLIENT_ID,
+    client_id: clientId,
     response_type: 'code',
     redirect_uri: REDIRECT_URI,
     scope: SCOPES,
@@ -130,6 +189,14 @@ export async function handleCallback() {
 
   log.info('Received auth code, exchanging for token');
 
+  // Get Client ID (from sessionStorage, survives the redirect)
+  const clientId = getClientId();
+  if (!clientId) {
+    log.error('Client ID not found after redirect');
+    window.history.replaceState({}, document.title, '/');
+    throw new Error('Client ID lost during auth flow');
+  }
+
   // Retrieve code verifier from sessionStorage
   const codeVerifier = sessionStorage.getItem(VERIFIER_KEY);
   sessionStorage.removeItem(VERIFIER_KEY); // Clean up immediately
@@ -148,7 +215,7 @@ export async function handleCallback() {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: CLIENT_ID,
+        client_id: clientId,
         grant_type: 'authorization_code',
         code: code,
         redirect_uri: REDIRECT_URI,
@@ -164,6 +231,14 @@ export async function handleCallback() {
 
     const data = await response.json();
     accessToken = data.access_token;
+
+    // Restore Client ID to memory from sessionStorage
+    const storedClientId = sessionStorage.getItem(CLIENT_ID_KEY);
+    if (storedClientId && !ENV_CLIENT_ID) {
+      userClientId = storedClientId;
+    }
+    // Clean up sessionStorage (but keep Client ID for potential re-auth)
+    // sessionStorage.removeItem(CLIENT_ID_KEY); // Keep it for re-auth
 
     log.info('Successfully obtained access token');
     log.info('Token type:', data.token_type);

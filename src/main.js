@@ -9,10 +9,10 @@ export const log = {
 };
 
 // Import after log is defined (other modules depend on log)
-import { initiateAuth, handleCallback } from './auth.js';
+import { initiateAuth, handleCallback, hasClientId } from './auth.js';
 import { fetchLikedSongs, extractArtistIds } from './spotify.js';
 import { loadLineup, matchArtists } from './matcher.js';
-import { showLoading, showResults, showError } from './ui.js';
+import { initUI, showLoading, showResults, showError, showSetup, setOnClientIdSet, showAuth, handleChangeClientId } from './ui.js';
 
 /**
  * Initialize the application
@@ -36,10 +36,44 @@ async function init() {
     return;
   }
 
+  // Set up callback for when Client ID is saved
+  setOnClientIdSet(() => {
+    showAuthSection();
+  });
+
+  // Set up "Change Client ID" link in footer
+  const changeClientIdLink = document.getElementById('change-client-id');
+  if (changeClientIdLink) {
+    changeClientIdLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      handleChangeClientId();
+    });
+  }
+
+  // Check if Client ID is available
+  if (!hasClientId()) {
+    log.info('No Client ID available, showing setup');
+    showSetup();
+    return;
+  }
+
+  // Client ID available, show auth section
+  showAuthSection();
+}
+
+/**
+ * Show the auth section and set up Connect button
+ */
+function showAuthSection() {
+  showAuth();
+
   // Set up Connect Spotify button
   const connectBtn = document.getElementById('connect-btn');
   if (connectBtn) {
-    connectBtn.addEventListener('click', handleConnectClick);
+    // Remove existing listeners by cloning
+    const newBtn = connectBtn.cloneNode(true);
+    connectBtn.parentNode.replaceChild(newBtn, connectBtn);
+    newBtn.addEventListener('click', handleConnectClick);
     log.info('Connect button ready');
   }
 
@@ -97,6 +131,9 @@ async function runMatching(accessToken) {
       log.info('No matches found');
     }
     log.info('=======================');
+
+    // Initialize UI with lineup data for genre-based expansion
+    initUI(lineup.artists);
 
     // Show results in UI
     showResults(matched, lineup.lastUpdated);
