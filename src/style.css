@@ -1,0 +1,297 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --black: #000;
+  --white: #fff;
+  --border-width: 3px;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--white);
+  color: var(--black);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+}
+
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  font-size: 1.25rem;
+}
+
+main {
+  flex: 1;
+}
+
+/* Auth Section */
+#auth-section {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2rem;
+  border: var(--border-width) solid var(--black);
+}
+
+#auth-section p {
+  margin-bottom: 1.5rem;
+}
+
+#auth-section p:last-child {
+  margin-bottom: 0;
+}
+
+#connect-btn {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
+  background-color: var(--black);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#connect-btn:hover {
+  opacity: 0.8;
+}
+
+#connect-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading State */
+#loading-section {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2rem;
+  border: var(--border-width) solid var(--black);
+}
+
+#loading-section h2 {
+  margin-bottom: 1rem;
+}
+
+.loading-status {
+  font-size: 1.125rem;
+}
+
+.track-count {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+/* Results Section - Two Column Grid */
+#results-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* List Box */
+.list-box {
+  border: var(--border-width) solid var(--black);
+  padding: 1.5rem;
+}
+
+.list-box h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--black);
+}
+
+.list-box h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Artist List */
+.artist-list {
+  list-style: none;
+}
+
+.artist-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.artist-list li:last-child {
+  border-bottom: none;
+}
+
+.artist-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--black);
+}
+
+.artist-link:hover {
+  opacity: 0.7;
+}
+
+.artist-marker {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  margin-right: 0.75rem;
+  color: var(--black);
+}
+
+.artist-name {
+  flex: 1;
+}
+
+/* Empty State */
+.empty-state {
+  color: #666;
+  font-style: italic;
+}
+
+/* Placeholder for future List B */
+.list-placeholder {
+  border: var(--border-width) dashed #ccc;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  min-height: 200px;
+}
+
+/* Lineup Info */
+.lineup-info {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* Footer */
+footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--black);
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.disclaimer {
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.footer-links {
+  margin-top: 1rem;
+}
+
+.footer-links a {
+  color: var(--black);
+  margin: 0 0.5rem;
+}
+
+.footer-links a:hover {
+  opacity: 0.7;
+}
+
+/* Lineup Page */
+#lineup-info {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.back-link {
+  margin-bottom: 1rem;
+}
+
+.back-link a {
+  color: var(--black);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.back-link a:hover {
+  opacity: 0.7;
+}
+
+.lineup-meta {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.lineup-note {
+  font-size: 0.875rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.lineup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.lineup-loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #results-section,
+  .lineup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .list-box {
+    padding: 1rem;
+  }
+
+  .list-placeholder {
+    min-height: 100px;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
