@@ -1,0 +1,115 @@
+// Spotifort — Main Application Entry Point
+// App initialization and orchestration
+
+// Logging utility — verbose in dev, silent in prod (except errors)
+export const log = {
+  info: (...args) => import.meta.env.DEV && console.log('[spotifort]', ...args),
+  warn: (...args) => import.meta.env.DEV && console.warn('[spotifort]', ...args),
+  error: (...args) => console.error('[spotifort]', ...args),
+};
+
+// Import after log is defined (other modules depend on log)
+import { initiateAuth, handleCallback } from './auth.js';
+import { fetchLikedSongs, extractArtistIds } from './spotify.js';
+import { loadLineup, matchArtists } from './matcher.js';
+import { showLoading, showResults, showError } from './ui.js';
+
+/**
+ * Initialize the application
+ */
+async function init() {
+  log.info('Spotifort initializing...');
+
+  // Check if we're returning from Spotify auth callback
+  if (window.location.pathname === '/callback') {
+    log.info('Handling OAuth callback');
+    try {
+      const token = await handleCallback();
+      if (token) {
+        log.info('Authentication successful!');
+        await runMatching(token);
+      }
+    } catch (err) {
+      log.error('Authentication failed:', err.message);
+      showError(err.message);
+    }
+    return;
+  }
+
+  // Set up Connect Spotify button
+  const connectBtn = document.getElementById('connect-btn');
+  if (connectBtn) {
+    connectBtn.addEventListener('click', handleConnectClick);
+    log.info('Connect button ready');
+  }
+
+  log.info('Spotifort ready');
+}
+
+/**
+ * Handle click on Connect Spotify button
+ */
+async function handleConnectClick() {
+  const connectBtn = document.getElementById('connect-btn');
+
+  try {
+    connectBtn.disabled = true;
+    connectBtn.textContent = 'Connecting...';
+    await initiateAuth();
+  } catch (err) {
+    log.error('Failed to initiate auth:', err.message);
+    connectBtn.disabled = false;
+    connectBtn.textContent = 'Connect Spotify';
+    showError(err.message);
+  }
+}
+
+/**
+ * Run the matching flow: fetch liked songs, extract artists, match against lineup
+ * @param {string} accessToken - Spotify access token
+ */
+async function runMatching(accessToken) {
+  try {
+    // Show loading state with progress callback
+    const onProgress = (trackCount) => {
+      showLoading(trackCount);
+    };
+
+    // Fetch liked songs with progress updates
+    const tracks = await fetchLikedSongs(accessToken, onProgress);
+
+    // Extract unique artist IDs
+    const userArtistIds = extractArtistIds(tracks);
+
+    // Load Treefort lineup
+    const lineup = await loadLineup();
+
+    // Match against lineup
+    const matched = matchArtists(userArtistIds, lineup.artists);
+
+    // Log matched artists to console
+    log.info('=== MATCHED ARTISTS ===');
+    if (matched.length > 0) {
+      matched.forEach((artist, i) => {
+        log.info(`${i + 1}. ${artist.name}`);
+      });
+    } else {
+      log.info('No matches found');
+    }
+    log.info('=======================');
+
+    // Show results in UI
+    showResults(matched, lineup.lastUpdated);
+
+  } catch (err) {
+    log.error('Matching failed:', err.message);
+    showError(err.message);
+  }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
