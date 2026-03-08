@@ -75,15 +75,22 @@ export function isUsingEnvClientId() {
 
 /**
  * Generate a cryptographically random string for PKCE code verifier
+ * Uses only URL-safe characters as per RFC 7636
  * @param {number} length - Length of the string (43-128 per spec)
  * @returns {string} - Random string
  */
 function generateRandomString(length = 64) {
+  // URL-safe characters for PKCE (RFC 7636)
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-  const values = crypto.getRandomValues(new Uint8Array(length));
-  return Array.from(values)
-    .map((x) => possible[x % possible.length])
-    .join('');
+  const randomValues = new Uint8Array(length);
+  crypto.getRandomValues(randomValues);
+
+  // Build string character by character (Safari-compatible)
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += possible.charAt(randomValues[i] % possible.length);
+  }
+  return result;
 }
 
 /**
@@ -92,17 +99,22 @@ function generateRandomString(length = 64) {
  * @returns {Promise<ArrayBuffer>} - SHA-256 hash
  */
 async function sha256(plain) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(plain);
-
   // Check if crypto.subtle is available (not available in some in-app browsers)
-  if (!crypto.subtle) {
+  if (!crypto || !crypto.subtle || !crypto.subtle.digest) {
     throw new CryptoNotSupportedError();
   }
 
   try {
-    return await crypto.subtle.digest('SHA-256', data);
+    // Convert string to Uint8Array manually for Safari compatibility
+    const bytes = new Uint8Array(plain.length);
+    for (let i = 0; i < plain.length; i++) {
+      bytes[i] = plain.charCodeAt(i) & 0xff;
+    }
+
+    // Safari may need explicit ArrayBuffer, so we pass bytes.buffer
+    return await crypto.subtle.digest('SHA-256', bytes.buffer);
   } catch (err) {
+    log.error('SHA-256 failed:', err.message);
     throw new CryptoNotSupportedError();
   }
 }
@@ -119,19 +131,44 @@ class CryptoNotSupportedError extends Error {
 
 /**
  * Base64url encode an ArrayBuffer (no padding, URL-safe)
+ * Manual implementation for Safari compatibility (avoids btoa edge cases)
  * @param {ArrayBuffer} buffer - The buffer to encode
  * @returns {string} - Base64url encoded string
  */
 function base64urlEncode(buffer) {
   const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
+  const len = bytes.length;
+
+  // Base64url alphabet (RFC 4648 Section 5)
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+  let result = '';
+
+  // Process 3 bytes at a time, producing 4 base64 characters
+  for (let i = 0; i < len; i += 3) {
+    const b0 = bytes[i];
+    const b1 = i + 1 < len ? bytes[i + 1] : 0;
+    const b2 = i + 2 < len ? bytes[i + 2] : 0;
+
+    // First character: bits 7-2 of b0
+    result += alphabet.charAt(b0 >> 2);
+
+    // Second character: bits 1-0 of b0 + bits 7-4 of b1
+    result += alphabet.charAt(((b0 & 0x03) << 4) | (b1 >> 4));
+
+    // Third character: bits 3-0 of b1 + bits 7-6 of b2 (only if we have b1)
+    if (i + 1 < len) {
+      result += alphabet.charAt(((b1 & 0x0f) << 2) | (b2 >> 6));
+    }
+
+    // Fourth character: bits 5-0 of b2 (only if we have b2)
+    if (i + 2 < len) {
+      result += alphabet.charAt(b2 & 0x3f);
+    }
   }
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+
+  // No padding for base64url (RFC 4648)
+  return result;
 }
 
 /**

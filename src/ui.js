@@ -65,6 +65,11 @@ export function showSetup() {
         <li>Click <strong>Settings</strong>, then copy your <strong>Client ID</strong></li>
       </ol>
       <p class="setup-link"><a href="/setup.html">View detailed guide with screenshots</a></p>
+      <p class="setup-note">
+        <strong>Note:</strong> You must create your Spotify Developer app on a desktop/laptop computer.
+        The Spotify Developer Dashboard does not show the "Create App" button on mobile browsers.
+        Once created, you can copy your Client ID and use Spotifort on any device.
+      </p>
     </div>
 
     <div class="setup-input">
