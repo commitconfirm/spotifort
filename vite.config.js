@@ -17,6 +17,7 @@ export default defineConfig({
         main: resolve(__dirname, 'src/index.html'),
         lineup: resolve(__dirname, 'src/lineup.html'),
         setup: resolve(__dirname, 'src/setup.html'),
+        notfound: resolve(__dirname, 'src/404.html'),
       },
     },
   },

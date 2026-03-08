@@ -8,10 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" type="image/png" href="/spotifort_transparent.png" />
   </head>
   <body>
     <div id="app">
       <header>
+        <img src="/spotifort_transparent.png" alt="Spotifort logo" class="site-logo" />
         <h1>Spotifort Setup Guide</h1>
         <p class="tagline">Create your Spotify Developer app in 5 minutes</p>
       </header>
@@ -29,89 +31,113 @@
               each Spotifort user creates their own Spotify Developer app. You become the
               sole user of your own app, which means no limits.
             </p>
-            <p>
-              <strong>Requirements:</strong> A Spotify Premium account. Free accounts cannot
-              create Developer apps.
-            </p>
-            <p>
-              <strong>Note:</strong> You must create your Spotify Developer app on a desktop/laptop
-              computer. The Spotify Developer Dashboard does not show the "Create App" button on
-              mobile browsers. Once created, you can copy your Client ID and use Spotifort on any device.
-            </p>
+          </div>
+
+          <div class="guide-notes">
+            <h2>Important Notes</h2>
+            <ul>
+              <li>
+                <strong>Desktop required for setup:</strong> You must create your Spotify Developer
+                app on a desktop or laptop computer. The Spotify Developer Dashboard does not show
+                the "Create App" button on mobile browsers. Once created, you can use Spotifort on any device.
+              </li>
+              <li>
+                <strong>Premium account required:</strong> Spotifort requires a Spotify Premium
+                account to function due to Spotify's Developer Mode restrictions.
+              </li>
+              <li>
+                <strong>Client ID is not sensitive:</strong> Your Client ID is a public identifier,
+                not a password. Spotifort never stores it permanently.
+              </li>
+            </ul>
           </div>
 
           <div class="guide-steps">
             <h2>Step-by-Step Instructions</h2>
 
             <div class="guide-step">
-              <h3>Step 1: Go to the Spotify Developer Dashboard</h3>
+              <h3>Step 1: Create a Spotify Developer Account</h3>
               <p>
-                Open <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener noreferrer">developer.spotify.com/dashboard</a>
-                in a new tab and log in with your Spotify account.
+                Log in at <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener noreferrer">developer.spotify.com/dashboard</a>
+                with your Spotify credentials. If you don't have a Spotify account, you'll need to create one first.
               </p>
-              <div class="screenshot-placeholder">[Screenshot: Spotify Developer Dashboard login page]</div>
+              <div class="guide-media">
+                <img src="/setup/step1-login.gif" alt="Logging into Spotify Developer Dashboard" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="screenshot-placeholder">Screenshot coming soon</div>
+              </div>
             </div>
 
             <div class="guide-step">
-              <h3>Step 2: Create a new app</h3>
+              <h3>Step 2: Create a New App</h3>
               <p>
-                Click the <strong>Create app</strong> button in the top right corner.
+                Click the <strong>"Create App"</strong> button and fill in the form.
+                App name can be anything (e.g., "Treefort Checker").
+                Description can be anything (e.g., "Personal use").
               </p>
-              <div class="screenshot-placeholder">[Screenshot: Dashboard with "Create app" button highlighted]</div>
+              <div class="guide-media">
+                <img src="/setup/step2-create-app.gif" alt="Creating a new Spotify app" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="screenshot-placeholder">Screenshot coming soon</div>
+              </div>
             </div>
 
             <div class="guide-step">
-              <h3>Step 3: Fill in the app details</h3>
-              <p>Enter the following information:</p>
-              <ul>
-                <li><strong>App name:</strong> Anything you like (e.g., "My Spotifort", "Treefort Matcher")</li>
-                <li><strong>App description:</strong> Anything (e.g., "Personal use")</li>
-                <li><strong>Website:</strong> Leave blank or enter <code>https://spotifort.com</code></li>
-                <li><strong>Redirect URI:</strong> <code class="important">https://spotifort.com/callback</code></li>
-              </ul>
+              <h3>Step 3: Set the Redirect URI</h3>
+              <p>
+                In the app creation form, set the <strong>Redirect URI</strong> to exactly:
+              </p>
+              <div class="copy-block">
+                <code>https://spotifort.com/callback</code>
+                <button class="copy-btn" data-copy="https://spotifort.com/callback" type="button">Copy</button>
+              </div>
               <p class="warning">
-                <strong>Important:</strong> The Redirect URI must be exactly
-                <code>https://spotifort.com/callback</code> — no trailing slash,
-                no typos. This is required for the authentication to work.
+                <strong>This must be exact or authentication will fail.</strong>
+                No trailing slash, no typos, must be HTTPS.
               </p>
-              <div class="screenshot-placeholder">[Screenshot: Create app form with fields filled in]</div>
+              <div class="guide-media">
+                <img src="/setup/step3-redirect-uri.gif" alt="Setting the redirect URI" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="screenshot-placeholder">Screenshot coming soon</div>
+              </div>
             </div>
 
             <div class="guide-step">
-              <h3>Step 4: Select Web API and save</h3>
+              <h3>Step 4: Select Web API</h3>
               <p>
-                Under "Which API/SDKs are you planning to use?", check <strong>Web API</strong>.
+                Under <strong>"Which API/SDKs are you planning to use?"</strong>, check <strong>Web API</strong>.
+                Then check the box agreeing to Spotify's Developer Terms of Service and click <strong>Save</strong>.
               </p>
-              <p>
-                Check the box agreeing to Spotify's Developer Terms of Service, then
-                click <strong>Save</strong>.
-              </p>
-              <div class="screenshot-placeholder">[Screenshot: API selection and terms checkbox]</div>
+              <div class="guide-media">
+                <img src="/setup/step4-select-api.gif" alt="Selecting Web API option" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="screenshot-placeholder">Screenshot coming soon</div>
+              </div>
             </div>
 
             <div class="guide-step">
-              <h3>Step 5: Copy your Client ID</h3>
+              <h3>Step 5: Copy Client ID and Paste into Spotifort</h3>
               <p>
-                After creating the app, you'll be taken to your app's dashboard.
-                Click <strong>Settings</strong> in the top right.
+                After creating the app, you'll see your <strong>Client ID</strong> on the dashboard —
+                a 32-character string of letters and numbers. Copy it (you want the Client ID, not the Client Secret).
               </p>
               <p>
-                You'll see your <strong>Client ID</strong> — a 32-character string of
-                letters and numbers. Click the copy button or select and copy it.
+                Then go to <a href="/">spotifort.com</a>, paste your Client ID into the input field,
+                and click <strong>Save & Continue</strong>.
               </p>
-              <div class="screenshot-placeholder">[Screenshot: App settings showing Client ID with copy button]</div>
+              <div class="guide-media">
+                <img src="/setup/step5-copy-paste-client-id.gif" alt="Copying Client ID and pasting into Spotifort" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="screenshot-placeholder">Screenshot coming soon</div>
+              </div>
             </div>
 
             <div class="guide-step">
-              <h3>Step 6: Paste into Spotifort</h3>
+              <h3>Step 6: Authorize with Spotify</h3>
               <p>
-                Go back to <a href="/">Spotifort</a>, paste your Client ID into the
-                input field, and click <strong>Save & Continue</strong>.
+                Click <strong>Connect Spotify</strong> and approve the permissions.
+                Spotifort only requests access to read your Liked Songs — nothing else.
+                We cannot modify your library, playlists, or account.
               </p>
-              <p>
-                That's it! You can now connect your Spotify account and find your
-                Treefort artists.
-              </p>
+              <div class="guide-media">
+                <img src="/setup/step6-authorize.gif" alt="Authorizing Spotifort with Spotify" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="screenshot-placeholder">Screenshot coming soon</div>
+              </div>
             </div>
           </div>
 
@@ -153,7 +179,44 @@
           <a href="/">Spotifort Home</a>
           <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
         </p>
+        <p class="footer-attribution">
+          Made by <a href="https://commitconfirm.com">commitconfirm.com</a>
+        </p>
       </footer>
     </div>
+    <script>
+      // Copy button functionality
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const text = btn.dataset.copy;
+          try {
+            await navigator.clipboard.writeText(text);
+            const original = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = original;
+              btn.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'Copy';
+              btn.classList.remove('copied');
+            }, 2000);
+          }
+        });
+      });
+    </script>
   </body>
 </html>

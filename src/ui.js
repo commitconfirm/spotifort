@@ -64,7 +64,6 @@ export function showSetup() {
         <li>Check the Developer Terms checkbox and click <strong>Save</strong></li>
         <li>Click <strong>Settings</strong>, then copy your <strong>Client ID</strong></li>
       </ol>
-      <p class="setup-link"><a href="/setup.html">View detailed guide with screenshots</a></p>
       <p class="setup-note">
         <strong>Note:</strong> You must create your Spotify Developer app on a desktop/laptop computer.
         The Spotify Developer Dashboard does not show the "Create App" button on mobile browsers.
@@ -76,6 +75,7 @@ export function showSetup() {
       <label for="client-id-input">Paste your Client ID:</label>
       <input type="text" id="client-id-input" placeholder="e.g., 1a2b3c4d5e6f7g8h9i0j" autocomplete="off" spellcheck="false">
       <button id="save-client-id-btn" type="button">Save & Continue</button>
+      <p class="setup-help"><a href="/setup.html">Need help? View the setup guide</a></p>
     </div>
 
     <p class="setup-note">
@@ -237,14 +237,7 @@ export function showResults(matchedArtists, lastUpdated) {
   // Render List A (matched artists)
   const listAHtml = renderListA(matchedArtists);
 
-  // Render placeholder for List B (future feature)
-  const listBHtml = `
-    <div class="list-placeholder">
-      <p>More recommendations coming soon</p>
-    </div>
-  `;
-
-  resultsSection.innerHTML = listAHtml + listBHtml;
+  resultsSection.innerHTML = listAHtml;
 
   // Attach click handlers for expansion
   attachExpansionHandlers();
@@ -397,7 +390,7 @@ function findSimilarArtistsByGenre(artistId) {
  */
 function renderSimilarArtists(container, similarArtists) {
   if (similarArtists.length === 0) {
-    container.innerHTML = '<p class="related-empty">No similar artists in the lineup</p>';
+    container.innerHTML = '<p class="related-empty">This is broken and no worky.</p>';
     return;
   }
 

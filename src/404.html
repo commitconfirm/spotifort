@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 — Spotifort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" type="image/png" href="/spotifort_transparent.png" />
+    <style>
+      .error-page {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 2rem;
+      }
+      .robot-art {
+        font-family: monospace;
+        font-size: 1rem;
+        line-height: 1.2;
+        margin: 2rem 0;
+        white-space: pre;
+      }
+      .error-code {
+        font-family: 'Ubuntu', sans-serif;
+        font-size: 6rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1;
+      }
+      .error-message {
+        font-size: 1.5rem;
+        margin: 1rem 0 2rem;
+      }
+      .robot-speech {
+        background: var(--black);
+        color: var(--white);
+        padding: 1rem 1.5rem;
+        margin: 1.5rem auto;
+        max-width: 400px;
+        position: relative;
+        box-shadow: 6px 6px 0 var(--black);
+        border: 5px solid var(--black);
+        background: var(--white);
+        color: var(--black);
+      }
+      .robot-speech::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 10px solid transparent;
+        border-top-color: var(--black);
+      }
+      .asimov-quote {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #555;
+        border-top: 1px solid #ddd;
+        padding-top: 0.75rem;
+      }
+      .glitch {
+        animation: glitch 0.3s infinite;
+      }
+      @keyframes glitch {
+        0%, 100% { transform: translate(0); }
+        25% { transform: translate(-2px, 1px); }
+        50% { transform: translate(2px, -1px); }
+        75% { transform: translate(-1px, -1px); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <a href="/">
+          <img src="/spotifort_transparent.png" alt="Spotifort logo" class="site-logo" />
+        </a>
+      </header>
+
+      <main>
+        <section class="error-page">
+          <p class="error-code">404</p>
+          <p class="error-message">Page not found</p>
+
+          <div class="robot-speech">
+            <p><strong>BEEP BOOP.</strong> I searched everywhere but this page has left the festival grounds.</p>
+            <p class="asimov-quote" id="asimov-quote"></p>
+          </div>
+          <script>
+            const asimovQuotes = [
+              "The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom.",
+              "I do not fear computers. I fear the lack of them.",
+              "Part of the inhumanity of the computer is that, once it is competently programmed and working smoothly, it is completely honest.",
+              "The most exciting phrase to hear in science, the one that heralds new discoveries, is not 'Eureka!' but 'That's funny...'",
+              "Self-education is, I firmly believe, the only kind of education there is.",
+              "If my doctor told me I had only six minutes to live, I wouldn't brood. I'd type a little faster.",
+              "Any sufficiently advanced technology is indistinguishable from magic... wait, that's Clarke. BEEP BOOP. ERROR.",
+              "It is change, continuing change, inevitable change, that is the dominant factor in society today.",
+              "Violence is the last refuge of the incompetent.",
+              "The true delight is in the finding out rather than in the knowing.",
+              "I'm not a speed reader. I'm a speed understander.",
+              "Life is pleasant. Death is peaceful. It's the transition that's troublesome."
+            ];
+            const quote = asimovQuotes[Math.floor(Math.random() * asimovQuotes.length)];
+            document.getElementById('asimov-quote').innerHTML = '<em>"' + quote + '"</em> — Isaac Asimov';
+          </script>
+
+          <div class="robot-art" aria-hidden="true">
+    ╭───────────╮
+    │  ◉    ◉  │
+    │    ▽     │
+    │  ╰────╯  │
+    ╰────┬┬────╯
+         ││
+    ╭────╯╰────╮
+    │  ┌────┐  │
+    │  │ 404│  │
+    │  └────┘  │
+    ╰──────────╯
+          </div>
+
+          <p>Maybe the band cancelled? Or you followed a broken link?</p>
+          <p style="margin-top: 1.5rem;">
+            <a href="/" class="btn-primary">Back to Spotifort</a>
+          </p>
+        </section>
+      </main>
+
+      <footer>
+        <p class="disclaimer">The robot is sorry. It tried its best.</p>
+        <p class="footer-attribution">
+          Made by <a href="https://commitconfirm.com">commitconfirm.com</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
