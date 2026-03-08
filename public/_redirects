@@ -1,8 +1,1 @@
-# Cloudflare Pages redirects
-
-# OAuth callback - serve index.html so main.js can handle it
-/callback  /index.html  200
-
-# Clean URLs - serve HTML files without extension
-/lineup    /lineup.html  200
-/setup     /setup.html   200
+/callback/* /index.html 200
