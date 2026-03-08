@@ -94,7 +94,27 @@ function generateRandomString(length = 64) {
 async function sha256(plain) {
   const encoder = new TextEncoder();
   const data = encoder.encode(plain);
-  return crypto.subtle.digest('SHA-256', data);
+
+  // Check if crypto.subtle is available (not available in some in-app browsers)
+  if (!crypto.subtle) {
+    throw new CryptoNotSupportedError();
+  }
+
+  try {
+    return await crypto.subtle.digest('SHA-256', data);
+  } catch (err) {
+    throw new CryptoNotSupportedError();
+  }
+}
+
+/**
+ * Custom error for unsupported crypto operations
+ */
+class CryptoNotSupportedError extends Error {
+  constructor() {
+    super('Please open this site directly in Safari or Chrome. In-app browsers (iMessage, Instagram, etc.) are not supported.');
+    this.name = 'CryptoNotSupportedError';
+  }
 }
 
 /**
