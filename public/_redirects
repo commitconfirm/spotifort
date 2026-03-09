@@ -1,3 +1,4 @@
+/callback /index.html 200
 /callback/* /index.html 200
 
 /* /404.html 404
