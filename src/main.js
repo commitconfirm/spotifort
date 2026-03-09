@@ -18,19 +18,22 @@ import { initUI, showLoading, showResults, showError, showSetup, setOnClientIdSe
  * Initialize the application
  */
 async function init() {
-  log.info('Spotifort initializing...');
+  console.log('[spotifort] init started');
+  console.log('[spotifort] pathname:', window.location.pathname);
+  console.log('[spotifort] search:', window.location.search);
 
   // Check if we're returning from Spotify auth callback
   if (window.location.pathname === '/callback') {
-    log.info('Handling OAuth callback');
+    console.log('[spotifort] handling callback...');
     try {
       const token = await handleCallback();
+      console.log('[spotifort] token received:', token ? 'yes' : 'no');
       if (token) {
-        log.info('Authentication successful!');
+        console.log('[spotifort] running matching...');
         await runMatching(token);
       }
     } catch (err) {
-      log.error('Authentication failed:', err.message);
+      console.error('[spotifort] callback error:', err);
       showError(err.message);
     }
     return;
