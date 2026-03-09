@@ -1,42 +1,37 @@
 #!/usr/bin/env node
 
 /**
- * Add genres to existing lineup.json using GET /artists/{id}
+ * Add genres to lineup.json using MusicBrainz API with Last.fm fallback
  *
- * This script uses the individual artist endpoint instead of Search API,
- * which may have separate rate limits. It can resume from where it left off.
+ * For each artist: try MusicBrainz first, if no genres found, try Last.fm
  *
  * Usage:
  *   node scripts/add-genres.js
+ *
+ * Requires:
+ *   - LASTFM_API_KEY in .env.local (get one at https://www.last.fm/api/account/create)
  */
 
-import { createInterface } from 'readline';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { config } from 'dotenv';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const LINEUP_PATH = join(__dirname, '..', 'public', 'lineup.json');
+const ENV_PATH = join(__dirname, '..', '.env.local');
 
-const API_BASE = 'https://api.spotify.com/v1';
-const REQUEST_DELAY = 500; // ms between API calls - be gentle
-
-/**
- * Prompt user for input
- */
-function prompt(question) {
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      rl.close();
-      resolve(answer.trim());
-    });
-  });
+// Load environment variables
+if (existsSync(ENV_PATH)) {
+  config({ path: ENV_PATH });
 }
+
+const MB_API_BASE = 'https://musicbrainz.org/ws/2';
+const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0';
+const USER_AGENT = 'Spotifort/1.0 (https://spotifort.com)';
+
+const MB_REQUEST_DELAY = 1100; // 1.1 seconds (MusicBrainz requires 1/sec)
+const LASTFM_REQUEST_DELAY = 200; // 200ms (Last.fm allows 5/sec)
 
 /**
  * Sleep for a given number of milliseconds
@@ -46,38 +41,121 @@ function sleep(ms) {
 }
 
 /**
- * Fetch artist by ID - returns genres or null
- * STOPS IMMEDIATELY on rate limit
+ * Search MusicBrainz for an artist by name
+ * Returns the MusicBrainz ID (MBID) or null if not found
  */
-async function fetchArtistGenres(accessToken, artistId) {
-  const url = `${API_BASE}/artists/${artistId}`;
+async function searchMusicBrainz(artistName) {
+  const query = encodeURIComponent(artistName);
+  const url = `${MB_API_BASE}/artist/?query=${query}&fmt=json&limit=1`;
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Accept': 'application/json',
+      },
+    });
 
-  if (response.status === 429) {
-    const retryAfter = response.headers.get('Retry-After') || 'unknown';
-    console.log(`\n\n*** RATE LIMITED ***`);
-    console.log(`Retry-After header: ${retryAfter} seconds`);
-    console.log(`Stopping immediately to preserve progress.`);
-    return { rateLimited: true };
+    if (!response.ok) {
+      if (response.status === 503) {
+        console.log(`\n  Rate limited (503). Waiting 5s...`);
+        await sleep(5000);
+        return null;
+      }
+      return null;
+    }
+
+    const data = await response.json();
+    const artists = data.artists;
+
+    if (!artists || artists.length === 0) {
+      return null;
+    }
+
+    return artists[0].id;
+  } catch (err) {
+    return null;
   }
+}
 
-  if (response.status === 403) {
-    console.log(`\n  WARNING: 403 Forbidden for artist ${artistId} - endpoint may be blocked`);
-    return { rateLimited: false, genres: [], blocked: true };
+/**
+ * Fetch genres for an artist by MusicBrainz ID
+ * Returns array of genre names
+ */
+async function fetchMusicBrainzGenres(mbid) {
+  const url = `${MB_API_BASE}/artist/${mbid}?inc=genres&fmt=json`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 503) {
+        console.log(`\n  Rate limited (503). Waiting 5s...`);
+        await sleep(5000);
+        return [];
+      }
+      return [];
+    }
+
+    const data = await response.json();
+    const genres = data.genres || [];
+
+    return genres
+      .sort((a, b) => (b.count || 0) - (a.count || 0))
+      .map(g => g.name);
+  } catch (err) {
+    return [];
   }
+}
 
-  if (!response.ok) {
-    console.log(`\n  ERROR: ${response.status} for artist ${artistId}`);
-    return { rateLimited: false, genres: [] };
+/**
+ * Fetch tags from Last.fm for an artist
+ * Returns top 5 tags with count > 30
+ */
+async function fetchLastFmTags(artistName, apiKey) {
+  const query = encodeURIComponent(artistName);
+  const url = `${LASTFM_API_BASE}/?method=artist.gettoptags&artist=${query}&api_key=${apiKey}&format=json`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': USER_AGENT,
+      },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (data.error || !data.toptags || !data.toptags.tag) {
+      return [];
+    }
+
+    const tags = data.toptags.tag;
+
+    // Filter tags with count > 30 and take top 5
+    return tags
+      .filter(t => t.count > 30)
+      .slice(0, 5)
+      .map(t => t.name.toLowerCase());
+  } catch (err) {
+    return [];
   }
+}
 
-  const data = await response.json();
-  return { rateLimited: false, genres: data.genres || [] };
+/**
+ * Save lineup to file
+ */
+function saveLineup(lineup) {
+  lineup.lastUpdated = new Date().toISOString().split('T')[0];
+  writeFileSync(LINEUP_PATH, JSON.stringify(lineup, null, 2) + '\n');
 }
 
 /**
@@ -85,35 +163,24 @@ async function fetchArtistGenres(accessToken, artistId) {
  */
 async function main() {
   console.log('');
-  console.log('Add Genres to Lineup');
-  console.log('====================');
-  console.log('');
-  console.log('This script adds genre data to existing artists in lineup.json');
-  console.log('using GET /artists/{id} endpoint. Stops immediately on rate limit.');
-  console.log('');
-  console.log('To get an access token:');
-  console.log('  1. Run the Spotifort app (npm run dev)');
-  console.log('  2. Connect your Spotify account');
-  console.log('  3. Copy the token from browser console');
+  console.log('Add Genres (MusicBrainz + Last.fm)');
+  console.log('==================================');
   console.log('');
 
-  const accessToken = await prompt('Paste your access token: ');
-
-  if (!accessToken) {
-    console.error('Error: No access token provided');
-    process.exit(1);
+  const lastfmApiKey = process.env.LASTFM_API_KEY;
+  if (!lastfmApiKey) {
+    console.log('Warning: No LASTFM_API_KEY in .env.local - Last.fm fallback disabled');
+    console.log('Get one at: https://www.last.fm/api/account/create');
+    console.log('');
   }
 
   // Load existing lineup
-  console.log('');
   console.log('Loading lineup.json...');
   const lineup = JSON.parse(readFileSync(LINEUP_PATH, 'utf8'));
   const artists = lineup.artists;
 
-  // Find artists that need genres (have spotifyId but no genres)
-  const needsGenres = artists.filter(a =>
-    a.spotifyId && (!a.genres || a.genres.length === 0)
-  );
+  // Find artists that need genres
+  const needsGenres = artists.filter(a => !a.genres || a.genres.length === 0);
   const alreadyHasGenres = artists.filter(a => a.genres && a.genres.length > 0);
 
   console.log(`  Total artists: ${artists.length}`);
@@ -126,85 +193,88 @@ async function main() {
     return;
   }
 
-  // Test with first artist
-  console.log('Testing API access...');
-  const testArtist = needsGenres[0];
-  const testResult = await fetchArtistGenres(accessToken, testArtist.spotifyId);
-
-  if (testResult.rateLimited) {
-    console.log('Cannot proceed - rate limited on first request.');
-    process.exit(1);
-  }
-
-  if (testResult.blocked) {
-    console.log('ERROR: GET /artists/{id} endpoint appears to be blocked (403).');
-    console.log('This endpoint should work for Dev Mode apps. Check your token.');
-    process.exit(1);
-  }
-
-  console.log(`  Test passed: ${testArtist.name} has ${testResult.genres.length} genres`);
-  if (testResult.genres.length > 0) {
-    console.log(`  Genres: ${testResult.genres.slice(0, 3).join(', ')}${testResult.genres.length > 3 ? '...' : ''}`);
-  }
-  console.log('');
-
-  // Process all artists needing genres
-  console.log(`Processing ${needsGenres.length} artists...`);
+  const estMinutes = Math.ceil(needsGenres.length * 2.5 / 60);
+  console.log(`Processing ${needsGenres.length} artists (~${estMinutes} minutes)...`);
   console.log('');
 
   let processed = 0;
-  let withGenres = 0;
-  let rateLimited = false;
+  let fromMusicBrainz = 0;
+  let fromLastFm = 0;
+  let noGenres = 0;
+  const saveInterval = 25;
 
   for (const artist of needsGenres) {
     processed++;
-    process.stdout.write(`\r  ${processed}/${needsGenres.length}: ${artist.name.padEnd(45).slice(0, 45)}`);
+    const progress = `[${processed}/${needsGenres.length}]`;
 
-    const result = await fetchArtistGenres(accessToken, artist.spotifyId);
+    process.stdout.write(`${progress} ${artist.name.padEnd(40).slice(0, 40)}`);
 
-    if (result.rateLimited) {
-      rateLimited = true;
-      break;
+    let genres = [];
+    let source = null;
+
+    // Try Last.fm first (faster, better coverage)
+    if (lastfmApiKey) {
+      genres = await fetchLastFmTags(artist.name, lastfmApiKey);
+      await sleep(LASTFM_REQUEST_DELAY);
+      if (genres.length > 0) {
+        source = 'LFM';
+        fromLastFm++;
+      }
     }
 
-    // Update artist in the original array
-    artist.genres = result.genres;
-    if (result.genres.length > 0) {
-      withGenres++;
+    // Fall back to MusicBrainz if no Last.fm tags
+    if (genres.length === 0) {
+      const mbid = await searchMusicBrainz(artist.name);
+      await sleep(MB_REQUEST_DELAY);
+
+      if (mbid) {
+        genres = await fetchMusicBrainzGenres(mbid);
+        await sleep(MB_REQUEST_DELAY);
+        if (genres.length > 0) {
+          source = 'MB';
+          fromMusicBrainz++;
+        }
+      }
     }
 
-    await sleep(REQUEST_DELAY);
+    artist.genres = genres;
+
+    if (genres.length > 0) {
+      console.log(` → [${source}] ${genres.slice(0, 3).join(', ')}${genres.length > 3 ? '...' : ''}`);
+    } else {
+      noGenres++;
+      console.log(' → no genres');
+    }
+
+    // Save progress periodically
+    if (processed % saveInterval === 0) {
+      saveLineup(lineup);
+      console.log(`  [Saved: ${processed}/${needsGenres.length}]`);
+    }
   }
 
-  console.log('');
-  console.log('');
-
-  // Save progress regardless of rate limit
-  lineup.lastUpdated = new Date().toISOString().split('T')[0];
-  writeFileSync(LINEUP_PATH, JSON.stringify(lineup, null, 2) + '\n');
+  // Final save
+  saveLineup(lineup);
 
   // Summary
   const totalWithGenres = artists.filter(a => a.genres && a.genres.length > 0).length;
   const allGenres = new Set(artists.flatMap(a => a.genres || []));
 
+  console.log('');
   console.log('Summary');
-  console.log('-------');
-  console.log(`  Processed this run: ${processed}`);
-  console.log(`  Found genres for: ${withGenres}`);
-  console.log(`  Total with genres: ${totalWithGenres}/${artists.length}`);
-  console.log(`  Unique genres: ${allGenres.size}`);
+  console.log('=======');
+  console.log(`  From MusicBrainz:    ${fromMusicBrainz}`);
+  console.log(`  From Last.fm:        ${fromLastFm}`);
+  console.log(`  No genres found:     ${noGenres}`);
+  console.log(`  Total with genres:   ${totalWithGenres}/${artists.length}`);
+  console.log(`  Unique genres:       ${allGenres.size}`);
   console.log('');
   console.log(`Saved to: ${LINEUP_PATH}`);
-
-  if (rateLimited) {
-    const remaining = needsGenres.length - processed;
-    console.log('');
-    console.log(`*** Rate limited after ${processed} artists. ${remaining} remaining. ***`);
-    console.log('Run this script again later to continue.');
-  } else {
-    console.log('');
-    console.log('Done!');
-  }
+  console.log('');
+  console.log('Done!');
 }
 
-main();
+main().catch(err => {
+  console.error(`\nError: ${err.message}`);
+  process.exit(1);
+});
