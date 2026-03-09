@@ -350,6 +350,38 @@ footer {
   font-size: 0.875rem;
 }
 
+.footer-partners {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.partner-link {
+  display: inline-block;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--white);
+  color: var(--black);
+  text-decoration: none;
+  border: 3px solid var(--black);
+  box-shadow: 3px 3px 0 var(--black);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.partner-link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--black);
+}
+
+.partner-link:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
 .disclaimer {
   margin-bottom: 0.5rem;
   color: #666;
@@ -830,9 +862,10 @@ footer {
   gap: 2rem;
 }
 
-/* Mobile: auth/setup first, preview second */
+/* Mobile: auth/setup/loading first, preview second */
 .landing-grid #auth-section,
-.landing-grid #setup-section {
+.landing-grid #setup-section,
+.landing-grid #loading-section {
   order: 1;
 }
 
@@ -856,7 +889,8 @@ footer {
   }
 
   .landing-grid #auth-section,
-  .landing-grid #setup-section {
+  .landing-grid #setup-section,
+  .landing-grid #loading-section {
     order: 2;
     margin: 0;
     max-width: none;

@@ -187,7 +187,7 @@ export function initUI(lineup) {
  * @param {number} trackCount - Number of tracks fetched so far
  */
 export function showLoading(trackCount = 0) {
-  const main = document.querySelector('main');
+  const landingGrid = document.querySelector('.landing-grid');
 
   // Check if loading section already exists
   let loadingSection = document.getElementById('loading-section');
@@ -199,10 +199,12 @@ export function showLoading(trackCount = 0) {
       authSection.classList.add('hidden');
     }
 
-    // Create loading section
+    // Create loading section inside landing-grid (replaces auth section's spot)
     loadingSection = document.createElement('section');
     loadingSection.id = 'loading-section';
-    main.insertBefore(loadingSection, main.firstChild);
+    if (landingGrid) {
+      landingGrid.appendChild(loadingSection);
+    }
   }
 
   loadingSection.innerHTML = `
@@ -230,6 +232,18 @@ export function showResults(matchedArtists, lastUpdated) {
   const authSection = document.getElementById('auth-section');
   if (authSection) {
     authSection.classList.add('hidden');
+  }
+
+  // Remove preview section - real results replace it
+  const previewSection = document.getElementById('preview-section');
+  if (previewSection) {
+    previewSection.remove();
+  }
+
+  // Hide landing grid
+  const landingGrid = document.querySelector('.landing-grid');
+  if (landingGrid) {
+    landingGrid.classList.add('hidden');
   }
 
   // Show results section
@@ -426,12 +440,13 @@ function renderSimilarArtists(container, similarArtists) {
 }
 
 /**
- * Show the auth section (initial state)
+ * Show the auth section (after Client ID is set, before auth)
  */
 export function showAuth() {
   const authSection = document.getElementById('auth-section');
   const resultsSection = document.getElementById('results-section');
   const loadingSection = document.getElementById('loading-section');
+  const setupSection = document.getElementById('setup-section');
 
   if (authSection) {
     authSection.classList.remove('hidden');
@@ -441,6 +456,10 @@ export function showAuth() {
   }
   if (loadingSection) {
     loadingSection.remove();
+  }
+  // Hide setup section when showing auth
+  if (setupSection) {
+    setupSection.classList.add('hidden');
   }
 }
 
