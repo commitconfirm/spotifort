@@ -230,8 +230,10 @@ export async function initiateAuth() {
   const authUrl = `${AUTH_URL}?${params.toString()}`;
   console.log('[spotifort] redirecting to:', authUrl);
 
-  // Redirect to Spotify
-  window.location.href = authUrl;
+  // Redirect to Spotify (defer slightly to ensure it works across browsers)
+  setTimeout(() => {
+    window.location.href = authUrl;
+  }, 100);
 }
 
 /**
