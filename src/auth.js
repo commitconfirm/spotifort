@@ -99,11 +99,8 @@ function generateRandomString(length = 64) {
  * @returns {Promise<ArrayBuffer>} - SHA-256 hash
  */
 async function sha256(plain) {
-  console.log('[spotifort] sha256 called');
-
   // Check if crypto.subtle is available (not available in some in-app browsers)
   if (!crypto || !crypto.subtle || !crypto.subtle.digest) {
-    console.log('[spotifort] crypto.subtle not available');
     throw new CryptoNotSupportedError();
   }
 
@@ -114,13 +111,10 @@ async function sha256(plain) {
       bytes[i] = plain.charCodeAt(i) & 0xff;
     }
 
-    console.log('[spotifort] calling crypto.subtle.digest...');
     // Safari may need explicit ArrayBuffer, so we pass bytes.buffer
     const result = await crypto.subtle.digest('SHA-256', bytes.buffer);
-    console.log('[spotifort] crypto.subtle.digest completed');
     return result;
   } catch (err) {
-    console.error('[spotifort] SHA-256 failed:', err);
     log.error('SHA-256 failed:', err.message);
     throw new CryptoNotSupportedError();
   }
@@ -193,10 +187,7 @@ async function generateCodeChallenge(verifier) {
  * Redirects the user to Spotify's authorization page
  */
 export async function initiateAuth() {
-  console.log('[spotifort] initiateAuth started');
-
   const clientId = getClientId();
-  console.log('[spotifort] clientId:', clientId ? 'present' : 'missing');
 
   if (!clientId) {
     log.error('No Spotify Client ID available');
@@ -207,15 +198,11 @@ export async function initiateAuth() {
 
   // Generate code verifier and store temporarily in sessionStorage
   // (needed to survive the redirect back from Spotify)
-  console.log('[spotifort] generating code verifier...');
   const codeVerifier = generateRandomString(64);
   sessionStorage.setItem(VERIFIER_KEY, codeVerifier);
-  console.log('[spotifort] code verifier stored');
 
   // Generate code challenge
-  console.log('[spotifort] generating code challenge...');
   const codeChallenge = await generateCodeChallenge(codeVerifier);
-  console.log('[spotifort] code challenge generated');
 
   // Build authorization URL
   const params = new URLSearchParams({
@@ -228,7 +215,6 @@ export async function initiateAuth() {
   });
 
   const authUrl = `${AUTH_URL}?${params.toString()}`;
-  console.log('[spotifort] redirecting to:', authUrl);
 
   // Redirect to Spotify using anchor click (most reliable across browsers)
   const link = document.createElement('a');
@@ -244,51 +230,43 @@ export async function initiateAuth() {
  * @returns {Promise<string|null>} - Access token or null if not on callback page
  */
 export async function handleCallback() {
-  console.log('[spotifort] handleCallback started');
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
   const error = urlParams.get('error');
-  console.log('[spotifort] code:', code ? 'present' : 'missing');
-  console.log('[spotifort] error:', error || 'none');
 
   // Not on callback page
   if (!code && !error) {
-    console.log('[spotifort] no code or error, returning null');
     return null;
   }
 
   // Handle error from Spotify
   if (error) {
-    console.error('[spotifort] Spotify auth error:', error);
-    // Clean up URL
+    log.error('Spotify auth error:', error);
     window.history.replaceState({}, document.title, '/');
     throw new Error(`Spotify authorization failed: ${error}`);
   }
 
-  console.log('[spotifort] received auth code, exchanging for token');
+  log.info('Received auth code, exchanging for token');
 
   // Get Client ID (from sessionStorage, survives the redirect)
   const clientId = getClientId();
-  console.log('[spotifort] clientId:', clientId ? 'present' : 'missing');
   if (!clientId) {
-    console.error('[spotifort] Client ID not found after redirect');
+    log.error('Client ID not found after redirect');
     window.history.replaceState({}, document.title, '/');
     throw new Error('Client ID lost during auth flow');
   }
 
   // Retrieve code verifier from sessionStorage
   const codeVerifier = sessionStorage.getItem(VERIFIER_KEY);
-  console.log('[spotifort] codeVerifier:', codeVerifier ? 'present' : 'missing');
   sessionStorage.removeItem(VERIFIER_KEY); // Clean up immediately
 
   if (!codeVerifier) {
-    console.warn('[spotifort] code verifier not found — auth flow interrupted');
+    log.warn('Code verifier not found — auth flow interrupted');
     window.history.replaceState({}, document.title, '/');
     return null;
   }
 
   try {
-    console.log('[spotifort] exchanging code for token...');
     // Exchange code for access token
     const response = await fetch(TOKEN_URL, {
       method: 'POST',
@@ -304,35 +282,31 @@ export async function handleCallback() {
       }),
     });
 
-    console.log('[spotifort] token exchange response:', response.status);
-
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('[spotifort] token exchange failed:', errorData);
+      log.error('Token exchange failed:', errorData);
       throw new Error(`Token exchange failed: ${errorData.error_description || errorData.error}`);
     }
 
     const data = await response.json();
     accessToken = data.access_token;
-    console.log('[spotifort] token obtained successfully');
 
     // Restore Client ID to memory from sessionStorage
     const storedClientId = sessionStorage.getItem(CLIENT_ID_KEY);
     if (storedClientId && !ENV_CLIENT_ID) {
       userClientId = storedClientId;
     }
-    // Clean up sessionStorage (but keep Client ID for potential re-auth)
-    // sessionStorage.removeItem(CLIENT_ID_KEY); // Keep it for re-auth
 
-    console.log('[spotifort] token type:', data.token_type);
-    console.log('[spotifort] expires in:', data.expires_in, 'seconds');
+    log.info('Successfully obtained access token');
+    log.info('Token type:', data.token_type);
+    log.info('Expires in:', data.expires_in, 'seconds');
 
     // Clean up URL (remove code from URL bar)
     window.history.replaceState({}, document.title, '/');
 
     return accessToken;
   } catch (err) {
-    console.error('[spotifort] failed to exchange code for token:', err);
+    log.error('Failed to exchange code for token:', err);
     window.history.replaceState({}, document.title, '/');
     throw err;
   }
