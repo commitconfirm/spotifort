@@ -246,16 +246,22 @@ main {
 .related-list li {
   padding: 0.25rem 0;
   padding-left: 0.5rem;
+  font-size: 1rem;
 }
 
 .related-artist-link {
   color: var(--black);
-  text-decoration: none;
-  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
 }
 
 .related-artist-link:hover {
-  text-decoration: underline;
+  background: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.125rem 0.25rem;
+  margin: -0.125rem -0.25rem;
 }
 
 .related-header {
@@ -274,7 +280,7 @@ main {
 }
 
 .shared-genres {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: #666;
 }
 
