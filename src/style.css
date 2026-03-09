@@ -258,6 +258,12 @@ main {
   text-decoration: underline;
 }
 
+.related-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
 .related-loading,
 .related-empty,
 .related-error {

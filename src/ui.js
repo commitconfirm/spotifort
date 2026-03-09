@@ -405,7 +405,9 @@ function renderSimilarArtists(container, similarArtists) {
     })
     .join('');
 
-  container.innerHTML = `<ul class="related-list">${items}</ul>`;
+  container.innerHTML = `
+    <p class="related-header">Other artists at Treefort you might like:</p>
+    <ul class="related-list">${items}</ul>`;
 }
 
 /**
