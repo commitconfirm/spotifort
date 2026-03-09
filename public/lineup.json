@@ -1,3419 +1,5488 @@
 {
-  "lastUpdated": "2026-03-07",
+  "lastUpdated": "2026-03-09",
   "artists": [
     {
       "name": "©asi",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "2ŁØT",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "A War In Me",
       "spotifyId": "1Ttl5V0zyc1LejUWxgVtSh",
       "spotifyUrl": "https://open.spotify.com/artist/1Ttl5V0zyc1LejUWxgVtSh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "psychedelic rock",
+        "funk",
+        "rock"
+      ]
     },
     {
       "name": "Aaron Golay & The Original Sin",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "drum and bass",
+        "electronic"
+      ]
     },
     {
       "name": "Abby Holliday",
       "spotifyId": "4q7Td1MO6rNg3UCvqrzz1k",
       "spotifyUrl": "https://open.spotify.com/artist/4q7Td1MO6rNg3UCvqrzz1k",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative",
+        "indie",
+        "indie pop",
+        "usa",
+        "american"
+      ]
     },
     {
       "name": "About",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "electronic",
+        "experimental"
+      ]
     },
     {
       "name": "Acapulco Lips",
       "spotifyId": "0k2Ypw0hHVRbZ0VVDCF84Y",
       "spotifyUrl": "https://open.spotify.com/artist/0k2Ypw0hHVRbZ0VVDCF84Y",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie"
+      ]
     },
     {
       "name": "Acopia",
       "spotifyId": "276EHqxzrJ8QJKoluzYjFr",
       "spotifyUrl": "https://open.spotify.com/artist/276EHqxzrJ8QJKoluzYjFr",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "ambient",
+        "dream pop"
+      ]
     },
     {
       "name": "Adam Iko",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Adira Sharkey",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "happy hardcore",
+        "rave",
+        "uk hardcore"
+      ]
     },
     {
       "name": "Afrosonics",
       "spotifyId": "1yIk9u61QXw2TEzWfqGHa3",
       "spotifyUrl": "https://open.spotify.com/artist/1yIk9u61QXw2TEzWfqGHa3",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "world fusion",
+        "usa",
+        "afro soul"
+      ]
     },
     {
       "name": "Aggie Miller",
       "spotifyId": "6GDPfkpV2sDHiSuF2Nd2No",
       "spotifyUrl": "https://open.spotify.com/artist/6GDPfkpV2sDHiSuF2Nd2No",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "AKA BELLE",
       "spotifyId": "6b8hJwJrOM47P2t188rSNY",
       "spotifyUrl": "https://open.spotify.com/artist/6b8hJwJrOM47P2t188rSNY",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Alex Sacknoff",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "darksynth",
+        "synthwave",
+        "dark wave"
+      ]
     },
     {
       "name": "Alex Vile",
       "spotifyId": "4i3YqXXd0dRAYMNcWH0na7",
       "spotifyUrl": "https://open.spotify.com/artist/4i3YqXXd0dRAYMNcWH0na7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "grunge",
+        "alternative",
+        "indie rock",
+        "alternative rock",
+        "aprils taste"
+      ]
     },
     {
       "name": "Ally Nicholas",
       "spotifyId": "3F2at4eIx4GXByVo0hGJaX",
       "spotifyUrl": "https://open.spotify.com/artist/3F2at4eIx4GXByVo0hGJaX",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop rock",
+        "alternative rock",
+        "female vocalists"
+      ]
     },
     {
       "name": "Amber Mark",
       "spotifyId": "0tbeZu9lv8YEKSQ9tZSslu",
       "spotifyUrl": "https://open.spotify.com/artist/0tbeZu9lv8YEKSQ9tZSslu",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "soul",
+        "rnb",
+        "pop"
+      ]
     },
     {
       "name": "Amoeba Arena",
       "spotifyId": "2ikkWuNlM0zTlalX1BrqC4",
       "spotifyUrl": "https://open.spotify.com/artist/2ikkWuNlM0zTlalX1BrqC4",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Ana Lete",
       "spotifyId": "4rSwPXPQ9OsLugzvLZpqUo",
       "spotifyUrl": "https://open.spotify.com/artist/4rSwPXPQ9OsLugzvLZpqUo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Anamanaguchi",
       "spotifyId": "2UwJRAgSOi1zcLkvUNc8XL",
       "spotifyUrl": "https://open.spotify.com/artist/2UwJRAgSOi1zcLkvUNc8XL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "chiptune",
+        "electronic rock",
+        "bitpop",
+        "electronic",
+        "electropop",
+        "electropunk",
+        "indie rock",
+        "pop",
+        "rock"
+      ]
     },
     {
       "name": "Andy Crosby & The Burning Roses",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "jazz",
+        "pop",
+        "vocal jazz",
+        "traditional pop"
+      ]
     },
     {
       "name": "Andy Frasco & The U.N.",
       "spotifyId": "4scyTeRfyqCWVATfPP7SGu",
       "spotifyUrl": "https://open.spotify.com/artist/4scyTeRfyqCWVATfPP7SGu",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "jam band",
+        "rock"
+      ]
     },
     {
       "name": "Angel Du$t",
       "spotifyId": "2ynylCO9SRPTKjgNEH0Y2a",
       "spotifyUrl": "https://open.spotify.com/artist/2ynylCO9SRPTKjgNEH0Y2a",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore punk",
+        "punk rock",
+        "acid rock",
+        "melodic hardcore"
+      ]
     },
     {
       "name": "Angela Autumn",
       "spotifyId": "2gyodrfLfK8xF0sSaxBZXQ",
       "spotifyUrl": "https://open.spotify.com/artist/2gyodrfLfK8xF0sSaxBZXQ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk"
+      ]
     },
     {
       "name": "Animals in the Attic",
       "spotifyId": "0Ei9DM9KcX4aIzIjgkO2KN",
       "spotifyUrl": "https://open.spotify.com/artist/0Ei9DM9KcX4aIzIjgkO2KN",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "indie rock",
+        "animals",
+        "slacker rock",
+        "rooms and buildings"
+      ]
     },
     {
       "name": "Ann Tique",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "classical",
+        "baroque",
+        "cantata",
+        "mass",
+        "motet",
+        "orchestral"
+      ]
     },
     {
       "name": "Anna Moss",
       "spotifyId": "79EqLrXbrtaK3sNgSQYoRE",
       "spotifyUrl": "https://open.spotify.com/artist/79EqLrXbrtaK3sNgSQYoRE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "pop",
+        "singer-singwriter"
+      ]
     },
     {
       "name": "Anyone Awake",
       "spotifyId": "2SkYI2KWVPqsrIC2Q5Iw1t",
       "spotifyUrl": "https://open.spotify.com/artist/2SkYI2KWVPqsrIC2Q5Iw1t",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Arcade Sarcasm",
       "spotifyId": "6wKqsFXGj3ztQ7HUMq2fWS",
       "spotifyUrl": "https://open.spotify.com/artist/6wKqsFXGj3ztQ7HUMq2fWS",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Aren't We Amphibians",
       "spotifyId": "2hTv2oTIcfByggCy3Mkzsy",
       "spotifyUrl": "https://open.spotify.com/artist/2hTv2oTIcfByggCy3Mkzsy",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "midwest emo",
+        "math rock"
+      ]
     },
     {
       "name": "Asa Menlove's Family Band",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "conscious hip hop",
+        "folk",
+        "hip hop"
+      ]
     },
     {
       "name": "Ashley Young",
       "spotifyId": "0TInbu4jw667VIW4muHWUe",
       "spotifyUrl": "https://open.spotify.com/artist/0TInbu4jw667VIW4muHWUe",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Aspect",
       "spotifyId": "3mWUb93hyQVsLFKac8S2fY",
       "spotifyUrl": "https://open.spotify.com/artist/3mWUb93hyQVsLFKac8S2fY",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "drum and bass"
+      ]
     },
     {
       "name": "Aubory Bugg",
       "spotifyId": "2fRZyxhGkcXXFwe7tGan1U",
       "spotifyUrl": "https://open.spotify.com/artist/2fRZyxhGkcXXFwe7tGan1U",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "acoustic",
+        "folk",
+        "usa",
+        "american",
+        "poprock"
+      ]
     },
     {
       "name": "Bad Luck Brigade",
       "spotifyId": "6Co6tC8KTvulZTXy75RKmI",
       "spotifyUrl": "https://open.spotify.com/artist/6Co6tC8KTvulZTXy75RKmI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Bad Self Portraits",
       "spotifyId": "4CvghHREbMIqV3aV5HrY6l",
       "spotifyUrl": "https://open.spotify.com/artist/4CvghHREbMIqV3aV5HrY6l",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Bad Tiger",
       "spotifyId": "7IOWL0EscEerSDMwmbPtGL",
       "spotifyUrl": "https://open.spotify.com/artist/7IOWL0EscEerSDMwmbPtGL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Barbara",
       "spotifyId": "6hhmxPotJ2kCsQjUGPtH14",
       "spotifyUrl": "https://open.spotify.com/artist/6hhmxPotJ2kCsQjUGPtH14",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "chanson française"
+      ]
     },
     {
       "name": "Barn",
       "spotifyId": "16Dqd74gjbN545T3rgHp4b",
       "spotifyUrl": "https://open.spotify.com/artist/16Dqd74gjbN545T3rgHp4b",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "death metal",
+        "technical death metal"
+      ]
     },
     {
       "name": "Being Hvman",
       "spotifyId": "3uJAN40H5YY8uctSvPRRA0",
       "spotifyUrl": "https://open.spotify.com/artist/3uJAN40H5YY8uctSvPRRA0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Ben Quad",
       "spotifyId": "2FdTMoKlQiI4m0158FbrQE",
       "spotifyUrl": "https://open.spotify.com/artist/2FdTMoKlQiI4m0158FbrQE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "midwest emo",
+        "pop punk",
+        "post-hardcore"
+      ]
     },
     {
       "name": "Beton Armé",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "BIG SIS",
       "spotifyId": "6BXcNAZ4A4vmgqskvbizeL",
       "spotifyUrl": "https://open.spotify.com/artist/6BXcNAZ4A4vmgqskvbizeL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "pop",
+        "dance",
+        "british"
+      ]
     },
     {
       "name": "Billie Marten",
       "spotifyId": "02YLJJnWC7YQVixkjEBRn7",
       "spotifyUrl": "https://open.spotify.com/artist/02YLJJnWC7YQVixkjEBRn7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie folk"
+      ]
     },
     {
       "name": "Blanket Ghost",
       "spotifyId": "493glsi330T8KLsym0O6sE",
       "spotifyUrl": "https://open.spotify.com/artist/493glsi330T8KLsym0O6sE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "emo",
+        "lofi",
+        "lo-fi"
+      ]
     },
     {
       "name": "Blondshell",
       "spotifyId": "7qrEXiLLnWkkYHhadZ1Oij",
       "spotifyUrl": "https://open.spotify.com/artist/7qrEXiLLnWkkYHhadZ1Oij",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Blood Cannery",
       "spotifyId": "0zyGRF8S3yrW8YTGHJZIeI",
       "spotifyUrl": "https://open.spotify.com/artist/0zyGRF8S3yrW8YTGHJZIeI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "deathgrind",
+        "grindcore"
+      ]
     },
     {
       "name": "Blu Marsi",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Blueprint",
       "spotifyId": "0oH5s9LtbS4emEnt90vY4s",
       "spotifyUrl": "https://open.spotify.com/artist/0oH5s9LtbS4emEnt90vY4s",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hip hop"
+      ]
     },
     {
       "name": "Blush",
       "spotifyId": "0uqUzyDhs3Ujb5DWDvwiOW",
       "spotifyUrl": "https://open.spotify.com/artist/0uqUzyDhs3Ujb5DWDvwiOW",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop",
+        "dance"
+      ]
     },
     {
       "name": "BLXCKPUNKS",
       "spotifyId": "7dRay78y8e4zBWHpsD4jW8",
       "spotifyUrl": "https://open.spotify.com/artist/7dRay78y8e4zBWHpsD4jW8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Bo Elledge",
       "spotifyId": "56x36XQA4m3sVZ2w1qpd3u",
       "spotifyUrl": "https://open.spotify.com/artist/56x36XQA4m3sVZ2w1qpd3u",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Bob Sumner",
       "spotifyId": "6vgVIpaKWcjKvu8nqe5iBg",
       "spotifyUrl": "https://open.spotify.com/artist/6vgVIpaKWcjKvu8nqe5iBg",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Bone Haus",
       "spotifyId": "1zOUxDDEYax8zcPp7iweuV",
       "spotifyUrl": "https://open.spotify.com/artist/1zOUxDDEYax8zcPp7iweuV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "garage rock",
+        "hard rock",
+        "stoner rock",
+        "alternative rock"
+      ]
     },
     {
       "name": "Bonnie Trash",
       "spotifyId": "72wuUu4nxDyhGDm7FPiXt5",
       "spotifyUrl": "https://open.spotify.com/artist/72wuUu4nxDyhGDm7FPiXt5",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "drone",
+        "post-punk",
+        "shoegaze"
+      ]
     },
     {
       "name": "Boot Juice",
       "spotifyId": "7n2Yn2i3HzGvXIPNDGsSGr",
       "spotifyUrl": "https://open.spotify.com/artist/7n2Yn2i3HzGvXIPNDGsSGr",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "folk rock"
+      ]
     },
     {
       "name": "Boulder Hill",
       "spotifyId": "45IymuW4WnlUc1wIV6ydL5",
       "spotifyUrl": "https://open.spotify.com/artist/45IymuW4WnlUc1wIV6ydL5",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Brad Parsons",
       "spotifyId": "5VNjkeSXaGpSLPgzb0nVo2",
       "spotifyUrl": "https://open.spotify.com/artist/5VNjkeSXaGpSLPgzb0nVo2",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Brand New Companion",
       "spotifyId": "7fe0AXx5BA17Dbp7KgmR7C",
       "spotifyUrl": "https://open.spotify.com/artist/7fe0AXx5BA17Dbp7KgmR7C",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "alternative rock",
+        "pop punk",
+        "post-hardcore",
+        "indie rock",
+        "alternative punk",
+        "art rock",
+        "midwest emo",
+        "noise rock",
+        "pop rock",
+        "punk",
+        "punk rock",
+        "rock"
+      ]
     },
     {
       "name": "Bread & Circus",
       "spotifyId": "6n093ZbFEFzaR9tipbhCHa",
       "spotifyUrl": "https://open.spotify.com/artist/6n093ZbFEFzaR9tipbhCHa",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Brijean",
       "spotifyId": "2TRNyrjoKJnqSc9G8jCZfb",
       "spotifyUrl": "https://open.spotify.com/artist/2TRNyrjoKJnqSc9G8jCZfb",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "house",
+        "indie pop"
+      ]
     },
     {
       "name": "Brooke Would + Honey Bear",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Brother Fantastic",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "hip hop",
+        "conscious hip hop",
+        "underground hip hop"
+      ]
     },
     {
       "name": "Buckets",
       "spotifyId": "2VAILUKur0keGIuFOb6Roi",
       "spotifyUrl": "https://open.spotify.com/artist/2VAILUKur0keGIuFOb6Roi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Buddy DeVore & the Faded Cowboys",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "pop rock",
+        "rockabilly"
+      ]
     },
     {
       "name": "Buddy Wynkoop",
       "spotifyId": "56Y4IMRJDQcagdjb8J47Ns",
       "spotifyUrl": "https://open.spotify.com/artist/56Y4IMRJDQcagdjb8J47Ns",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Built to Spill",
       "spotifyId": "3kbBWco9PZ5eSQsNScwG6U",
       "spotifyUrl": "https://open.spotify.com/artist/3kbBWco9PZ5eSQsNScwG6U",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "rock"
+      ]
     },
     {
       "name": "Bull Market",
       "spotifyId": "6eiQYSEMsX6ULHKwFhKfMo",
       "spotifyUrl": "https://open.spotify.com/artist/6eiQYSEMsX6ULHKwFhKfMo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "american",
+        "united states"
+      ]
     },
     {
       "name": "Burl Haggard",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "country",
+        "classic country",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "BYLAND",
       "spotifyId": "5zSPR2YNjfLn5rNQPZiJgC",
       "spotifyUrl": "https://open.spotify.com/artist/5zSPR2YNjfLn5rNQPZiJgC",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "new mexico",
+        "indie rock"
+      ]
     },
     {
       "name": "Cab Ellis",
       "spotifyId": "7hDfnuDsxOlgBPBEoa34Rh",
       "spotifyUrl": "https://open.spotify.com/artist/7hDfnuDsxOlgBPBEoa34Rh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Cactus Moon",
       "spotifyId": "07uYsL53ziLwTlFbHTReq2",
       "spotifyUrl": "https://open.spotify.com/artist/07uYsL53ziLwTlFbHTReq2",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "blues rock",
+        "boogie rock",
+        "hard rock"
+      ]
     },
     {
       "name": "Calvin Pineda & The Antacids",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "dance-pop",
+        "edm",
+        "electronic",
+        "electropop",
+        "electro house",
+        "nu disco",
+        "progressive house",
+        "club",
+        "dance",
+        "festival progressive house",
+        "funktronica",
+        "melodic house",
+        "melodic techno",
+        "pop",
+        "synth-pop",
+        "uk garage"
+      ]
     },
     {
       "name": "Canopy",
       "spotifyId": "3yULULMsNxQKtG83wWbgD2",
       "spotifyUrl": "https://open.spotify.com/artist/3yULULMsNxQKtG83wWbgD2",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "melodic death metal",
+        "death metal"
+      ]
     },
     {
       "name": "CÀRIN",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "latin",
+        "mariachi",
+        "norteño",
+        "banda sinaloense",
+        "bolero",
+        "corrido",
+        "ranchera",
+        "reggaeton",
+        "regional mexicano",
+        "sierreño",
+        "vallenato"
+      ]
     },
     {
       "name": "Carsten Kottraba",
       "spotifyId": "0dls3NxmNx2gV9sRgLI5lK",
       "spotifyUrl": "https://open.spotify.com/artist/0dls3NxmNx2gV9sRgLI5lK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "glitch",
+        "ambient",
+        "minimalism",
+        "drone",
+        "idm",
+        "minimal techno"
+      ]
     },
     {
       "name": "Case Oats",
       "spotifyId": "5Ml0QbIoj7bneIUJDCoMx8",
       "spotifyUrl": "https://open.spotify.com/artist/5Ml0QbIoj7bneIUJDCoMx8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country",
+        "rock",
+        "indie",
+        "folk",
+        "indie pop"
+      ]
     },
     {
       "name": "Casual ana",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ]
     },
     {
       "name": "Cat Clyde",
       "spotifyId": "7oRT0oC3vhUGQJCL6CYYzk",
       "spotifyUrl": "https://open.spotify.com/artist/7oRT0oC3vhUGQJCL6CYYzk",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "singer-songwriter",
+        "blues",
+        "bluegrass"
+      ]
     },
     {
       "name": "Cat Valley",
       "spotifyId": "0TfWLbyEITK3wjax2OU33I",
       "spotifyUrl": "https://open.spotify.com/artist/0TfWLbyEITK3wjax2OU33I",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Cat Wolf",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "audio drama"
+      ]
     },
     {
       "name": "Catie Turner",
       "spotifyId": "3nYYI90ObxhjLjdxaoXGSa",
       "spotifyUrl": "https://open.spotify.com/artist/3nYYI90ObxhjLjdxaoXGSa",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "american idol",
+        "pop",
+        "alternative"
+      ]
     },
     {
       "name": "Cece Coakley",
       "spotifyId": "41cBCgJoK9bpY0Qy2SWIRN",
       "spotifyUrl": "https://open.spotify.com/artist/41cBCgJoK9bpY0Qy2SWIRN",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "indie rock"
+      ]
     },
     {
       "name": "Chalk",
       "spotifyId": "3qa9pv6B0dmiBVETLQOCpi",
       "spotifyUrl": "https://open.spotify.com/artist/3qa9pv6B0dmiBVETLQOCpi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "dance-punk",
+        "post-punk"
+      ]
     },
     {
       "name": "Chanpan",
       "spotifyId": "1fWoiW6kTjrVDoRc4ba3kh",
       "spotifyUrl": "https://open.spotify.com/artist/1fWoiW6kTjrVDoRc4ba3kh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "pop"
+      ]
     },
     {
       "name": "Charlie Sutton",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "folk rock",
+        "folk",
+        "pacific northwest"
+      ]
     },
     {
       "name": "CHARLIETANGO",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Charly Foxx",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "ambient",
+        "art rock",
+        "electronic",
+        "new wave",
+        "post-punk"
+      ]
     },
     {
       "name": "CHECKMVTE",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Chico Detour",
       "spotifyId": "4M7VJebvGOX9LRhZlDq9am",
       "spotifyUrl": "https://open.spotify.com/artist/4M7VJebvGOX9LRhZlDq9am",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Chief Broom",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "CHILD",
       "spotifyId": "0rJBlhYybU0pvDOeQMHgYh",
       "spotifyUrl": "https://open.spotify.com/artist/0rJBlhYybU0pvDOeQMHgYh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "blues rock",
+        "psychedelic rock",
+        "grindcore"
+      ]
     },
     {
       "name": "Chipped Nail Polish",
       "spotifyId": "7wHSzJW2W7PcXQxRVe0DkL",
       "spotifyUrl": "https://open.spotify.com/artist/7wHSzJW2W7PcXQxRVe0DkL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Chloe Gendrow",
       "spotifyId": "7oYVCSnh6vWs6ZMzx76hNP",
       "spotifyUrl": "https://open.spotify.com/artist/7oYVCSnh6vWs6ZMzx76hNP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "minimal techno",
+        "tech house",
+        "techno"
+      ]
     },
     {
       "name": "Chuck Vibes",
       "spotifyId": "4xV9Ml2wjwsAiik3enzupx",
       "spotifyUrl": "https://open.spotify.com/artist/4xV9Ml2wjwsAiik3enzupx",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Cigarette Speedway",
       "spotifyId": "54OOgsTS1ezeyzrLkirC0J",
       "spotifyUrl": "https://open.spotify.com/artist/54OOgsTS1ezeyzrLkirC0J",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Cigs Inside",
       "spotifyId": "5nUxxiyHWLV1wHvvdd3aMH",
       "spotifyUrl": "https://open.spotify.com/artist/5nUxxiyHWLV1wHvvdd3aMH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Citizen",
       "spotifyId": "0znuUIjvP0LXEslfaq0Nor",
       "spotifyUrl": "https://open.spotify.com/artist/0znuUIjvP0LXEslfaq0Nor",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "alternative rock",
+        "indie rock",
+        "rock",
+        "grunge",
+        "pop rock",
+        "post-hardcore"
+      ]
     },
     {
       "name": "Clarion",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "post-ambient emotional hardcore",
+        "shoegaze"
+      ]
     },
     {
       "name": "Clearframe",
       "spotifyId": "156nVYnCfiJDhcQWKRSmCI",
       "spotifyUrl": "https://open.spotify.com/artist/156nVYnCfiJDhcQWKRSmCI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Cloudest Speaker",
       "spotifyId": "3jZyXOCmvm0kFyf5zRBgjx",
       "spotifyUrl": "https://open.spotify.com/artist/3jZyXOCmvm0kFyf5zRBgjx",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "COBRAH",
       "spotifyId": "1AHswQqsDNmu1xaE8KpBne",
       "spotifyUrl": "https://open.spotify.com/artist/1AHswQqsDNmu1xaE8KpBne",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "pop"
+      ]
     },
     {
       "name": "con'spiracy",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Connor Kelly & The Time Warp",
       "spotifyId": "1zPBaiyAP0pKi4oMnvfAUi",
       "spotifyUrl": "https://open.spotify.com/artist/1zPBaiyAP0pKi4oMnvfAUi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Contact",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "progg",
+        "swedish"
+      ]
     },
     {
       "name": "Coral Grief",
       "spotifyId": "0O5Q3XbLXsSkQ4sM42c66a",
       "spotifyUrl": "https://open.spotify.com/artist/0O5Q3XbLXsSkQ4sM42c66a",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "ambient",
+        "dream pop",
+        "psychedelic",
+        "shoegaze"
+      ]
     },
     {
       "name": "corto.alto",
       "spotifyId": "5Kd7e5lauV4CDdTHm5uiJH",
       "spotifyUrl": "https://open.spotify.com/artist/5Kd7e5lauV4CDdTHm5uiJH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "jazz"
+      ]
     },
     {
       "name": "Cross Country",
       "spotifyId": "4DNNhaxL8pJHq2iXI1ZtgS",
       "spotifyUrl": "https://open.spotify.com/artist/4DNNhaxL8pJHq2iXI1ZtgS",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "southern rock",
+        "70s",
+        "doo wop",
+        "folk rock"
+      ]
     },
     {
       "name": "Crush The Monster",
       "spotifyId": "6kChsOkkRX5LN4dIv7eB1W",
       "spotifyUrl": "https://open.spotify.com/artist/6kChsOkkRX5LN4dIv7eB1W",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "cryshadow",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Cure for Paranoia",
       "spotifyId": "4YRwYMJHtjOnfqkDd8EJbk",
       "spotifyUrl": "https://open.spotify.com/artist/4YRwYMJHtjOnfqkDd8EJbk",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "funk",
+        "soul"
+      ]
     },
     {
       "name": "daddybaby",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Dahlia, Dahlia",
       "spotifyId": "5aUfGo3wJsDog87dPUhe66",
       "spotifyUrl": "https://open.spotify.com/artist/5aUfGo3wJsDog87dPUhe66",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alt-rock"
+      ]
     },
     {
       "name": "Dan English",
       "spotifyId": "055lipaCR86EoOxi2CsSBh",
       "spotifyUrl": "https://open.spotify.com/artist/055lipaCR86EoOxi2CsSBh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "chamber folk",
+        "neo-psychedelia",
+        "hypnogogic pop"
+      ]
     },
     {
       "name": "Dark Chisme",
       "spotifyId": "704pDqaroLiTRwJQxVdPO0",
       "spotifyUrl": "https://open.spotify.com/artist/704pDqaroLiTRwJQxVdPO0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "darkwave"
+      ]
     },
     {
       "name": "David Henry",
       "spotifyId": "3l2UdwCUEMK2ilXtWrdgKh",
       "spotifyUrl": "https://open.spotify.com/artist/3l2UdwCUEMK2ilXtWrdgKh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "video game music",
+        "soundtrack",
+        "symphonic"
+      ]
     },
     {
       "name": "Dead, Dumb and Blind",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "rock",
+        "psychedelic rock",
+        "folk rock",
+        "jam band",
+        "roots rock",
+        "blues rock",
+        "classic rock",
+        "country rock",
+        "pop rock"
+      ]
     },
     {
       "name": "Death Lens",
       "spotifyId": "4WqVsCKvGiqrgF9v27Dsa8",
       "spotifyUrl": "https://open.spotify.com/artist/4WqVsCKvGiqrgF9v27Dsa8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage punk",
+        "lo-fi"
+      ]
     },
     {
       "name": "Dedicated Servers with The French Tips and Friends",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "DeeOhGee",
       "spotifyId": "5Qxc5Uz6DHyKMSYIfX2SFW",
       "spotifyUrl": "https://open.spotify.com/artist/5Qxc5Uz6DHyKMSYIfX2SFW",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "southern rock",
+        "rock",
+        "alt-country",
+        "country",
+        "alt country"
+      ]
     },
     {
       "name": "Deep Heaven",
       "spotifyId": "4Qrdi1c8Icxq566uOw50HL",
       "spotifyUrl": "https://open.spotify.com/artist/4Qrdi1c8Icxq566uOw50HL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hard rock",
+        "rock",
+        "heavy metal",
+        "progressive rock",
+        "blues rock",
+        "classic rock"
+      ]
     },
     {
       "name": "Deeveaux",
       "spotifyId": "0cjW5lD0MBB3pGqPNgYE2y",
       "spotifyUrl": "https://open.spotify.com/artist/0cjW5lD0MBB3pGqPNgYE2y",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "deeveaux"
+      ]
     },
     {
       "name": "Degler",
       "spotifyId": "1Zt14sCOZdAejsus1grPTX",
       "spotifyUrl": "https://open.spotify.com/artist/1Zt14sCOZdAejsus1grPTX",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Dela Freed",
       "spotifyId": "7ElXHMvNMNhwdnIOhmZUxI",
       "spotifyUrl": "https://open.spotify.com/artist/7ElXHMvNMNhwdnIOhmZUxI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Deloyd Elze",
       "spotifyId": "74ERN7iYMRTDYfWz2BspQo",
       "spotifyUrl": "https://open.spotify.com/artist/74ERN7iYMRTDYfWz2BspQo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Dirt Russell",
       "spotifyId": "0U2zQrjJvzqBYYq0n2Xx6q",
       "spotifyUrl": "https://open.spotify.com/artist/0U2zQrjJvzqBYYq0n2Xx6q",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Divorce",
       "spotifyId": "0YMVzWF9HWGbV4DZHfCyKo",
       "spotifyUrl": "https://open.spotify.com/artist/0YMVzWF9HWGbV4DZHfCyKo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "noise rock"
+      ]
     },
     {
       "name": "Dj Odie",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "DJ Phake",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Don Hurt Band",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "alternative rock",
+        "post-hardcore"
+      ]
     },
     {
       "name": "Downcoast",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Dozey Dubs",
       "spotifyId": "4rqVdByW6Tia774zEzkF3S",
       "spotifyUrl": "https://open.spotify.com/artist/4rqVdByW6Tia774zEzkF3S",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Dr. Scott's Electric Hairbrush",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "DR. TOM",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Drook",
       "spotifyId": "2WeD1vAUXMF0QB3zQBcVq9",
       "spotifyUrl": "https://open.spotify.com/artist/2WeD1vAUXMF0QB3zQBcVq9",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop",
+        "electronic",
+        "shoegaze",
+        "alternative rock",
+        "indie rock"
+      ]
     },
     {
       "name": "Drug Church",
       "spotifyId": "6q4AmzK3GzCuEzkurnYuEQ",
       "spotifyUrl": "https://open.spotify.com/artist/6q4AmzK3GzCuEzkurnYuEQ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "post-hardcore",
+        "punk"
+      ]
     },
     {
       "name": "DUCKWRTH",
       "spotifyId": "6I3MElirhT5t6Kf7p0hGk9",
       "spotifyUrl": "https://open.spotify.com/artist/6I3MElirhT5t6Kf7p0hGk9",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "contemporary r&b",
+        "pop rap"
+      ]
     },
     {
       "name": "Duhbreez",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Dumpster Fire",
       "spotifyId": "38FbzzLtG3k4JIUQ0jSOL3",
       "spotifyUrl": "https://open.spotify.com/artist/38FbzzLtG3k4JIUQ0jSOL3",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "dust",
       "spotifyId": "6RRMDZDsUYLdzRCck2x2NI",
       "spotifyUrl": "https://open.spotify.com/artist/6RRMDZDsUYLdzRCck2x2NI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "symphonic metal",
+        "metal",
+        "power metal",
+        "gothic metal",
+        "progressive metal"
+      ]
     },
     {
       "name": "Ealdor Bealu",
       "spotifyId": "0EgvRQsr0niNGCVzodEJgK",
       "spotifyUrl": "https://open.spotify.com/artist/0EgvRQsr0niNGCVzodEJgK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "ambient",
+        "heavy psych",
+        "psychedelic rock",
+        "rock",
+        "stoner rock"
+      ]
     },
     {
       "name": "Earthlings Crew",
       "spotifyId": "06NjLrQfO0VKJRGLweipry",
       "spotifyUrl": "https://open.spotify.com/artist/06NjLrQfO0VKJRGLweipry",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Eddie 9V",
       "spotifyId": "2GHXeEEol7BPT31flS6O1B",
       "spotifyUrl": "https://open.spotify.com/artist/2GHXeEEol7BPT31flS6O1B",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "blues",
+        "blues rock",
+        "neo soul",
+        "soul"
+      ]
     },
     {
       "name": "Ekko Astral",
       "spotifyId": "5YaWzI756w0pw1DkJkun5u",
       "spotifyUrl": "https://open.spotify.com/artist/5YaWzI756w0pw1DkJkun5u",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "noise rock",
+        "punk rock"
+      ]
     },
     {
       "name": "El Kabong",
       "spotifyId": "2aKuq1Y3jZykFgDpAnNv26",
       "spotifyUrl": "https://open.spotify.com/artist/2aKuq1Y3jZykFgDpAnNv26",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Eleven & Jason D",
       "spotifyId": "0VfVFty80ng8uM3XSch7JZ",
       "spotifyUrl": "https://open.spotify.com/artist/0VfVFty80ng8uM3XSch7JZ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rap",
+        "hip hop",
+        "boom bap"
+      ]
     },
     {
       "name": "Elise Trouw presents The Diary of Elon Lust",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Ella Rae Cole",
       "spotifyId": "0feYAogxxbJsEIFpcesFru",
       "spotifyUrl": "https://open.spotify.com/artist/0feYAogxxbJsEIFpcesFru",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "jazz",
+        "vocal jazz",
+        "swing",
+        "big band",
+        "blues",
+        "pop"
+      ]
     },
     {
       "name": "Ellis Bullard",
       "spotifyId": "1RFoIsTuA1AU2H5oT6k12Q",
       "spotifyUrl": "https://open.spotify.com/artist/1RFoIsTuA1AU2H5oT6k12Q",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country"
+      ]
     },
     {
       "name": "Emilee Gomske",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "dance"
+      ]
     },
     {
       "name": "Emily Yacina",
       "spotifyId": "50oMAfElZgbElx2ktukv47",
       "spotifyUrl": "https://open.spotify.com/artist/50oMAfElZgbElx2ktukv47",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie folk",
+        "indie pop"
+      ]
     },
     {
       "name": "emlo",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Erin Stereo",
       "spotifyId": "0G9j4bV2SaYaHZje3S8tFL",
       "spotifyUrl": "https://open.spotify.com/artist/0G9j4bV2SaYaHZje3S8tFL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Eshu Tune",
       "spotifyId": "3GMf4cHUuJaIc8AQMLHWFY",
       "spotifyUrl": "https://open.spotify.com/artist/3GMf4cHUuJaIc8AQMLHWFY",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rap",
+        "hip hop"
+      ]
     },
     {
       "name": "esmé (chewing gum)",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Ethel Rose",
       "spotifyId": "4pVSwflBPhrRuRSUibbgph",
       "spotifyUrl": "https://open.spotify.com/artist/4pVSwflBPhrRuRSUibbgph",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "easy listening",
+        "traditional pop",
+        "vocal jazz"
+      ]
     },
     {
       "name": "Eunoian",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Evan Honer",
       "spotifyId": "1GERDglQrxe4ynLzcdG6qP",
       "spotifyUrl": "https://open.spotify.com/artist/1GERDglQrxe4ynLzcdG6qP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country",
+        "folk",
+        "usa",
+        "indie folk"
+      ]
     },
     {
       "name": "EvoluShawn",
       "spotifyId": "7bim58oPUeMjoprNgLJTsH",
       "spotifyUrl": "https://open.spotify.com/artist/7bim58oPUeMjoprNgLJTsH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "jungle",
+        "drum and bass",
+        "dubstep",
+        "dnb",
+        "halftime"
+      ]
     },
     {
       "name": "Faded Jinx",
       "spotifyId": "6e4HuTyHY1u85wYzcNJSh6",
       "spotifyUrl": "https://open.spotify.com/artist/6e4HuTyHY1u85wYzcNJSh6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Family Worship Center",
       "spotifyId": "3Kti0Urjz53ZhYTWiB6Dl2",
       "spotifyUrl": "https://open.spotify.com/artist/3Kti0Urjz53ZhYTWiB6Dl2",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "fanclubwallet",
       "spotifyId": "1NJUWqbiNAk1BPOyQhb2qe",
       "spotifyUrl": "https://open.spotify.com/artist/1NJUWqbiNAk1BPOyQhb2qe",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "canadian"
+      ]
     },
     {
       "name": "Far From Giants",
       "spotifyId": "38OtcIT2KRbcu3tGk7mWZq",
       "spotifyUrl": "https://open.spotify.com/artist/38OtcIT2KRbcu3tGk7mWZq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Father John Misty",
       "spotifyId": "2kGBy2WHvF0VdZyqiVCkDT",
       "spotifyUrl": "https://open.spotify.com/artist/2kGBy2WHvF0VdZyqiVCkDT",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk rock",
+        "indie rock",
+        "psychedelic rock",
+        "experimental rock"
+      ]
     },
     {
       "name": "femtanyl",
       "spotifyId": "53e9n1LucuH3guikmtv180",
       "spotifyUrl": "https://open.spotify.com/artist/53e9n1LucuH3guikmtv180",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "breakcore",
+        "digital hardcore"
+      ]
     },
     {
       "name": "FIGHTMASTER",
       "spotifyId": "3ejIpQTvOb6XjUhX96RrMw",
       "spotifyUrl": "https://open.spotify.com/artist/3ejIpQTvOb6XjUhX96RrMw",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "alt-country",
+        "singer-songwriter",
+        "alternative",
+        "usa"
+      ]
     },
     {
       "name": "Fleeting Confidence",
       "spotifyId": "5lvdtHtb2r4DTwtBN2BeBm",
       "spotifyUrl": "https://open.spotify.com/artist/5lvdtHtb2r4DTwtBN2BeBm",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "midwest emo",
+        "emo"
+      ]
     },
     {
       "name": "flipturn",
       "spotifyId": "7FKTg75ADVMZgY3P9ZMRtH",
       "spotifyUrl": "https://open.spotify.com/artist/7FKTg75ADVMZgY3P9ZMRtH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Floating Witch's Head",
       "spotifyId": "2OXwWtLONE3ZtwJGqhO9q8",
       "spotifyUrl": "https://open.spotify.com/artist/2OXwWtLONE3ZtwJGqhO9q8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "garage rock",
+        "psychedelic rock",
+        "psychedelic",
+        "garage"
+      ]
     },
     {
       "name": "Floral Tattoo",
       "spotifyId": "5A9WRVGRY9QQf7RVJxVnSS",
       "spotifyUrl": "https://open.spotify.com/artist/5A9WRVGRY9QQf7RVJxVnSS",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "shoegaze",
+        "dream pop",
+        "noise pop",
+        "emo"
+      ]
     },
     {
       "name": "Flowstate",
       "spotifyId": "40G3cM4jnPvtuatyqvYHeZ",
       "spotifyUrl": "https://open.spotify.com/artist/40G3cM4jnPvtuatyqvYHeZ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative rock",
+        "hard rock",
+        "post-grunge"
+      ]
     },
     {
       "name": "Follow Us",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "grunge",
+        "alternative rock",
+        "rock",
+        "noise rock",
+        "acoustic rock",
+        "sludge metal",
+        "alternative metal",
+        "pigfuck",
+        "post-hardcore",
+        "punk",
+        "punk rock"
+      ]
     },
     {
       "name": "Footballhead",
       "spotifyId": "2nwoELT7b1GI21sww1pRwd",
       "spotifyUrl": "https://open.spotify.com/artist/2nwoELT7b1GI21sww1pRwd",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "midwest emo"
+      ]
     },
     {
       "name": "Forty Feet Tall",
       "spotifyId": "5Y0hXvdIjFtKZ5UFYMAAeF",
       "spotifyUrl": "https://open.spotify.com/artist/5Y0hXvdIjFtKZ5UFYMAAeF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "punk rock",
+        "garage rock",
+        "united states",
+        "portland"
+      ]
     },
     {
       "name": "Frankie Tillo",
       "spotifyId": "7IqtXJ1AeuXFU2KwPnEszJ",
       "spotifyUrl": "https://open.spotify.com/artist/7IqtXJ1AeuXFU2KwPnEszJ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "traditional pop",
+        "western"
+      ]
     },
     {
       "name": "Frooty Treblez",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Fur Foxen",
       "spotifyId": "6In9P4kDaRgsRq4LwtdNeT",
       "spotifyUrl": "https://open.spotify.com/artist/6In9P4kDaRgsRq4LwtdNeT",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Fust",
       "spotifyId": "70kEs7OMlk8egbrVvRlOIv",
       "spotifyUrl": "https://open.spotify.com/artist/70kEs7OMlk8egbrVvRlOIv",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "rock"
+      ]
     },
     {
       "name": "future.exboyfriend",
       "spotifyId": "1qSSYhvOuxNuHzPdLfDQl1",
       "spotifyUrl": "https://open.spotify.com/artist/1qSSYhvOuxNuHzPdLfDQl1",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "alternative",
+        "indie pop",
+        "usa",
+        "american"
+      ]
     },
     {
       "name": "GATORBOYZ",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Geese",
       "spotifyId": "0WCo84qtCKfbyIf1lqQWB4",
       "spotifyUrl": "https://open.spotify.com/artist/0WCo84qtCKfbyIf1lqQWB4",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "art punk",
+        "post-punk",
+        "cowpunk",
+        "punk blues"
+      ]
     },
     {
       "name": "Gelli Haha",
       "spotifyId": "4O0acxqHYUQGGMqOICiSeI",
       "spotifyUrl": "https://open.spotify.com/artist/4O0acxqHYUQGGMqOICiSeI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "electropop"
+      ]
     },
     {
       "name": "Generifus",
       "spotifyId": "6I6GrF2qKkip4b9aSqlCbo",
       "spotifyUrl": "https://open.spotify.com/artist/6I6GrF2qKkip4b9aSqlCbo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "experimental",
+        "lo-fi"
+      ]
     },
     {
       "name": "Girl Tones",
       "spotifyId": "1Tq0nryXkwLARcHDMIZbY6",
       "spotifyUrl": "https://open.spotify.com/artist/1Tq0nryXkwLARcHDMIZbY6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock",
+        "rock",
+        "hard rock",
+        "punk",
+        "blues rock"
+      ]
     },
     {
       "name": "Gladie",
       "spotifyId": "7CmAu41S1eT28xXF2ocPE6",
       "spotifyUrl": "https://open.spotify.com/artist/7CmAu41S1eT28xXF2ocPE6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "indie pop"
+      ]
     },
     {
       "name": "Go Kurosawa",
       "spotifyId": "7xosp4nmGQZhCc0rE9ILg5",
       "spotifyUrl": "https://open.spotify.com/artist/7xosp4nmGQZhCc0rE9ILg5",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "japanese"
+      ]
     },
     {
       "name": "Good Friends",
       "spotifyId": "5B8apB7ewMAim8Q3pYWQWS",
       "spotifyUrl": "https://open.spotify.com/artist/5B8apB7ewMAim8Q3pYWQWS",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Good Morning June",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Gosh",
       "spotifyId": "3gBTDNCWsL9r7TwZOzakjs",
       "spotifyUrl": "https://open.spotify.com/artist/3gBTDNCWsL9r7TwZOzakjs",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "progressive house"
+      ]
     },
     {
       "name": "Gregory Rawlins",
       "spotifyId": "4dmlX6Hdx0iskrZDCea2F9",
       "spotifyUrl": "https://open.spotify.com/artist/4dmlX6Hdx0iskrZDCea2F9",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "reggae",
+        "lovers rock",
+        "dub"
+      ]
     },
     {
       "name": "Groove*Jet",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "house",
+        "deep house",
+        "disco",
+        "edm"
+      ]
     },
     {
       "name": "Guava Tree",
       "spotifyId": "6txQqpobp49CRM7TgXHLyU",
       "spotifyUrl": "https://open.spotify.com/artist/6txQqpobp49CRM7TgXHLyU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Gully Boys",
       "spotifyId": "0RNADU4Af78zqyTCOj2rVU",
       "spotifyUrl": "https://open.spotify.com/artist/0RNADU4Af78zqyTCOj2rVU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "minnesota",
+        "punk rock",
+        "minneapolis"
+      ]
     },
     {
       "name": "Gwen Good",
       "spotifyId": "7DQdO2uNZq47G06EuAuLYO",
       "spotifyUrl": "https://open.spotify.com/artist/7DQdO2uNZq47G06EuAuLYO",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop",
+        "dance-pop",
+        "contemporary r&b",
+        "electropop",
+        "pop rap",
+        "pop rock"
+      ]
     },
     {
       "name": "Hand Trembler",
       "spotifyId": "3MbQAkpXIaNyFN86rqN7E3",
       "spotifyUrl": "https://open.spotify.com/artist/3MbQAkpXIaNyFN86rqN7E3",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Hannah Cohen",
       "spotifyId": "7ovXNdlB2DNSC16TbKgros",
       "spotifyUrl": "https://open.spotify.com/artist/7ovXNdlB2DNSC16TbKgros",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop"
+      ]
     },
     {
       "name": "hate the way i am",
       "spotifyId": "2H92kBdSw0tRuEGT4zDH2Z",
       "spotifyUrl": "https://open.spotify.com/artist/2H92kBdSw0tRuEGT4zDH2Z",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "indie",
+        "indie rock"
+      ]
     },
     {
       "name": "Haute & Freddy",
       "spotifyId": "66T34XqGkEWbzKWALSBDuR",
       "spotifyUrl": "https://open.spotify.com/artist/66T34XqGkEWbzKWALSBDuR",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative"
+      ]
     },
     {
       "name": "Hayes Noble",
       "spotifyId": "7uO6P0OnlmeLwbdYj4x9Ow",
       "spotifyUrl": "https://open.spotify.com/artist/7uO6P0OnlmeLwbdYj4x9Ow",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Heather Meuleman",
       "spotifyId": "11VkDTfsJGDHg9RAUbO2Zd",
       "spotifyUrl": "https://open.spotify.com/artist/11VkDTfsJGDHg9RAUbO2Zd",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk rock",
+        "indie rock",
+        "pop rock",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "Heathers",
       "spotifyId": "4ece8MHBxffv0dw7gThk6M",
       "spotifyUrl": "https://open.spotify.com/artist/4ece8MHBxffv0dw7gThk6M",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "acoustic",
+        "female vocalists"
+      ]
     },
     {
       "name": "Heaven For Real",
       "spotifyId": "0De6AsHTSn4Q2Jc049oh0U",
       "spotifyUrl": "https://open.spotify.com/artist/0De6AsHTSn4Q2Jc049oh0U",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "art rock"
+      ]
     },
     {
       "name": "hellogoodbye",
       "spotifyId": "6GH0NzpthMGxu1mcfAkOde",
       "spotifyUrl": "https://open.spotify.com/artist/6GH0NzpthMGxu1mcfAkOde",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative dance",
+        "indie pop",
+        "indie rock",
+        "pop",
+        "pop rock",
+        "power pop"
+      ]
     },
     {
       "name": "Help",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "depressive black metal",
+        "punk"
+      ]
     },
     {
       "name": "hemlock",
       "spotifyId": "2urQCjxehNpSQWZW83h1L2",
       "spotifyUrl": "https://open.spotify.com/artist/2urQCjxehNpSQWZW83h1L2",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "black metal",
+        "thrash metal"
+      ]
     },
     {
       "name": "hemlocke springs",
       "spotifyId": "52PdgUJOjvS6Mpmjy1SAlx",
       "spotifyUrl": "https://open.spotify.com/artist/52PdgUJOjvS6Mpmjy1SAlx",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "synth-pop",
+        "alternative pop",
+        "dance-pop",
+        "indie pop",
+        "indietronica",
+        "new wave",
+        "pop"
+      ]
     },
     {
       "name": "High Pine Whiskey Yell",
       "spotifyId": "1oXUK2UThRgdPM3qgrwLNN",
       "spotifyUrl": "https://open.spotify.com/artist/1oXUK2UThRgdPM3qgrwLNN",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Hillfolk Noir",
       "spotifyId": "4alcboeaGrEX6CcqhSsyBb",
       "spotifyUrl": "https://open.spotify.com/artist/4alcboeaGrEX6CcqhSsyBb",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "americana",
+        "bluegrass",
+        "united states"
+      ]
     },
     {
       "name": "Hit Hit Hit",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "HLSTRM",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Home Front",
       "spotifyId": "0CyB1ZUexbBDoyHb15UJrU",
       "spotifyUrl": "https://open.spotify.com/artist/0CyB1ZUexbBDoyHb15UJrU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "post-punk",
+        "punk"
+      ]
     },
     {
       "name": "Horchatta",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "hori bai!",
       "spotifyId": "5Tm1l6Kby15VN5EJGT0K6P",
       "spotifyUrl": "https://open.spotify.com/artist/5Tm1l6Kby15VN5EJGT0K6P",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Horror Hi-Fi",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Horse Bitch",
       "spotifyId": "1Zt2Apekc6uieOsLkf7M0v",
       "spotifyUrl": "https://open.spotify.com/artist/1Zt2Apekc6uieOsLkf7M0v",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk rock",
+        "hard rock",
+        "psychedelic rock"
+      ]
     },
     {
       "name": "Hot Pursuit",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "alternative"
+      ]
     },
     {
       "name": "houseboat",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "indie",
+        "experimental",
+        "lofi",
+        "baltimore",
+        "sound collage"
+      ]
     },
     {
       "name": "Hudson Powder Company",
       "spotifyId": "1C3i0CucdBHKnWklC6LWwK",
       "spotifyUrl": "https://open.spotify.com/artist/1C3i0CucdBHKnWklC6LWwK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "grunge",
+        "pop"
+      ]
     },
     {
       "name": "Hurdy Gurdy Girls",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "hard rock",
+        "heavy psych"
+      ]
     },
     {
       "name": "Hurtado",
       "spotifyId": "4A8XZTZZvzNLSdTkGsjpY1",
       "spotifyUrl": "https://open.spotify.com/artist/4A8XZTZZvzNLSdTkGsjpY1",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "IFAA Creative Bands",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Improvement Movement",
       "spotifyId": "18S4ntNsQ8TCG80wpOsxWZ",
       "spotifyUrl": "https://open.spotify.com/artist/18S4ntNsQ8TCG80wpOsxWZ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop"
+      ]
     },
     {
       "name": "Information",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "ambient",
+        "experimental",
+        "minimal"
+      ]
     },
     {
       "name": "Ingrown",
       "spotifyId": "7DHEVu8mFuQP14XdDIFhss",
       "spotifyUrl": "https://open.spotify.com/artist/7DHEVu8mFuQP14XdDIFhss",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore",
+        "goregrind"
+      ]
     },
     {
       "name": "Initiate",
       "spotifyId": "4chi4s0FYncuGQul8cezau",
       "spotifyUrl": "https://open.spotify.com/artist/4chi4s0FYncuGQul8cezau",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore punk"
+      ]
     },
     {
       "name": "INJI",
       "spotifyId": "0Z4Ir8usNVcAdCSQl0fQki",
       "spotifyUrl": "https://open.spotify.com/artist/0Z4Ir8usNVcAdCSQl0fQki",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "dance-pop",
+        "electropop",
+        "hip house",
+        "tech house"
+      ]
     },
     {
       "name": "Instant Crush",
       "spotifyId": "6CzsxPxOIeXoyhmNiFmtmu",
       "spotifyUrl": "https://open.spotify.com/artist/6CzsxPxOIeXoyhmNiFmtmu",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "aprils taste"
+      ]
     },
     {
       "name": "Internet Explorer",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "garbage",
+        "1995",
+        "internet"
+      ]
     },
     {
       "name": "Irvin Brown",
       "spotifyId": "4H2Vpqaqbl1Hh4YFmprakq",
       "spotifyUrl": "https://open.spotify.com/artist/4H2Vpqaqbl1Hh4YFmprakq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "skinhead reggae",
+        "skinhead music"
+      ]
     },
     {
       "name": "Ivy Rosé",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Izze Azalea",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Izzy Taylor",
       "spotifyId": "5FWA0PxhytuJdbAEG3CCym",
       "spotifyUrl": "https://open.spotify.com/artist/5FWA0PxhytuJdbAEG3CCym",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop",
+        "country",
+        "country pop",
+        "singer-songwriter",
+        "pop rock",
+        "contemporary country",
+        "synth-pop",
+        "indie folk",
+        "alternative pop",
+        "electropop"
+      ]
     },
     {
       "name": "J. Graves",
       "spotifyId": "0o6k3hGli4YOXmrwrvGni7",
       "spotifyUrl": "https://open.spotify.com/artist/0o6k3hGli4YOXmrwrvGni7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pdx",
+        "usa"
+      ]
     },
     {
       "name": "Jackson Cole",
       "spotifyId": "3tsuuAXrixMLpFj3CUjFaF",
       "spotifyUrl": "https://open.spotify.com/artist/3tsuuAXrixMLpFj3CUjFaF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Jan Reed",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Jang The Goon",
       "spotifyId": "4onm722ygkiceEX3nTy4MM",
       "spotifyUrl": "https://open.spotify.com/artist/4onm722ygkiceEX3nTy4MM",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Jay William Miller",
       "spotifyId": "2K8xWprtSq2Ee2A3d3ryCF",
       "spotifyUrl": "https://open.spotify.com/artist/2K8xWprtSq2Ee2A3d3ryCF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "jazz",
+        "big band",
+        "swing",
+        "vocal jazz"
+      ]
     },
     {
       "name": "jdhix",
       "spotifyId": "2gpWgSbMg6Yj1HfUatrHdC",
       "spotifyUrl": "https://open.spotify.com/artist/2gpWgSbMg6Yj1HfUatrHdC",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Jeff Crosby",
       "spotifyId": "1f708zcisEeFNzcCUTHEgh",
       "spotifyUrl": "https://open.spotify.com/artist/1f708zcisEeFNzcCUTHEgh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folksinger"
+      ]
     },
     {
       "name": "Jens Kuross",
       "spotifyId": "0tkBS89wZe0goJeNXZMCK6",
       "spotifyUrl": "https://open.spotify.com/artist/0tkBS89wZe0goJeNXZMCK6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "experimental",
+        "ambient"
+      ]
     },
     {
       "name": "Jesafarican",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Jesse Blake Rundle",
       "spotifyId": "5k2JA3Xa3HTUY8wCaEz3ZK",
       "spotifyUrl": "https://open.spotify.com/artist/5k2JA3Xa3HTUY8wCaEz3ZK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "lo-fi",
+        "folk",
+        "neofolk",
+        "music",
+        "indie folk"
+      ]
     },
     {
       "name": "Jesus Christ Taxi Driver",
       "spotifyId": "4Z3yQdWB1RBn7DXi4x5NVM",
       "spotifyUrl": "https://open.spotify.com/artist/4Z3yQdWB1RBn7DXi4x5NVM",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "punk",
+        "blues",
+        "alternative",
+        "indie",
+        "indie rock"
+      ]
     },
     {
       "name": "Jett Setter",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "jilly.FM",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "JMSN",
       "spotifyId": "6HCkJzbswOIc7Qc5TJ1n5l",
       "spotifyUrl": "https://open.spotify.com/artist/6HCkJzbswOIc7Qc5TJ1n5l",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative r&b",
+        "contemporary r&b",
+        "electronica",
+        "soul"
+      ]
     },
     {
       "name": "jo passed",
       "spotifyId": "1ONiIDqrHLLeDjVan9RRns",
       "spotifyUrl": "https://open.spotify.com/artist/1ONiIDqrHLLeDjVan9RRns",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Jocelyn Guntar",
       "spotifyId": "588D8tHzddpyn6vecw74dz",
       "spotifyUrl": "https://open.spotify.com/artist/588D8tHzddpyn6vecw74dz",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "boogie",
+        "disco",
+        "pop",
+        "r&b",
+        "soul"
+      ]
     },
     {
       "name": "John Craigie",
       "spotifyId": "7ytgyYmtUPfxXHsXEvgObK",
       "spotifyUrl": "https://open.spotify.com/artist/7ytgyYmtUPfxXHsXEvgObK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "americana",
+        "folk"
+      ]
     },
     {
       "name": "John Gorbus",
       "spotifyId": "2UXPEJGW6SX7epGgbkov7Z",
       "spotifyUrl": "https://open.spotify.com/artist/2UXPEJGW6SX7epGgbkov7Z",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "John Roseboro",
       "spotifyId": "0OTbmw4nbgWHiTyqhmz72s",
       "spotifyUrl": "https://open.spotify.com/artist/0OTbmw4nbgWHiTyqhmz72s",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "bossa nova",
+        "chillout",
+        "folk",
+        "folk pop",
+        "indie folk"
+      ]
     },
     {
       "name": "Johnny Franco and his real brother Dom",
       "spotifyId": "4sLDVKP1r8XmgrPs39drGf",
       "spotifyUrl": "https://open.spotify.com/artist/4sLDVKP1r8XmgrPs39drGf",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Joshua Emara",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Jughandle Parade",
       "spotifyId": "43xw4OokZh58b6hM8XlbMN",
       "spotifyUrl": "https://open.spotify.com/artist/43xw4OokZh58b6hM8XlbMN",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "JÜN",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Kaleena Zanders",
       "spotifyId": "0Sz2jslaxjcw2VM5zYh2jK",
       "spotifyUrl": "https://open.spotify.com/artist/0Sz2jslaxjcw2VM5zYh2jK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "vocal house"
+      ]
     },
     {
       "name": "KANDERS10",
       "spotifyId": "0EIfFW6NoZwI7nJx6b4zZg",
       "spotifyUrl": "https://open.spotify.com/artist/0EIfFW6NoZwI7nJx6b4zZg",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Kash’d Out",
       "spotifyId": "7hZ19Z3zttnwEmwx43fivm",
       "spotifyUrl": "https://open.spotify.com/artist/7hZ19Z3zttnwEmwx43fivm",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Kassa Overall",
       "spotifyId": "7qzzcFzliEAHMlDA9qaRVf",
       "spotifyUrl": "https://open.spotify.com/artist/7qzzcFzliEAHMlDA9qaRVf",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hip hop",
+        "jazz",
+        "r&b"
+      ]
     },
     {
       "name": "Kayristin",
       "spotifyId": "6ciw33Esp5Sxybg44NnWji",
       "spotifyUrl": "https://open.spotify.com/artist/6ciw33Esp5Sxybg44NnWji",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Keddies Resort",
       "spotifyId": "0bnGaDAvn59fGoVlyw2eRF",
       "spotifyUrl": "https://open.spotify.com/artist/0bnGaDAvn59fGoVlyw2eRF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage punk",
+        "garage rock",
+        "punk",
+        "punk rock",
+        "pop punk"
+      ]
     },
     {
       "name": "Kendall Lujan",
       "spotifyId": "5JvY8N4icJjp1ND34IJAqQ",
       "spotifyUrl": "https://open.spotify.com/artist/5JvY8N4icJjp1ND34IJAqQ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Kevin Devine",
       "spotifyId": "66ScZxprvrMbCtN4ivA0JX",
       "spotifyUrl": "https://open.spotify.com/artist/66ScZxprvrMbCtN4ivA0JX",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative rock",
+        "folk rock",
+        "indie rock"
+      ]
     },
     {
       "name": "Khorvai",
       "spotifyId": "0QGRAbEog1AiSxts0jjF2F",
       "spotifyUrl": "https://open.spotify.com/artist/0QGRAbEog1AiSxts0jjF2F",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Kishi Bashi",
       "spotifyId": "3LVPGE5jPPwtbGslx07YR0",
       "spotifyUrl": "https://open.spotify.com/artist/3LVPGE5jPPwtbGslx07YR0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "folk",
+        "pop"
+      ]
     },
     {
       "name": "Kiss the Tiger",
       "spotifyId": "2ncZ6eU0pqD6HnWCd0jC59",
       "spotifyUrl": "https://open.spotify.com/artist/2ncZ6eU0pqD6HnWCd0jC59",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "rock",
+        "rock and roll"
+      ]
     },
     {
       "name": "Knuckle Puck",
       "spotifyId": "5ABfpj7Z00wfPiv2uW4MFm",
       "spotifyUrl": "https://open.spotify.com/artist/5ABfpj7Z00wfPiv2uW4MFm",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "punk",
+        "punk rock",
+        "rock"
+      ]
     },
     {
       "name": "Kokein",
       "spotifyId": "2Pa92dGMpcEFRRQKyEIvYA",
       "spotifyUrl": "https://open.spotify.com/artist/2Pa92dGMpcEFRRQKyEIvYA",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "alternative rock",
+        "female vocalists",
+        "basque"
+      ]
     },
     {
       "name": "L.A. WITCH",
       "spotifyId": "4VIQa9l1HW6VPhR9IdJS8C",
       "spotifyUrl": "https://open.spotify.com/artist/4VIQa9l1HW6VPhR9IdJS8C",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock",
+        "psychedelic rock",
+        "rock"
+      ]
     },
     {
       "name": "L8 Bloomer",
       "spotifyId": "5TkrjXejr644CAuQetYPE0",
       "spotifyUrl": "https://open.spotify.com/artist/5TkrjXejr644CAuQetYPE0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Landlady",
       "spotifyId": "49BZ5IiDgPouHX3pg8O4nK",
       "spotifyUrl": "https://open.spotify.com/artist/49BZ5IiDgPouHX3pg8O4nK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop",
+        "rock"
+      ]
     },
     {
       "name": "Landon Conrath",
       "spotifyId": "2PJ06l59DomDd440az768u",
       "spotifyUrl": "https://open.spotify.com/artist/2PJ06l59DomDd440az768u",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electronic",
+        "singer-songwriter",
+        "indie pop",
+        "usa",
+        "my top songs"
+      ]
     },
     {
       "name": "Lasher",
       "spotifyId": "0rvnTerTfbGTXvq08tbuLb",
       "spotifyUrl": "https://open.spotify.com/artist/0rvnTerTfbGTXvq08tbuLb",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "black metal"
+      ]
     },
     {
       "name": "Laurance",
       "spotifyId": "4QOJXnAKAkNxLuskemdJAg",
       "spotifyUrl": "https://open.spotify.com/artist/4QOJXnAKAkNxLuskemdJAg",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "contemporary jazz",
+        "jazz",
+        "jazz fusion"
+      ]
     },
     {
       "name": "Leading Lines",
       "spotifyId": "2jBd9A8wae1TFobSXzP0oy",
       "spotifyUrl": "https://open.spotify.com/artist/2jBd9A8wae1TFobSXzP0oy",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Lee Penn Sky",
       "spotifyId": "6xLrTsjoZcv1vfH53a77Qo",
       "spotifyUrl": "https://open.spotify.com/artist/6xLrTsjoZcv1vfH53a77Qo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alt-cr"
+      ]
     },
     {
       "name": "Legz",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "deep minimal",
+        "dub-tech"
+      ]
     },
     {
       "name": "Lena Rich",
       "spotifyId": "1XUOCvwssfxY0XElzLgWDE",
       "spotifyUrl": "https://open.spotify.com/artist/1XUOCvwssfxY0XElzLgWDE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Les Duck",
       "spotifyId": "6CtrnwBCcorrgY0xyVhZJC",
       "spotifyUrl": "https://open.spotify.com/artist/6CtrnwBCcorrgY0xyVhZJC",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Lex Leosis",
       "spotifyId": "3l5iTPvfsSfyeaurhaAeh6",
       "spotifyUrl": "https://open.spotify.com/artist/3l5iTPvfsSfyeaurhaAeh6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hip-hop"
+      ]
     },
     {
       "name": "Lily DeTaeye",
       "spotifyId": "7HD4yLYRGDHNZfwwcgLtKH",
       "spotifyUrl": "https://open.spotify.com/artist/7HD4yLYRGDHNZfwwcgLtKH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Lily Seabird",
       "spotifyId": "1ZIjaMq0dyU2CZaI6GFxBd",
       "spotifyUrl": "https://open.spotify.com/artist/1ZIjaMq0dyU2CZaI6GFxBd",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "indie pop",
+        "lo-fi"
+      ]
     },
     {
       "name": "Lineup",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Little Venom",
       "spotifyId": "01T8ebO9G7M8Ni0ki90my5",
       "spotifyUrl": "https://open.spotify.com/artist/01T8ebO9G7M8Ni0ki90my5",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Liz Cooper",
       "spotifyId": "58irgKwXTjCCuYQB58aXeH",
       "spotifyUrl": "https://open.spotify.com/artist/58irgKwXTjCCuYQB58aXeH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "twee",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "Lobo Lara",
       "spotifyId": "4VsV4p5seMhiQOzQVeOoRb",
       "spotifyUrl": "https://open.spotify.com/artist/4VsV4p5seMhiQOzQVeOoRb",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "singer-songwriter",
+        "soft rock"
+      ]
     },
     {
       "name": "Los Syringas",
       "spotifyId": "4RppgAwCPBVdc8tIWbG1mq",
       "spotifyUrl": "https://open.spotify.com/artist/4RppgAwCPBVdc8tIWbG1mq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "pop",
+        "pop rock",
+        "psychedelic pop",
+        "merseybeat",
+        "psychedelic rock",
+        "classic rock",
+        "rock and roll",
+        "britpop",
+        "mainstream rock"
+      ]
     },
     {
       "name": "lots of hands",
       "spotifyId": "6sNcyjEVdNlZ0dpgr7EcT9",
       "spotifyUrl": "https://open.spotify.com/artist/6sNcyjEVdNlZ0dpgr7EcT9",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "indie pop",
+        "bedroom pop",
+        "lo-fi"
+      ]
     },
     {
       "name": "low-fi",
       "spotifyId": "4zEgLmIZjSsUZIAJQKzJ5b",
       "spotifyUrl": "https://open.spotify.com/artist/4zEgLmIZjSsUZIAJQKzJ5b",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative",
+        "rock",
+        "post-punk"
+      ]
     },
     {
       "name": "LSD and the Search for God",
       "spotifyId": "2feOOr1Yjovo67byuxvjZv",
       "spotifyUrl": "https://open.spotify.com/artist/2feOOr1Yjovo67byuxvjZv",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "shoegaze",
+        "dream pop",
+        "psychedelic",
+        "psychedelic rock",
+        "rock"
+      ]
     },
     {
       "name": "Lucas Benoit",
       "spotifyId": "3DCEcUZRWbszHhIuObiRXG",
       "spotifyUrl": "https://open.spotify.com/artist/3DCEcUZRWbszHhIuObiRXG",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Luke Herrin",
       "spotifyId": "0NZULpqWFSQVwy9oeflGFq",
       "spotifyUrl": "https://open.spotify.com/artist/0NZULpqWFSQVwy9oeflGFq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "LX",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "hip hop"
+      ]
     },
     {
       "name": "Machine Country",
       "spotifyId": "3g2tSJ2gwqBwEWtLozRM4a",
       "spotifyUrl": "https://open.spotify.com/artist/3g2tSJ2gwqBwEWtLozRM4a",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Machine Girl",
       "spotifyId": "17Vw9uuOYB7XYjPt0LNFN0",
       "spotifyUrl": "https://open.spotify.com/artist/17Vw9uuOYB7XYjPt0LNFN0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "breakcore",
+        "digital hardcore",
+        "drum and bass",
+        "electronic",
+        "techno",
+        "house"
+      ]
     },
     {
       "name": "Maci Mattravers",
       "spotifyId": "7l8VLYq1O2EgTfugzBtFeV",
       "spotifyUrl": "https://open.spotify.com/artist/7l8VLYq1O2EgTfugzBtFeV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Macseal",
       "spotifyId": "1b1pwTnc2DJVXGy8pniShT",
       "spotifyUrl": "https://open.spotify.com/artist/1b1pwTnc2DJVXGy8pniShT",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo"
+      ]
     },
     {
       "name": "Maddie Zahm",
       "spotifyId": "5dtPlx7yKOo7KdZGyrfFIq",
       "spotifyUrl": "https://open.spotify.com/artist/5dtPlx7yKOo7KdZGyrfFIq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop"
+      ]
     },
     {
       "name": "Madisun Proof",
       "spotifyId": "5cQbdx0zvNTMcDo4VRHScC",
       "spotifyUrl": "https://open.spotify.com/artist/5cQbdx0zvNTMcDo4VRHScC",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hip hop"
+      ]
     },
     {
       "name": "Magdalena Bay",
       "spotifyId": "1oPRcJUkloHaRLYx0olBLJ",
       "spotifyUrl": "https://open.spotify.com/artist/1oPRcJUkloHaRLYx0olBLJ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "synth-pop",
+        "alternative pop",
+        "electronic",
+        "neo-psychedelia"
+      ]
     },
     {
       "name": "Maggie Halfman",
       "spotifyId": "7cwCSJiWWU5RENcy28kXxO",
       "spotifyUrl": "https://open.spotify.com/artist/7cwCSJiWWU5RENcy28kXxO",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "indie",
+        "indie folk"
+      ]
     },
     {
       "name": "Makayla King",
       "spotifyId": "2BlORtkiNenI3ECO8etdNP",
       "spotifyUrl": "https://open.spotify.com/artist/2BlORtkiNenI3ECO8etdNP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Make Believe",
       "spotifyId": "5doa04GAWApiQwT7VsPM5P",
       "spotifyUrl": "https://open.spotify.com/artist/5doa04GAWApiQwT7VsPM5P",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "math rock",
+        "experimental",
+        "indie"
+      ]
     },
     {
       "name": "MAPLO",
       "spotifyId": "4ReKvZvnXDdrRuMSMeiThI",
       "spotifyUrl": "https://open.spotify.com/artist/4ReKvZvnXDdrRuMSMeiThI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "MARBLE",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "j-pop"
+      ]
     },
     {
       "name": "Marcey Yates",
       "spotifyId": "061sCpH0RWLX2GczSQcmUP",
       "spotifyUrl": "https://open.spotify.com/artist/061sCpH0RWLX2GczSQcmUP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "MARI",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "heavy metal",
+        "pop rock",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "MARO",
       "spotifyId": "3NP4jJcW3R6qO6rbtnH0wn",
       "spotifyUrl": "https://open.spotify.com/artist/3NP4jJcW3R6qO6rbtnH0wn",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "pop"
+      ]
     },
     {
       "name": "Massy Ferguson",
       "spotifyId": "1jmDf2swGkKqy51iCSjzIq",
       "spotifyUrl": "https://open.spotify.com/artist/1jmDf2swGkKqy51iCSjzIq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "seattle",
+        "kathleen"
+      ]
     },
     {
       "name": "MATT HOPPER & THE ROMAN CANDLES",
       "spotifyId": "00erS0Spu7NNZ9BnEko50s",
       "spotifyUrl": "https://open.spotify.com/artist/00erS0Spu7NNZ9BnEko50s",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie folk",
+        "usa"
+      ]
     },
     {
       "name": "Matt Mitchell Music Co.",
       "spotifyId": "5QlQD7bXMOiM8qEoFlbElV",
       "spotifyUrl": "https://open.spotify.com/artist/5QlQD7bXMOiM8qEoFlbElV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Matt Rebar",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Matty J and the Grays",
       "spotifyId": "1816p2ZvcASGplbqc4jirc",
       "spotifyUrl": "https://open.spotify.com/artist/1816p2ZvcASGplbqc4jirc",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Max Low",
       "spotifyId": "1OGrGLXNm7YPutzu0KAYSP",
       "spotifyUrl": "https://open.spotify.com/artist/1OGrGLXNm7YPutzu0KAYSP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "usa",
+        "funk_add_to_lidarr_batch_18"
+      ]
     },
     {
       "name": "McKenna Esteb",
       "spotifyId": "5R218OuGBko4GEdpGHuf6v",
       "spotifyUrl": "https://open.spotify.com/artist/5R218OuGBko4GEdpGHuf6v",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "mclusky",
       "spotifyId": "3xA9AB0f4BVjsSlyQc12iE",
       "spotifyUrl": "https://open.spotify.com/artist/3xA9AB0f4BVjsSlyQc12iE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "noise rock",
+        "art punk",
+        "indie rock",
+        "post-hardcore",
+        "sasscore"
+      ]
     },
     {
       "name": "meg elsier",
       "spotifyId": "4rkAMhebcdsLwZKBriNerT",
       "spotifyUrl": "https://open.spotify.com/artist/4rkAMhebcdsLwZKBriNerT",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "electropop",
+        "pop",
+        "indie rock",
+        "usa",
+        "indie folk"
+      ]
     },
     {
       "name": "Melancholy Club",
       "spotifyId": "6ZQIbnXfEalBgahgWcOk1U",
       "spotifyUrl": "https://open.spotify.com/artist/6ZQIbnXfEalBgahgWcOk1U",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "midwest emo"
+      ]
     },
     {
       "name": "Merce Lemon",
       "spotifyId": "4u2LxHDBsFDH3J9NumXSCH",
       "spotifyUrl": "https://open.spotify.com/artist/4u2LxHDBsFDH3J9NumXSCH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "indie rock",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "Mercy Giant",
       "spotifyId": "2WcdcYMautuvDMJz0fhVDI",
       "spotifyUrl": "https://open.spotify.com/artist/2WcdcYMautuvDMJz0fhVDI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative country",
+        "alternative rock",
+        "country",
+        "desert rock"
+      ]
     },
     {
       "name": "Mexican Slum Rats",
       "spotifyId": "4rjlpKrZkDXXh3nAhF41tn",
       "spotifyUrl": "https://open.spotify.com/artist/4rjlpKrZkDXXh3nAhF41tn",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "surf",
+        "surf punk"
+      ]
     },
     {
       "name": "Mike Johnston Band",
       "spotifyId": "6shjpRThJQxkNgWzz9bYMs",
       "spotifyUrl": "https://open.spotify.com/artist/6shjpRThJQxkNgWzz9bYMs",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Mindy Gledhill",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "female vocalists",
+        "indie",
+        "easy listening",
+        "indie pop"
+      ]
     },
     {
       "name": "mini bear",
       "spotifyId": "0mpWTPgmk0s1ZZ7PbkYunA",
       "spotifyUrl": "https://open.spotify.com/artist/0mpWTPgmk0s1ZZ7PbkYunA",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "jazz rock",
+        "blues rock",
+        "progressive rock"
+      ]
     },
     {
       "name": "MJD",
       "spotifyId": "5mRPb0ggsB9xGh0kD4zU8v",
       "spotifyUrl": "https://open.spotify.com/artist/5mRPb0ggsB9xGh0kD4zU8v",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "drum and bass"
+      ]
     },
     {
       "name": "Mobius Trip",
       "spotifyId": "5kuVfG2PDO2bScEQMDPzUa",
       "spotifyUrl": "https://open.spotify.com/artist/5kuVfG2PDO2bScEQMDPzUa",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Momma",
       "spotifyId": "5Wj0an60VgRckYV9zlDe1e",
       "spotifyUrl": "https://open.spotify.com/artist/5Wj0an60VgRckYV9zlDe1e",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative rock",
+        "indie rock"
+      ]
     },
     {
       "name": "Mondo Pondo",
       "spotifyId": "5H2DHyT0tR3Vc5ArEEA942",
       "spotifyUrl": "https://open.spotify.com/artist/5H2DHyT0tR3Vc5ArEEA942",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Monopines",
       "spotifyId": "0k1Xw2grRwLFXNNSB8A14x",
       "spotifyUrl": "https://open.spotify.com/artist/0k1Xw2grRwLFXNNSB8A14x",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Moon Owl's Mages",
       "spotifyId": "6McLfo8BDbdS7Rke3ylIky",
       "spotifyUrl": "https://open.spotify.com/artist/6McLfo8BDbdS7Rke3ylIky",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock",
+        "psychedelic rock",
+        "rock and roll"
+      ]
     },
     {
       "name": "Mortigi Tempo",
       "spotifyId": "7pzI90lHofqHVdLN8NnEBl",
       "spotifyUrl": "https://open.spotify.com/artist/7pzI90lHofqHVdLN8NnEBl",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "MÔS",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "classical",
+        "baroque",
+        "cantata",
+        "mass",
+        "motet",
+        "orchestral"
+      ]
     },
     {
       "name": "Mother Mother",
       "spotifyId": "0e86yPdC41PGRkLp2Q1Bph",
       "spotifyUrl": "https://open.spotify.com/artist/0e86yPdC41PGRkLp2Q1Bph",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "rock",
+        "indie pop",
+        "pop",
+        "pop rock"
+      ]
     },
     {
       "name": "Motherhood",
       "spotifyId": "4SnpEoCpqpmL3axTRi3C7D",
       "spotifyUrl": "https://open.spotify.com/artist/4SnpEoCpqpmL3axTRi3C7D",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage punk",
+        "garage rock",
+        "alternative rock",
+        "punk rock"
+      ]
     },
     {
       "name": "Mr Grant Olsen",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "MX LONELY",
       "spotifyId": "7JrQ7OeohqbGyqXwuLLEpW",
       "spotifyUrl": "https://open.spotify.com/artist/7JrQ7OeohqbGyqXwuLLEpW",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "shoegaze"
+      ]
     },
     {
       "name": "MYLO BYBEE",
       "spotifyId": "6NWYao9Kq1OZi1mki3yhwS",
       "spotifyUrl": "https://open.spotify.com/artist/6NWYao9Kq1OZi1mki3yhwS",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "shoegaze",
+        "alternative rock",
+        "indie rock"
+      ]
     },
     {
       "name": "NDLES",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "punk rock",
+        "electronic",
+        "electropunk",
+        "rock",
+        "electronica"
+      ]
     },
     {
       "name": "Neptune Moon",
       "spotifyId": "0wYRCIJ2Jyawl8ogOdimQo",
       "spotifyUrl": "https://open.spotify.com/artist/0wYRCIJ2Jyawl8ogOdimQo",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Newsletter",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "alternative rock",
+        "german"
+      ]
     },
     {
       "name": "Nick Delffs",
       "spotifyId": "16iBiNiEBOuaVYbB0m5KyW",
       "spotifyUrl": "https://open.spotify.com/artist/16iBiNiEBOuaVYbB0m5KyW",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Nicki Walters",
       "spotifyId": "2lxSru4lmE6jlNU3sBeWS6",
       "spotifyUrl": "https://open.spotify.com/artist/2lxSru4lmE6jlNU3sBeWS6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Night Cap",
       "spotifyId": "0d4OObbLXdSSO2suAeC4jk",
       "spotifyUrl": "https://open.spotify.com/artist/0d4OObbLXdSSO2suAeC4jk",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "indie rock"
+      ]
     },
     {
       "name": "Night Heron",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "psychedelic",
+        "soul",
+        "synthpop",
+        "rnb",
+        "nu-metal"
+      ]
     },
     {
       "name": "NIGHTBRAIN",
       "spotifyId": "5GbyhhI3KE3Od4kKtNiBuv",
       "spotifyUrl": "https://open.spotify.com/artist/5GbyhhI3KE3Od4kKtNiBuv",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Nightskill",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "nimino",
       "spotifyId": "5x0R3zoC09GMiRJomoexLV",
       "spotifyUrl": "https://open.spotify.com/artist/5x0R3zoC09GMiRJomoexLV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "house",
+        "electronic",
+        "dance"
+      ]
     },
     {
       "name": "NOFO",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Not Your Ex Lover",
       "spotifyId": "0C7WLiFnSN1KKVB6jqpGD1",
       "spotifyUrl": "https://open.spotify.com/artist/0C7WLiFnSN1KKVB6jqpGD1",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Nuppeppo",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Odd Man Out",
       "spotifyId": "5wnAwAJumfgRhuqn1HNMEX",
       "spotifyUrl": "https://open.spotify.com/artist/5wnAwAJumfgRhuqn1HNMEX",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore",
+        "straight edge"
+      ]
     },
     {
       "name": "OGRE",
       "spotifyId": "2VVgdgcVCQxg1QKLpX9GrH",
       "spotifyUrl": "https://open.spotify.com/artist/2VVgdgcVCQxg1QKLpX9GrH",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "doom metal",
+        "stoner rock",
+        "hard rock"
+      ]
     },
     {
       "name": "Oh He Dead",
       "spotifyId": "2nLlWcvMIIGHHnDOQMi0h6",
       "spotifyUrl": "https://open.spotify.com/artist/2nLlWcvMIIGHHnDOQMi0h6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "soul",
+        "dc"
+      ]
     },
     {
       "name": "Órale!",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Orographic",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "OSCAR",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "rap",
+        "electronic",
+        "house"
+      ]
     },
     {
       "name": "Pace Jackson",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "pop",
+        "dance-pop",
+        "disco",
+        "contemporary r&b",
+        "pop soul",
+        "soul",
+        "new jack swing",
+        "pop rock",
+        "r&b",
+        "boogie",
+        "hip hop",
+        "pop rap"
+      ]
     },
     {
       "name": "Packaging",
       "spotifyId": "0Ptdlmg0GmSHwgazEsZFZ0",
       "spotifyUrl": "https://open.spotify.com/artist/0Ptdlmg0GmSHwgazEsZFZ0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "psychedelic",
+        "electronic",
+        "shoegaze",
+        "dream pop"
+      ]
     },
     {
       "name": "Pancho and the Wizards",
       "spotifyId": "4CHxrtchUiY6JpbzASLbw1",
       "spotifyUrl": "https://open.spotify.com/artist/4CHxrtchUiY6JpbzASLbw1",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "PAPAS",
       "spotifyId": "2G8ovRQSEooPZjQHuavHnC",
       "spotifyUrl": "https://open.spotify.com/artist/2G8ovRQSEooPZjQHuavHnC",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Paxxwavez",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Payette",
       "spotifyId": "723wZarEGb5hq0BbKl7hIw",
       "spotifyUrl": "https://open.spotify.com/artist/723wZarEGb5hq0BbKl7hIw",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Pearly Drops",
       "spotifyId": "2eMb96S1ZJ1YQ7FhWAzWJL",
       "spotifyUrl": "https://open.spotify.com/artist/2eMb96S1ZJ1YQ7FhWAzWJL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "dream pop",
+        "electronic",
+        "synthpop"
+      ]
     },
     {
       "name": "Period Bomb",
       "spotifyId": "4VJ4TsWxo8vFmFhgh3eyy6",
       "spotifyUrl": "https://open.spotify.com/artist/4VJ4TsWxo8vFmFhgh3eyy6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "noise punk"
+      ]
     },
     {
       "name": "Perreo Boys feat. DJ Alex Top",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Petal Party",
       "spotifyId": "3XJz9ZPvU18XmXMOtqQOsV",
       "spotifyUrl": "https://open.spotify.com/artist/3XJz9ZPvU18XmXMOtqQOsV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop rock",
+        "rock"
+      ]
     },
     {
       "name": "Pileup",
       "spotifyId": "13T0pvqI92VaGpC2zYKhJU",
       "spotifyUrl": "https://open.spotify.com/artist/13T0pvqI92VaGpC2zYKhJU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Pink Fuzz",
       "spotifyId": "1liWP89lUWfAWUowTe5eo7",
       "spotifyUrl": "https://open.spotify.com/artist/1liWP89lUWfAWUowTe5eo7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "fuzz",
+        "indie rock"
+      ]
     },
     {
       "name": "Pink Lady Monster",
       "spotifyId": "64EAOFIFy6DKFtB2aLsL9Z",
       "spotifyUrl": "https://open.spotify.com/artist/64EAOFIFy6DKFtB2aLsL9Z",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "post punk",
+        "art rock",
+        "denver",
+        "no wave"
+      ]
     },
     {
       "name": "PISS",
       "spotifyId": "1nGBerMI4y0SI6fZk97uYf",
       "spotifyUrl": "https://open.spotify.com/artist/1nGBerMI4y0SI6fZk97uYf",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "japanese hardcore",
+        "punk",
+        "raw punk",
+        "hardcore punk"
+      ]
     },
     {
       "name": "Play The Fool",
       "spotifyId": "0gJ3euPiOO8F1pWaAMn5JZ",
       "spotifyUrl": "https://open.spotify.com/artist/0gJ3euPiOO8F1pWaAMn5JZ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "PLAYDEAD",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "post-punk",
+        "gothic rock"
+      ]
     },
     {
       "name": "Plum",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "noise rock",
+        "noise"
+      ]
     },
     {
       "name": "Plum Vision",
       "spotifyId": "2OEuG6CnuN2pJ58aRGY7qB",
       "spotifyUrl": "https://open.spotify.com/artist/2OEuG6CnuN2pJ58aRGY7qB",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "grunge",
+        "punk rock",
+        "punk",
+        "riot grrrl"
+      ]
     },
     {
       "name": "Polaruz (Polar-Z)",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "blues rock",
+        "rock",
+        "southern rock",
+        "hard rock",
+        "boogie rock",
+        "classic rock"
+      ]
     },
     {
       "name": "Porcelain Tongue",
       "spotifyId": "6CKmORyIDwsuGrVmclQMXU",
       "spotifyUrl": "https://open.spotify.com/artist/6CKmORyIDwsuGrVmclQMXU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop rock"
+      ]
     },
     {
       "name": "Porches",
       "spotifyId": "2JzhQYGos3RqV7MT5fWeek",
       "spotifyUrl": "https://open.spotify.com/artist/2JzhQYGos3RqV7MT5fWeek",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "synthpop",
+        "electronic",
+        "indie"
+      ]
     },
     {
       "name": "Pretty Jane",
       "spotifyId": "6epJ25SOjrUlNIH80KKluq",
       "spotifyUrl": "https://open.spotify.com/artist/6epJ25SOjrUlNIH80KKluq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "american"
+      ]
     },
     {
       "name": "Prism Bitch",
       "spotifyId": "7ungoomfqCNHmx5No3a0py",
       "spotifyUrl": "https://open.spotify.com/artist/7ungoomfqCNHmx5No3a0py",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative"
+      ]
     },
     {
       "name": "Proxi",
       "spotifyId": "3paz9I5zTaEZl4qwj0gT6S",
       "spotifyUrl": "https://open.spotify.com/artist/3paz9I5zTaEZl4qwj0gT6S",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "progressive trance",
+        "trance",
+        "uplifting trance",
+        "vocal trance"
+      ]
     },
     {
       "name": "Pump Action",
       "spotifyId": "4Fb4B8ahca7VvUQv24Qttm",
       "spotifyUrl": "https://open.spotify.com/artist/4Fb4B8ahca7VvUQv24Qttm",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "gambling addiction"
+      ]
     },
     {
       "name": "R.U.K.U.S.",
       "spotifyId": "3VlYawAcl8DEcz1jC1eza2",
       "spotifyUrl": "https://open.spotify.com/artist/3VlYawAcl8DEcz1jC1eza2",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Raccoon Tour",
       "spotifyId": "5mGnbFnoUYEUNE5EKnQY7R",
       "spotifyUrl": "https://open.spotify.com/artist/5mGnbFnoUYEUNE5EKnQY7R",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "uke punk",
+        "penis punk"
+      ]
     },
     {
       "name": "Radium Dolls",
       "spotifyId": "5XdOr2J2sgTI4mEE6j9KYr",
       "spotifyUrl": "https://open.spotify.com/artist/5XdOr2J2sgTI4mEE6j9KYr",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "rock",
+        "australian",
+        "australia",
+        "rock n roll"
+      ]
     },
     {
       "name": "ranger",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "speed metal",
+        "heavy metal",
+        "thrash metal"
+      ]
     },
     {
       "name": "Rattlesnake Preachers",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "alternative rock",
+        "britpop",
+        "hard rock",
+        "post-punk",
+        "glam punk",
+        "punk rock",
+        "glam rock",
+        "pop rock",
+        "grunge",
+        "post-britpop",
+        "post-grunge",
+        "power pop",
+        "symphonic rock"
+      ]
     },
     {
       "name": "Reckless Rooster",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "finnish",
+        "rock",
+        "rock n roll",
+        "animal band"
+      ]
     },
     {
       "name": "Red Caroline",
       "spotifyId": "4W6LRwQJMF5pEAZIUE3RbV",
       "spotifyUrl": "https://open.spotify.com/artist/4W6LRwQJMF5pEAZIUE3RbV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop rock"
+      ]
     },
     {
       "name": "Rediviva",
       "spotifyId": "3S8mdygDfRkFh6l6oiT2uU",
       "spotifyUrl": "https://open.spotify.com/artist/3S8mdygDfRkFh6l6oiT2uU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Rehash",
       "spotifyId": "10WfoBIKKTSqCvkeG1XW9T",
       "spotifyUrl": "https://open.spotify.com/artist/10WfoBIKKTSqCvkeG1XW9T",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "punk",
+        "grunge",
+        "indie"
+      ]
     },
     {
       "name": "REPOSADO",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Rhodes Hull's Magic Band",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "heartland rock",
+        "pop rock",
+        "rock"
+      ]
     },
     {
       "name": "Rider & Rolling Thunder",
       "spotifyId": "5ozZrxoqvxIYWsQP9zK9KY",
       "spotifyUrl": "https://open.spotify.com/artist/5ozZrxoqvxIYWsQP9zK9KY",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "southern rock",
+        "country rock",
+        "alt-country",
+        "blues rock"
+      ]
     },
     {
       "name": "Riley!",
       "spotifyId": "6mxWaHNcOgrJeD8NCRenps",
       "spotifyUrl": "https://open.spotify.com/artist/6mxWaHNcOgrJeD8NCRenps",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo"
+      ]
     },
     {
       "name": "Rodeo Screams",
       "spotifyId": "0VRJtMrOVeD5pQvmFnuLQ0",
       "spotifyUrl": "https://open.spotify.com/artist/0VRJtMrOVeD5pQvmFnuLQ0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Roller Dome",
       "spotifyId": "4pgwRwiOsXt0815UH3BBC0",
       "spotifyUrl": "https://open.spotify.com/artist/4pgwRwiOsXt0815UH3BBC0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Rootbeer Richie & The Reveille",
       "spotifyId": "0L8UtqBJvyrDFhPuJQ8Oq8",
       "spotifyUrl": "https://open.spotify.com/artist/0L8UtqBJvyrDFhPuJQ8Oq8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "soul",
+        "rock",
+        "swamp pop"
+      ]
     },
     {
       "name": "ROSHANE",
       "spotifyId": "32IImRZuPleOxDA3HZJDng",
       "spotifyUrl": "https://open.spotify.com/artist/32IImRZuPleOxDA3HZJDng",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Rougarou Rounders",
       "spotifyId": "2kQ0aLq7IGrnlc48XdAH3K",
       "spotifyUrl": "https://open.spotify.com/artist/2kQ0aLq7IGrnlc48XdAH3K",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "black metal",
+        "folk metal"
+      ]
     },
     {
       "name": "Roxanne Roll",
       "spotifyId": "164icSMpaVsvS95UeAQFuh",
       "spotifyUrl": "https://open.spotify.com/artist/164icSMpaVsvS95UeAQFuh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "RUDY",
       "spotifyId": "1CR19zorrzYyfSpMHW3Q8V",
       "spotifyUrl": "https://open.spotify.com/artist/1CR19zorrzYyfSpMHW3Q8V",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "disco",
+        "new wave"
+      ]
     },
     {
       "name": "Rudy Love and The Encore",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "runo plum",
       "spotifyId": "0pouttXEXIHvguV90fhB39",
       "spotifyUrl": "https://open.spotify.com/artist/0pouttXEXIHvguV90fhB39",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie folk",
+        "indie pop"
+      ]
     },
     {
       "name": "Ryan Curtis",
       "spotifyId": "56jzLOY2fjJ9HX2OJZqoz7",
       "spotifyUrl": "https://open.spotify.com/artist/56jzLOY2fjJ9HX2OJZqoz7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country"
+      ]
     },
     {
       "name": "Saintseneca",
       "spotifyId": "5x3hUNIfDPxP1Kr0ZaGs64",
       "spotifyUrl": "https://open.spotify.com/artist/5x3hUNIfDPxP1Kr0ZaGs64",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk",
+        "indie"
+      ]
     },
     {
       "name": "Sam Burchfield",
       "spotifyId": "2S8ft2HNlQ2Ox9ltQZM1A5",
       "spotifyUrl": "https://open.spotify.com/artist/2S8ft2HNlQ2Ox9ltQZM1A5",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk"
+      ]
     },
     {
       "name": "Sam Henry",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Samantha Henson",
       "spotifyId": "2IArtik8fqduaGHITn0lu6",
       "spotifyUrl": "https://open.spotify.com/artist/2IArtik8fqduaGHITn0lu6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk"
+      ]
     },
     {
       "name": "Samia",
       "spotifyId": "1Uk1GyijF6fSfX4mWq5bfR",
       "spotifyUrl": "https://open.spotify.com/artist/1Uk1GyijF6fSfX4mWq5bfR",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "SAMWOY",
       "spotifyId": "4khtCx57NpDeXO1miYSmvO",
       "spotifyUrl": "https://open.spotify.com/artist/4khtCx57NpDeXO1miYSmvO",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative"
+      ]
     },
     {
       "name": "San Holo (Wholesome Riddim Set)",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "future bass",
+        "edm",
+        "electronic",
+        "trap"
+      ]
     },
     {
       "name": "Sautrah",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Scare Lewis",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Sean Atkins and Carrington",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Semisoft",
       "spotifyId": "4mygwcmYf3hUdWMek9DFQL",
       "spotifyUrl": "https://open.spotify.com/artist/4mygwcmYf3hUdWMek9DFQL",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Serafima and The Shakedowns",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Sergio León",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Sessa",
       "spotifyId": "6ijeN3MhwnbRfo86gH5McZ",
       "spotifyUrl": "https://open.spotify.com/artist/6ijeN3MhwnbRfo86gH5McZ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "mpb",
+        "pop"
+      ]
     },
     {
       "name": "SEXTILE",
       "spotifyId": "4ReoJ2faKfdjI0plizlL56",
       "spotifyUrl": "https://open.spotify.com/artist/4ReoJ2faKfdjI0plizlL56",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "post-punk",
+        "coldwave"
+      ]
     },
     {
       "name": "Shadow Work",
       "spotifyId": "7CTtlHnsQi0YdGsm5d5VUP",
       "spotifyUrl": "https://open.spotify.com/artist/7CTtlHnsQi0YdGsm5d5VUP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Shady Nasty",
       "spotifyId": "5fEdUhbIAf9JlPhlc3swPx",
       "spotifyUrl": "https://open.spotify.com/artist/5fEdUhbIAf9JlPhlc3swPx",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rap",
+        "hip hop"
+      ]
     },
     {
       "name": "Sheep Bridge Jumpers",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "hard rock",
+        "alternative metal",
+        "post-grunge",
+        "alternative rock",
+        "progressive metal",
+        "rock"
+      ]
     },
     {
       "name": "SID3S",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Silverada",
       "spotifyId": "5fTJlk4f1YRh4ObYssJo44",
       "spotifyUrl": "https://open.spotify.com/artist/5fTJlk4f1YRh4ObYssJo44",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country"
+      ]
     },
     {
       "name": "Siso",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "k-indie",
+        "korean"
+      ]
     },
     {
       "name": "SKORTS",
       "spotifyId": "686RkEsfRaioWFc918kagY",
       "spotifyUrl": "https://open.spotify.com/artist/686RkEsfRaioWFc918kagY",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Slow Caves",
       "spotifyId": "4P50NzjBhqd2dr6CQ8asjl",
       "spotifyUrl": "https://open.spotify.com/artist/4P50NzjBhqd2dr6CQ8asjl",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "fort collins"
+      ]
     },
     {
       "name": "Slow Exit",
       "spotifyId": "29Yl63PWne5Kdurkkk6gPp",
       "spotifyUrl": "https://open.spotify.com/artist/29Yl63PWne5Kdurkkk6gPp",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "harsh noise"
+      ]
     },
     {
       "name": "Slow Teeth",
       "spotifyId": "6ggt8w7TO3Z7r0Dpuozv7o",
       "spotifyUrl": "https://open.spotify.com/artist/6ggt8w7TO3Z7r0Dpuozv7o",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk punk"
+      ]
     },
     {
       "name": "Smoker Dad",
       "spotifyId": "77vLyFXYwhqfUME8bhBcjp",
       "spotifyUrl": "https://open.spotify.com/artist/77vLyFXYwhqfUME8bhBcjp",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "southern rock",
+        "garage rock"
+      ]
     },
     {
       "name": "Smokey Brights",
       "spotifyId": "52El5lMDpmHgFxGuFHwD5T",
       "spotifyUrl": "https://open.spotify.com/artist/52El5lMDpmHgFxGuFHwD5T",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "seattle",
+        "preverb"
+      ]
     },
     {
       "name": "So Sus",
       "spotifyId": "11sKJR32kjCgOpP5jyl38A",
       "spotifyUrl": "https://open.spotify.com/artist/11sKJR32kjCgOpP5jyl38A",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "house",
+        "dance",
+        "edm"
+      ]
     },
     {
       "name": "Social Cinema",
       "spotifyId": "3JpSDDwQPy4uViTMdUe4du",
       "spotifyUrl": "https://open.spotify.com/artist/3JpSDDwQPy4uViTMdUe4du",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "power pop",
+        "indie pop",
+        "indie rock",
+        "lo-fi"
+      ]
     },
     {
       "name": "Soft Blue Shimmer",
       "spotifyId": "5ZclZsMoBdRY9MJw6l47Fx",
       "spotifyUrl": "https://open.spotify.com/artist/5ZclZsMoBdRY9MJw6l47Fx",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "dream pop",
+        "shoegaze"
+      ]
     },
     {
       "name": "SOJOURN",
       "spotifyId": "3u66jhgpjynUlPbV0LGyqi",
       "spotifyUrl": "https://open.spotify.com/artist/3u66jhgpjynUlPbV0LGyqi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hip-hop"
+      ]
     },
     {
       "name": "Something Spicy",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Son Little",
       "spotifyId": "4lujUKeO6nQAJXpq37Epn7",
       "spotifyUrl": "https://open.spotify.com/artist/4lujUKeO6nQAJXpq37Epn7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "soul",
+        "blues",
+        "indie"
+      ]
     },
     {
       "name": "SOOT",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "punk",
+        "post-punk",
+        "noise rock",
+        "experimental rock",
+        "brisbane"
+      ]
     },
     {
       "name": "Sove The Second",
       "spotifyId": "2nGTZztcQIqy9jVNXXGCM5",
       "spotifyUrl": "https://open.spotify.com/artist/2nGTZztcQIqy9jVNXXGCM5",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Spoon Benders",
       "spotifyId": "0xMp6RS1udvg0N3LQFsrN9",
       "spotifyUrl": "https://open.spotify.com/artist/0xMp6RS1udvg0N3LQFsrN9",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock"
+      ]
     },
     {
       "name": "Sportscourt",
       "spotifyId": "1xNrCT7WHFpPFxVwLgrh8M",
       "spotifyUrl": "https://open.spotify.com/artist/1xNrCT7WHFpPFxVwLgrh8M",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "punk",
+        "punk rock",
+        "pop punk"
+      ]
     },
     {
       "name": "SpudMother",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "SPY",
       "spotifyId": "7vCI1d19vrokQuRkiAhwMC",
       "spotifyUrl": "https://open.spotify.com/artist/7vCI1d19vrokQuRkiAhwMC",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore",
+        "punk",
+        "hardcore punk"
+      ]
     },
     {
       "name": "St. Paul & The Broken Bones",
       "spotifyId": "4fXkvh05wFhuH77MfD4m9o",
       "spotifyUrl": "https://open.spotify.com/artist/4fXkvh05wFhuH77MfD4m9o",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "soul"
+      ]
     },
     {
       "name": "St. Terrible",
       "spotifyId": "6qVfnIe4SyrQZi6aonS4Pk",
       "spotifyUrl": "https://open.spotify.com/artist/6qVfnIe4SyrQZi6aonS4Pk",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie"
+      ]
     },
     {
       "name": "Star Chamber",
       "spotifyId": "0s8Dej4FnK07I2ahm8JOeK",
       "spotifyUrl": "https://open.spotify.com/artist/0s8Dej4FnK07I2ahm8JOeK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop rock",
+        "power pop",
+        "rock"
+      ]
     },
     {
       "name": "Starya",
       "spotifyId": "0vbBnL6lV4Gn3PA11vmKjX",
       "spotifyUrl": "https://open.spotify.com/artist/0vbBnL6lV4Gn3PA11vmKjX",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "usa"
+      ]
     },
     {
       "name": "Stay tuned for \" + tag + \" performers!",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Steinza",
       "spotifyId": "6Q868mSv5AUeLn44rc77sD",
       "spotifyUrl": "https://open.spotify.com/artist/6Q868mSv5AUeLn44rc77sD",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk"
+      ]
     },
     {
       "name": "Still Depths",
       "spotifyId": "2jsbHDaUXANpce57NTavyG",
       "spotifyUrl": "https://open.spotify.com/artist/2jsbHDaUXANpce57NTavyG",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock"
+      ]
     },
     {
       "name": "STOMACH BOOK",
       "spotifyId": "079cEjjSpv5dOLH5xsGdvN",
       "spotifyUrl": "https://open.spotify.com/artist/079cEjjSpv5dOLH5xsGdvN",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "noise pop"
+      ]
     },
     {
       "name": "SUMDIM",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Surf Green Machine",
       "spotifyId": "63pX7iUWG1ewDIpzGDshlG",
       "spotifyUrl": "https://open.spotify.com/artist/63pX7iUWG1ewDIpzGDshlG",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Surf Hat",
       "spotifyId": "4fFi5poEqNSf7iv0jOwEFy",
       "spotifyUrl": "https://open.spotify.com/artist/4fFi5poEqNSf7iv0jOwEFy",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "surf rock",
+        "psychedelic rock"
+      ]
     },
     {
       "name": "Suturist",
       "spotifyId": "4J0XVC87qGU9A2FBXlnFL3",
       "spotifyUrl": "https://open.spotify.com/artist/4J0XVC87qGU9A2FBXlnFL3",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Swanya",
       "spotifyId": "2vRLpOCo5juwD45gr6qWX7",
       "spotifyUrl": "https://open.spotify.com/artist/2vRLpOCo5juwD45gr6qWX7",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Sword II",
       "spotifyId": "0JYwNChldP4Ad3OC6U83zi",
       "spotifyUrl": "https://open.spotify.com/artist/0JYwNChldP4Ad3OC6U83zi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "neo-psychedelia",
+        "shoegaze",
+        "indie rock",
+        "usa"
+      ]
     },
     {
       "name": "Talon Smartt",
       "spotifyId": "2SmzcugRkhE2WTpkSk4nmI",
       "spotifyUrl": "https://open.spotify.com/artist/2SmzcugRkhE2WTpkSk4nmI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Tater Patch",
       "spotifyId": "6MnnkogafJVALRanEEArpW",
       "spotifyUrl": "https://open.spotify.com/artist/6MnnkogafJVALRanEEArpW",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "bluegrass"
+      ]
     },
     {
       "name": "Tears of Bliss",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "new wave",
+        "art pop",
+        "pop rock",
+        "synth-pop",
+        "psychedelic pop",
+        "sophisti-pop"
+      ]
     },
     {
       "name": "Teddy And The Rough Riders",
       "spotifyId": "73PqmYewGOesbBVOciGNV8",
       "spotifyUrl": "https://open.spotify.com/artist/73PqmYewGOesbBVOciGNV8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country"
+      ]
     },
     {
       "name": "ten.17",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "TENNVNT",
       "spotifyId": "6nkDqFXxsdi7e1oTH5YBfl",
       "spotifyUrl": "https://open.spotify.com/artist/6nkDqFXxsdi7e1oTH5YBfl",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Téo",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "The Apprentices",
       "spotifyId": "2lN3CjUu16ym2ELGP6FhIF",
       "spotifyUrl": "https://open.spotify.com/artist/2lN3CjUu16ym2ELGP6FhIF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hard rock",
+        "psychedelic rock",
+        "garage rock",
+        "heavy psych",
+        "progressive rock",
+        "rock"
+      ]
     },
     {
       "name": "The Army, The Navy",
       "spotifyId": "4MAnvDgzeM6bAVUVUbUeFI",
       "spotifyUrl": "https://open.spotify.com/artist/4MAnvDgzeM6bAVUVUbUeFI",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "bedroom pop"
+      ]
     },
     {
       "name": "The Band Solstice",
       "spotifyId": "5bhdFGDNIbD39FiBK3cm6o",
       "spotifyUrl": "https://open.spotify.com/artist/5bhdFGDNIbD39FiBK3cm6o",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "doom metal",
+        "epic doom metal",
+        "heavy metal",
+        "metal"
+      ]
     },
     {
       "name": "The Beaches",
       "spotifyId": "6ws5XBA70XgeBpnLZhQBoy",
       "spotifyUrl": "https://open.spotify.com/artist/6ws5XBA70XgeBpnLZhQBoy",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "rock",
+        "indie"
+      ]
     },
     {
       "name": "The Bed Heads",
       "spotifyId": "3mQWr8T6bUF5HYWvUIZ4kg",
       "spotifyUrl": "https://open.spotify.com/artist/3mQWr8T6bUF5HYWvUIZ4kg",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "folk"
+      ]
     },
     {
       "name": "The Bees and Locusts",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "electronic",
+        "grindcore",
+        "math rock",
+        "sasscore",
+        "experimental",
+        "noise",
+        "noisecore"
+      ]
     },
     {
       "name": "The Belair Lip Bombs",
       "spotifyId": "6viWvP8YChO4DcOi1BpNvT",
       "spotifyUrl": "https://open.spotify.com/artist/6viWvP8YChO4DcOi1BpNvT",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "indie rock"
+      ]
     },
     {
       "name": "The Ben Graham Group",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "doo-wop",
+        "pop",
+        "r&b",
+        "soul",
+        "pop soul"
+      ]
     },
     {
       "name": "The BOMB Pulse",
       "spotifyId": "2TqnGHrrn59QUqQApkKWmF",
       "spotifyUrl": "https://open.spotify.com/artist/2TqnGHrrn59QUqQApkKWmF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Dangerous Summer (Acoustic)",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "emo pop",
+        "pop punk"
+      ]
     },
     {
       "name": "The Dead & Down",
       "spotifyId": "67p6rZ4zLPXOHwVPM1Ir3w",
       "spotifyUrl": "https://open.spotify.com/artist/67p6rZ4zLPXOHwVPM1Ir3w",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "psychedelic rock",
+        "folk rock",
+        "jam band",
+        "roots rock",
+        "blues rock",
+        "classic rock",
+        "country rock",
+        "pop rock"
+      ]
     },
     {
       "name": "The Dirty Turkeys",
       "spotifyId": "3pncVgpTyZNAmXe3Gl9pu6",
       "spotifyUrl": "https://open.spotify.com/artist/3pncVgpTyZNAmXe3Gl9pu6",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "psychedelic rock",
+        "garage rock",
+        "psychedelic",
+        "blues",
+        "garage"
+      ]
     },
     {
       "name": "The Early November",
       "spotifyId": "2rxtSTPBJawYhQAXIpgEAi",
       "spotifyUrl": "https://open.spotify.com/artist/2rxtSTPBJawYhQAXIpgEAi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "emo",
+        "rock",
+        "indie rock"
+      ]
     },
     {
       "name": "The Jaws of Brooklyn",
       "spotifyId": "0G8ZAUGVk9uCR2xycfkepP",
       "spotifyUrl": "https://open.spotify.com/artist/0G8ZAUGVk9uCR2xycfkepP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Last Wild Buffalo",
       "spotifyId": "1TT3HS23SP6RjggzMRH6Tc",
       "spotifyUrl": "https://open.spotify.com/artist/1TT3HS23SP6RjggzMRH6Tc",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Lowtimers",
       "spotifyId": "2f41SnzTlJJ5rCBIez98ix",
       "spotifyUrl": "https://open.spotify.com/artist/2f41SnzTlJJ5rCBIez98ix",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Macks",
       "spotifyId": "0KgAXT7iccIXQWgjb9RWHU",
       "spotifyUrl": "https://open.spotify.com/artist/0KgAXT7iccIXQWgjb9RWHU",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "funk",
+        "jazz"
+      ]
     },
     {
       "name": "The Mall Goth Moths",
       "spotifyId": "4ayglnddf19vRIoyoktAwN",
       "spotifyUrl": "https://open.spotify.com/artist/4ayglnddf19vRIoyoktAwN",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Mighty DeltaOne",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "ska",
+        "ska punk"
+      ]
     },
     {
       "name": "The Nude Party",
       "spotifyId": "5BxtbtwwHXC3HA5kAn06sK",
       "spotifyUrl": "https://open.spotify.com/artist/5BxtbtwwHXC3HA5kAn06sK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock",
+        "folk rock"
+      ]
     },
     {
       "name": "The Old One Two",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "The Other Room There",
       "spotifyId": "0JdcqyjE0czztyJA1aoHL8",
       "spotifyUrl": "https://open.spotify.com/artist/0JdcqyjE0czztyJA1aoHL8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Psycodelics",
       "spotifyId": "5laLttRqR3x1WXHZ9eZOko",
       "spotifyUrl": "https://open.spotify.com/artist/5laLttRqR3x1WXHZ9eZOko",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "funk"
+      ]
     },
     {
       "name": "The Rat Utopia Experiment",
       "spotifyId": "3JyFf0L4m9YDuka462BWKa",
       "spotifyUrl": "https://open.spotify.com/artist/3JyFf0L4m9YDuka462BWKa",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Ravenna Colt",
       "spotifyId": "1CoNbwYpIYNjX4BbS5PQ15",
       "spotifyUrl": "https://open.spotify.com/artist/1CoNbwYpIYNjX4BbS5PQ15",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alt-country",
+        "rock",
+        "americana"
+      ]
     },
     {
       "name": "The Retrograde",
       "spotifyId": "6R2UeI1q0BcAu70RDbrJ6c",
       "spotifyUrl": "https://open.spotify.com/artist/6R2UeI1q0BcAu70RDbrJ6c",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock"
+      ]
     },
     {
       "name": "The Secret Beach",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "The Shmuks",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "rock",
+        "pop",
+        "pop rock",
+        "psychedelic pop",
+        "merseybeat",
+        "psychedelic rock",
+        "classic rock",
+        "rock and roll",
+        "britpop",
+        "mainstream rock"
+      ]
     },
     {
       "name": "The Skurfs",
       "spotifyId": "4CGQmZoM4RAQbOUcJAS1fw",
       "spotifyUrl": "https://open.spotify.com/artist/4CGQmZoM4RAQbOUcJAS1fw",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Snares",
       "spotifyId": "2SI0fmTOowU65cl5kXeO5s",
       "spotifyUrl": "https://open.spotify.com/artist/2SI0fmTOowU65cl5kXeO5s",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock",
+        "psychedelic rock",
+        "indie surf",
+        "terry seen live"
+      ]
     },
     {
       "name": "The Sophs",
       "spotifyId": "2zX0ROHqU3TEfFtKBtqOAE",
       "spotifyUrl": "https://open.spotify.com/artist/2zX0ROHqU3TEfFtKBtqOAE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock"
+      ]
     },
     {
       "name": "The Stone Popes",
       "spotifyId": "17L8EaqKWoZtIIaEtgBTyP",
       "spotifyUrl": "https://open.spotify.com/artist/17L8EaqKWoZtIIaEtgBTyP",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop punk",
+        "indie rock",
+        "power pop",
+        "punk rock"
+      ]
     },
     {
       "name": "The Takes",
       "spotifyId": "22CxvQCHRWjDdy0nco4nch",
       "spotifyUrl": "https://open.spotify.com/artist/22CxvQCHRWjDdy0nco4nch",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "folk",
+        "indie",
+        "folk rock",
+        "granola jam rock"
+      ]
     },
     {
       "name": "The Thing",
       "spotifyId": "7dQ8sxeaPMgVhWn2R1jd9L",
       "spotifyUrl": "https://open.spotify.com/artist/7dQ8sxeaPMgVhWn2R1jd9L",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "free jazz",
+        "jazz"
+      ]
     },
     {
       "name": "The Traveler",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "progressive",
+        "space"
+      ]
     },
     {
       "name": "The Two Lips",
       "spotifyId": "0jtiZkDcuWRf647co8id50",
       "spotifyUrl": "https://open.spotify.com/artist/0jtiZkDcuWRf647co8id50",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "texas",
+        "united states",
+        "diy",
+        "san marcos"
+      ]
     },
     {
       "name": "The Velveteers",
       "spotifyId": "79wCmFlJs2qglR5n4UHMoq",
       "spotifyUrl": "https://open.spotify.com/artist/79wCmFlJs2qglR5n4UHMoq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "The Whags",
       "spotifyId": "0sSvO4hBwHX96HiNK2W9u4",
       "spotifyUrl": "https://open.spotify.com/artist/0sSvO4hBwHX96HiNK2W9u4",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "The Whips",
       "spotifyId": "7nIrScHJlz2YcViu0prBVw",
       "spotifyUrl": "https://open.spotify.com/artist/7nIrScHJlz2YcViu0prBVw",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "burgerrecords"
+      ]
     },
     {
       "name": "The Womack Sisters",
       "spotifyId": "6BjLHAiun9TeqC55KB3L6s",
       "spotifyUrl": "https://open.spotify.com/artist/6BjLHAiun9TeqC55KB3L6s",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "gospel",
+        "soul",
+        "rnb",
+        "los angeles",
+        "girl groups"
+      ]
     },
     {
       "name": "The Wonder Years",
       "spotifyId": "0nq64XZMWV1s7XHXIkdH7K",
       "spotifyUrl": "https://open.spotify.com/artist/0nq64XZMWV1s7XHXIkdH7K",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop punk",
+        "melodic hardcore"
+      ]
     },
     {
       "name": "Thorn",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "death metal"
+      ]
     },
     {
       "name": "THROES",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "hardcore",
+        "punk"
+      ]
     },
     {
       "name": "Tilted Earth",
       "spotifyId": "144dWswp7aDwTTS1tMMeXk",
       "spotifyUrl": "https://open.spotify.com/artist/144dWswp7aDwTTS1tMMeXk",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hard rock"
+      ]
     },
     {
       "name": "Timeworm",
       "spotifyId": "2UsdaVRlaPj5D6rFxaTQBy",
       "spotifyUrl": "https://open.spotify.com/artist/2UsdaVRlaPj5D6rFxaTQBy",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Tispur",
       "spotifyId": "7yURHibrsNmgV7moqxVTKM",
       "spotifyUrl": "https://open.spotify.com/artist/7yURHibrsNmgV7moqxVTKM",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "singer songwriter",
+        "folk",
+        "dream folk"
+      ]
     },
     {
       "name": "TNYG",
       "spotifyId": "4TgKkQ4WikKgPcQS2qpi58",
       "spotifyUrl": "https://open.spotify.com/artist/4TgKkQ4WikKgPcQS2qpi58",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Tobacco Road",
       "spotifyId": "1TXzO2kMPkmcOCId24wkCh",
       "spotifyUrl": "https://open.spotify.com/artist/1TXzO2kMPkmcOCId24wkCh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Tokyo Tea Room",
       "spotifyId": "3lzTKwFsOqxtp5cLJ2qbSD",
       "spotifyUrl": "https://open.spotify.com/artist/3lzTKwFsOqxtp5cLJ2qbSD",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "dream pop"
+      ]
     },
     {
       "name": "Tom Hamilton Band",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Toody Cole & Her Band",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Town Of Trees",
       "spotifyId": "2sXRtx5XDFzlPQRLN7jeww",
       "spotifyUrl": "https://open.spotify.com/artist/2sXRtx5XDFzlPQRLN7jeww",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Trauma Kit",
       "spotifyId": "2SVDeAj43ybj9mAHdGTFst",
       "spotifyUrl": "https://open.spotify.com/artist/2SVDeAj43ybj9mAHdGTFst",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore"
+      ]
     },
     {
       "name": "Trestles",
       "spotifyId": "7hmPErlX3ndzdXcrg8WblE",
       "spotifyUrl": "https://open.spotify.com/artist/7hmPErlX3ndzdXcrg8WblE",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "surf",
+        "indie rock",
+        "santa cruz"
+      ]
     },
     {
       "name": "Trevor Sigler",
       "spotifyId": "3BPsmbWFQCqhxBXYCNYXNz",
       "spotifyUrl": "https://open.spotify.com/artist/3BPsmbWFQCqhxBXYCNYXNz",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "soul"
+      ]
     },
     {
       "name": "Trippy Hearts",
       "spotifyId": "5nB93a8iCEE7TWG6sCMv2s",
       "spotifyUrl": "https://open.spotify.com/artist/5nB93a8iCEE7TWG6sCMv2s",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "emo",
+        "indie rock",
+        "post-rock"
+      ]
     },
     {
       "name": "Troubled Youth",
       "spotifyId": "4Z0jZSx7gpLGVWjAUcqro3",
       "spotifyUrl": "https://open.spotify.com/artist/4Z0jZSx7gpLGVWjAUcqro3",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "finnish",
+        "rock",
+        "underground",
+        "punk rock",
+        "rock n roll made by bad asses"
+      ]
     },
     {
       "name": "Tune-Yards",
       "spotifyId": "0asVlqTLu3TimnYVyY5Jxi",
       "spotifyUrl": "https://open.spotify.com/artist/0asVlqTLu3TimnYVyY5Jxi",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "experimental",
+        "freak folk",
+        "indie"
+      ]
     },
     {
       "name": "Turtle Poppers",
       "spotifyId": "2Yo91L3popt5WOqp8QiDPj",
       "spotifyUrl": "https://open.spotify.com/artist/2Yo91L3popt5WOqp8QiDPj",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Tyler Ballgame",
       "spotifyId": "1pQ0Axx7UF8LDDOqSgdVmK",
       "spotifyUrl": "https://open.spotify.com/artist/1pQ0Axx7UF8LDDOqSgdVmK",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "singer-songwriter"
+      ]
     },
     {
       "name": "Tyler John Kraehling",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Tylor & the Train Robbers",
       "spotifyId": "56uv6W81FBAmalvwAIX67F",
       "spotifyUrl": "https://open.spotify.com/artist/56uv6W81FBAmalvwAIX67F",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "country"
+      ]
     },
     {
       "name": "Ultra Small Ocean",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "psychedelic rock",
+        "mod",
+        "psychedelic pop",
+        "british rhythm & blues",
+        "pop rock",
+        "rock",
+        "blues rock"
+      ]
     },
     {
       "name": "Unko Mike",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "classical"
+      ]
     },
     {
       "name": "Up is the Down is the",
       "spotifyId": "0LHTg6x25hLtSfYrznh7k0",
       "spotifyUrl": "https://open.spotify.com/artist/0LHTg6x25hLtSfYrznh7k0",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop punk",
+        "alternative rock",
+        "indie rock",
+        "power pop",
+        "post-punk revival"
+      ]
     },
     {
       "name": "Variant",
       "spotifyId": "2HKnHumJtHEHbB1rYXqUJm",
       "spotifyUrl": "https://open.spotify.com/artist/2HKnHumJtHEHbB1rYXqUJm",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "ambient",
+        "dub techno"
+      ]
     },
     {
       "name": "Venus & the Flytraps",
       "spotifyId": "0p1Rswnjvt7KFNFTYXNmWF",
       "spotifyUrl": "https://open.spotify.com/artist/0p1Rswnjvt7KFNFTYXNmWF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock"
+      ]
     },
     {
       "name": "Venus Love",
       "spotifyId": "51H1771xkxiRNRprXDOkGu",
       "spotifyUrl": "https://open.spotify.com/artist/51H1771xkxiRNRprXDOkGu",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage rock",
+        "psychedelic pop",
+        "psychedelic rock",
+        "folk rock",
+        "proto-punk",
+        "psychedelic folk",
+        "rock"
+      ]
     },
     {
       "name": "VERTTIGO",
       "spotifyId": "7eLn91iQ7lCk8ZJqxYfYzk",
       "spotifyUrl": "https://open.spotify.com/artist/7eLn91iQ7lCk8ZJqxYfYzk",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "dream pop",
+        "shoegaze",
+        "drone pop",
+        "ethereal",
+        "romantic goth"
+      ]
     },
     {
       "name": "Vexed Vixen",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "glam metal",
+        "hard rock",
+        "aor",
+        "glam rock",
+        "heavy metal"
+      ]
     },
     {
       "name": "VIAL",
       "spotifyId": "7soK35m8BosPkMQ67t7bqf",
       "spotifyUrl": "https://open.spotify.com/artist/7soK35m8BosPkMQ67t7bqf",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "punk",
+        "punk rock"
+      ]
     },
     {
       "name": "Victor Jones",
       "spotifyId": "3qWUrXaaCWw9NohGOAKCbD",
       "spotifyUrl": "https://open.spotify.com/artist/3qWUrXaaCWw9NohGOAKCbD",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rock",
+        "alternative",
+        "experimental",
+        "alternative rock",
+        "post punk"
+      ]
     },
     {
       "name": "Vika & the Velvets",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Wallice",
       "spotifyId": "6d6ts87Fxm1EdULf4CaLw4",
       "spotifyUrl": "https://open.spotify.com/artist/6d6ts87Fxm1EdULf4CaLw4",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie pop",
+        "my top songs"
+      ]
     },
     {
       "name": "Walsy & the Riverdogs",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Walter Mitty and His Makeshift Orchestra",
       "spotifyId": "1iuJNmtyZVJxHVrnosRipw",
       "spotifyUrl": "https://open.spotify.com/artist/1iuJNmtyZVJxHVrnosRipw",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "folk punk",
+        "acoustic"
+      ]
     },
     {
       "name": "War On Women",
       "spotifyId": "2cRFZn5EhqH0Wu1gHlOHlz",
       "spotifyUrl": "https://open.spotify.com/artist/2cRFZn5EhqH0Wu1gHlOHlz",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "hardcore punk",
+        "punk",
+        "hardcore"
+      ]
     },
     {
       "name": "Wend",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Wes Parker",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "indie rock",
+        "usa",
+        "us",
+        "american",
+        "virginia"
+      ]
     },
     {
       "name": "Wes Schlag & The Bad Quitters",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "West 22nd",
       "spotifyId": "2FKnkloMDcNrUeLDfQJf8i",
       "spotifyUrl": "https://open.spotify.com/artist/2FKnkloMDcNrUeLDfQJf8i",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "alternative rock",
+        "indie pop",
+        "indie rock",
+        "rock"
+      ]
     },
     {
       "name": "White Hot Velvet",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "White Pine Lightning",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "White Reaper",
       "spotifyId": "75klPfIVnyYcyEGaicRUSF",
       "spotifyUrl": "https://open.spotify.com/artist/75klPfIVnyYcyEGaicRUSF",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "garage punk",
+        "garage rock",
+        "punk rock",
+        "power pop"
+      ]
     },
     {
       "name": "Whitmer Thomas",
       "spotifyId": "6conzu32k403L1Zr3xWTr1",
       "spotifyUrl": "https://open.spotify.com/artist/6conzu32k403L1Zr3xWTr1",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "pop",
+        "alternative",
+        "indie pop",
+        "usa",
+        "folk pop"
+      ]
     },
     {
       "name": "Wilby",
       "spotifyId": "1Y6ECsGp8e5NR3v88UBIPT",
       "spotifyUrl": "https://open.spotify.com/artist/1Y6ECsGp8e5NR3v88UBIPT",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "rosie-wilby",
+        "indie pop"
+      ]
     },
     {
       "name": "Will Swinton",
       "spotifyId": "1fUcXY3KcnNvCP2dnF7XCh",
       "spotifyUrl": "https://open.spotify.com/artist/1fUcXY3KcnNvCP2dnF7XCh",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Willa Mae",
       "spotifyId": "2YHWH5dyiNRD04RsbhA8Fn",
       "spotifyUrl": "https://open.spotify.com/artist/2YHWH5dyiNRD04RsbhA8Fn",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Wine Lips",
       "spotifyId": "4fPl9Aa0FMkATDiA7AnBNM",
       "spotifyUrl": "https://open.spotify.com/artist/4fPl9Aa0FMkATDiA7AnBNM",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "punk rock",
+        "garage rock"
+      ]
     },
     {
       "name": "wins",
       "spotifyId": "0kKYDo4Vuo6FT32zVe4jrB",
       "spotifyUrl": "https://open.spotify.com/artist/0kKYDo4Vuo6FT32zVe4jrB",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "edm",
+        "house"
+      ]
     },
     {
       "name": "winterforever",
       "spotifyId": "1Vj8vCrpcFROS0Yz0yiF5v",
       "spotifyUrl": "https://open.spotify.com/artist/1Vj8vCrpcFROS0Yz0yiF5v",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "post-hardcore"
+      ]
     },
     {
       "name": "Witch Post",
       "spotifyId": "4TBDzXf9NfvFpqLOAodNYQ",
       "spotifyUrl": "https://open.spotify.com/artist/4TBDzXf9NfvFpqLOAodNYQ",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie rock",
+        "indie pop"
+      ]
     },
     {
       "name": "With Child",
       "spotifyId": "2DYC8WeaeQv4oRPhNSpFrq",
       "spotifyUrl": "https://open.spotify.com/artist/2DYC8WeaeQv4oRPhNSpFrq",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Withstand the Sands",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Witness Chamber",
       "spotifyId": "5lDfHoA14DTYZv1LpwBDu8",
       "spotifyUrl": "https://open.spotify.com/artist/5lDfHoA14DTYZv1LpwBDu8",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "metallic hardcore",
+        "hardcore"
+      ]
     },
     {
       "name": "WY-FY",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Yaw Appiah",
       "spotifyId": "2EpwVoTYiRy4LqGFvW7URr",
       "spotifyUrl": "https://open.spotify.com/artist/2EpwVoTYiRy4LqGFvW7URr",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "usa"
+      ]
     },
     {
       "name": "Yellow Days",
       "spotifyId": "3dv4Q4q3LWOnbLJnC6GgTY",
       "spotifyUrl": "https://open.spotify.com/artist/3dv4Q4q3LWOnbLJnC6GgTY",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "indie",
+        "psychedelic"
+      ]
     },
     {
       "name": "YOU'RES (braided waves)",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     },
     {
       "name": "Yuuf",
       "spotifyId": "3VfdXeAhqukWy1TTimSA7v",
       "spotifyUrl": "https://open.spotify.com/artist/3VfdXeAhqukWy1TTimSA7v",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "london",
+        "psychedelic rock",
+        "united kingdom"
+      ]
     },
     {
       "name": "Zack Q & The Frizz",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": [
+        "heartland rock",
+        "pop rock",
+        "rock"
+      ]
     },
     {
       "name": "Zap Pack",
       "spotifyId": "25VObTb4PslKfZchyjJoMz",
       "spotifyUrl": "https://open.spotify.com/artist/25VObTb4PslKfZchyjJoMz",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "ZMAN",
       "spotifyId": "3XMd7fCgFvAuHCsP7SR6BV",
       "spotifyUrl": "https://open.spotify.com/artist/3XMd7fCgFvAuHCsP7SR6BV",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "music to scope choice ass to"
+      ]
     },
     {
       "name": "Zookraught",
       "spotifyId": "5lL3ndBEhlTm6TtjldQ3s1",
       "spotifyUrl": "https://open.spotify.com/artist/5lL3ndBEhlTm6TtjldQ3s1",
-      "notOnSpotify": false
+      "notOnSpotify": false,
+      "genres": [
+        "dance-punk",
+        "slench"
+      ]
     },
     {
       "name": "ИФΞMI",
       "spotifyId": null,
       "spotifyUrl": null,
-      "notOnSpotify": true
+      "notOnSpotify": true,
+      "genres": []
     }
   ]
 }

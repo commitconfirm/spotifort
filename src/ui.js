@@ -390,7 +390,7 @@ function findSimilarArtistsByGenre(artistId) {
  */
 function renderSimilarArtists(container, similarArtists) {
   if (similarArtists.length === 0) {
-    container.innerHTML = '<p class="related-empty">This is broken and no worky.</p>';
+    container.innerHTML = '<p class="related-empty">No similar artists found in the lineup.</p>';
     return;
   }
 
