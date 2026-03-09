@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why Does Spotifort Need a Client ID? — Spotifort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" type="image/png" href="/spotifort_transparent.png" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <a href="/">
+          <img src="/spotifort_transparent.png" alt="Spotifort logo" class="site-logo" />
+        </a>
+        <h1>Why Does Spotifort Need a Client ID?</h1>
+      </header>
+
+      <main>
+        <section id="why-content">
+          <div class="back-link">
+            <a href="/">&larr; Back to Spotifort</a>
+          </div>
+
+          <div class="why-section">
+            <h2>A Note on Spotify's API Restrictions</h2>
+            <p>
+              Spotifort was originally a simpler concept: connect your Spotify account, see which artists
+              from your Liked Songs are playing Treefort, done. No setup required.
+            </p>
+            <p>
+              In February 2026, Spotify restructured their Developer API. Development Mode apps are now
+              limited to <strong>5 authorized users</strong>, require a <strong>Premium account</strong>,
+              and lost access to key endpoints including related artists, batch artist lookups, and genre data.
+            </p>
+            <p>
+              Extended Quota access — which would remove these restrictions — requires a registered business
+              entity and 250,000 monthly active users. That's an unreachable bar for a non-commercial,
+              open-source project built for a music festival in Boise.
+            </p>
+            <p>
+              <a href="https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security" target="_blank" rel="noopener noreferrer">
+                Read Spotify's blog post about these changes
+              </a>
+            </p>
+          </div>
+
+          <div class="why-section">
+            <h2>What This Means for You</h2>
+            <p>
+              Because of the 5-user limit, Spotifort can't share a single Client ID with everyone.
+              Instead, each user creates their own Spotify Developer app, making them user #1 on
+              their own app. No limits, no waitlist.
+            </p>
+            <p>
+              The process takes about 2 minutes. The setup guide walks through it step by step.
+            </p>
+            <p>
+              <a href="/setup.html" class="btn-primary">View the Setup Guide</a>
+            </p>
+          </div>
+
+          <div class="why-section">
+            <h2>What Spotifort Could Be</h2>
+            <p>
+              Without these API restrictions, Spotifort could offer:
+            </p>
+            <ul class="feature-list">
+              <li><strong>One-click connection</strong> — No developer app setup, just authorize and go</li>
+              <li><strong>Similar artist recommendations</strong> — "You like Band A, check out Band B who's also playing" (Related Artists endpoint)</li>
+              <li><strong>Richer genre data</strong> — Better genre matching from Spotify's own database</li>
+              <li><strong>A simpler experience</strong> — No Premium requirement, no desktop-only setup step</li>
+            </ul>
+            <p>
+              This project would be better, simpler, and more accessible if Spotify offered a tier
+              for non-commercial, open-source community projects.
+            </p>
+          </div>
+
+          <div class="why-section">
+            <h2>If You Agree, Say Something</h2>
+            <p>
+              Spotify has a developer community forum where you can share feedback on their API policies.
+              If you think there should be a path for open-source, non-commercial projects to access the
+              API without enterprise-level requirements, consider adding your voice.
+            </p>
+            <p>
+              Be constructive. Spotify has legitimate reasons for tightening API access — abuse, scraping,
+              and security concerns are real. But there's room for a middle ground that supports community projects.
+            </p>
+            <ul class="link-list">
+              <li>
+                <a href="https://community.spotify.com/t5/Spotify-for-Developers/ct-p/for-developers" target="_blank" rel="noopener noreferrer">
+                  Spotify Developer Community Forum
+                </a>
+              </li>
+              <li>
+                <a href="https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security" target="_blank" rel="noopener noreferrer">
+                  Spotify's February 2026 Blog Post
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="why-cta">
+            <a href="/" class="btn-primary">Return to Spotifort</a>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p class="disclaimer">Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.</p>
+        <p class="footer-links">
+          <a href="/">Spotifort Home</a>
+          <a href="/setup.html">Setup Guide</a>
+          <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
+        </p>
+        <p class="footer-attribution">
+          Made by <a href="https://commitconfirm.com">commitconfirm.com</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

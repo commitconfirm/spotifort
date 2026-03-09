@@ -796,3 +796,78 @@ footer {
 .hidden {
   display: none !important;
 }
+
+/* Why Page */
+#why-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.why-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: var(--border-width) solid var(--black);
+  box-shadow: var(--border-shadow);
+}
+
+.why-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--black);
+}
+
+.why-section p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.why-section p:last-child {
+  margin-bottom: 0;
+}
+
+.why-section a {
+  color: var(--black);
+  font-weight: 600;
+}
+
+.why-section a:hover {
+  opacity: 0.7;
+}
+
+.feature-list {
+  margin: 1rem 0 1.5rem 1.5rem;
+  line-height: 1.8;
+}
+
+.feature-list li {
+  margin-bottom: 0.5rem;
+}
+
+.link-list {
+  list-style: none;
+  margin: 1rem 0;
+}
+
+.link-list li {
+  margin-bottom: 0.75rem;
+}
+
+.link-list a {
+  color: var(--black);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-list a:hover {
+  background: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.125rem 0.25rem;
+  margin: -0.125rem -0.25rem;
+}
+
+.why-cta {
+  text-align: center;
+  margin: 2rem 0;
+}

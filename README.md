@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://spotifort.com">spotifort.com</a> · <a href="https://spotifort.com/setup">Setup Guide</a> · <a href="https://spotifort.com/lineup">Full Lineup</a>
+  <a href="https://spotifort.com">spotifort.com</a> · <a href="https://spotifort.com/setup">Setup Guide</a> · <a href="https://spotifort.com/lineup">Full Lineup</a> · <a href="https://spotifort.com/why">Why Client ID?</a>
 </p>
 
 ---
@@ -32,6 +32,8 @@ All processing happens **client-side in your browser**. Spotifort has no backend
 ### Why Do I Need a Client ID?
 
 Spotify's [February 2026 API changes](https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security) restrict Development Mode apps to 5 authorized users. Rather than limiting Spotifort to 5 people, each user creates their own Spotify Developer app — making you user #1 on your own app. This is the only way an independent, open-source project can work within Spotify's current restrictions.
+
+For the full story on what changed and what Spotifort could be without these restrictions, see [Why Does Spotifort Need a Client ID?](https://spotifort.com/why)
 
 **Requirements:**
 - Spotify Premium account (required by Spotify for Developer Mode)
