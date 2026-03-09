@@ -99,8 +99,11 @@ function generateRandomString(length = 64) {
  * @returns {Promise<ArrayBuffer>} - SHA-256 hash
  */
 async function sha256(plain) {
+  console.log('[spotifort] sha256 called');
+
   // Check if crypto.subtle is available (not available in some in-app browsers)
   if (!crypto || !crypto.subtle || !crypto.subtle.digest) {
+    console.log('[spotifort] crypto.subtle not available');
     throw new CryptoNotSupportedError();
   }
 
@@ -111,9 +114,13 @@ async function sha256(plain) {
       bytes[i] = plain.charCodeAt(i) & 0xff;
     }
 
+    console.log('[spotifort] calling crypto.subtle.digest...');
     // Safari may need explicit ArrayBuffer, so we pass bytes.buffer
-    return await crypto.subtle.digest('SHA-256', bytes.buffer);
+    const result = await crypto.subtle.digest('SHA-256', bytes.buffer);
+    console.log('[spotifort] crypto.subtle.digest completed');
+    return result;
   } catch (err) {
+    console.error('[spotifort] SHA-256 failed:', err);
     log.error('SHA-256 failed:', err.message);
     throw new CryptoNotSupportedError();
   }
@@ -186,7 +193,10 @@ async function generateCodeChallenge(verifier) {
  * Redirects the user to Spotify's authorization page
  */
 export async function initiateAuth() {
+  console.log('[spotifort] initiateAuth started');
+
   const clientId = getClientId();
+  console.log('[spotifort] clientId:', clientId ? 'present' : 'missing');
 
   if (!clientId) {
     log.error('No Spotify Client ID available');
@@ -197,13 +207,15 @@ export async function initiateAuth() {
 
   // Generate code verifier and store temporarily in sessionStorage
   // (needed to survive the redirect back from Spotify)
+  console.log('[spotifort] generating code verifier...');
   const codeVerifier = generateRandomString(64);
   sessionStorage.setItem(VERIFIER_KEY, codeVerifier);
-  log.info('Generated code verifier');
+  console.log('[spotifort] code verifier stored');
 
   // Generate code challenge
+  console.log('[spotifort] generating code challenge...');
   const codeChallenge = await generateCodeChallenge(codeVerifier);
-  log.info('Generated code challenge');
+  console.log('[spotifort] code challenge generated');
 
   // Build authorization URL
   const params = new URLSearchParams({
@@ -216,7 +228,7 @@ export async function initiateAuth() {
   });
 
   const authUrl = `${AUTH_URL}?${params.toString()}`;
-  log.info('Redirecting to Spotify auth');
+  console.log('[spotifort] redirecting to:', authUrl);
 
   // Redirect to Spotify
   window.location.href = authUrl;
