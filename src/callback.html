@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotifort — Find Your Treefort Artists</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" type="image/png" href="/spotifort_transparent.png" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <img src="/spotifort_transparent.png" alt="Spotifort logo" class="site-logo" />
+        <h1>Spotifort</h1>
+        <p class="tagline">Find which artists you love are playing Treefort 2026</p>
+      </header>
+
+      <main>
+        <section id="auth-section">
+          <p>Connect your Spotify account to see which artists from your Liked Songs are playing Treefort Music Fest 2026 (March 25-29, Boise, Idaho).</p>
+          <button id="connect-btn" type="button">Connect Spotify</button>
+          <p class="browser-note">For best results, open this site in Safari or Chrome, not an in-app browser.</p>
+        </section>
+
+        <section id="results-section" class="hidden">
+          <!-- Results will be rendered here -->
+        </section>
+      </main>
+
+      <footer>
+        <p class="disclaimer">Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.</p>
+        <p class="disclaimer">Use at your own risk — no guarantees of accuracy.</p>
+        <p class="footer-links">
+          <a href="/lineup.html">View full lineup data</a>
+          <a href="/why.html">Why do I need a Client ID?</a>
+          <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
+          <a href="https://claude.ai/code">Built with Claude Code</a>
+          <a href="#" id="change-client-id">Change Client ID</a>
+        </p>
+        <p class="footer-attribution">
+          Made by <a href="https://commitconfirm.com">commitconfirm.com</a> while mass caffeinated at <a href="https://www.alchemistcoffee.com/">Alchemist Coffee</a>
+        </p>
+      </footer>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
