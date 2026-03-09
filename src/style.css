@@ -813,6 +813,73 @@ footer {
   box-shadow: 2px 2px 0 var(--black);
 }
 
+/* Preview Section */
+#intro-section {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+#intro-section p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+#preview-section {
+  max-width: 500px;
+  margin: 0 auto 2rem;
+}
+
+#preview-section h2 {
+  font-size: 1.25rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.preview-box {
+  opacity: 0.75;
+}
+
+.preview-list-box {
+  border: 3px dashed #666 !important;
+  box-shadow: none !important;
+  background: #fafafa;
+}
+
+.preview-list-box h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #999;
+  color: #333;
+}
+
+.preview-list-box .artist-list {
+  font-size: 1rem;
+}
+
+.preview-list-box .artist-item {
+  border-bottom-color: #ddd;
+  border-bottom-style: dashed;
+}
+
+.preview-list-box .artist-toggle {
+  cursor: default;
+}
+
+.preview-list-box .artist-toggle:hover .artist-marker {
+  background: transparent;
+  color: var(--black);
+}
+
+.preview-label {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
 .hidden {
   display: none !important;
 }
