@@ -5,6 +5,7 @@ import { setClientId, clearClientId } from './auth.js';
 
 // Module-level state for expansion feature
 let lineupArtists = [];
+let hasShownSimilarArtistsInfo = false;
 
 // Callback for when Client ID is set
 let onClientIdSet = null;
@@ -405,7 +406,15 @@ function renderSimilarArtists(container, similarArtists) {
     })
     .join('');
 
+  // Show info explanation once per session
+  let infoHtml = '';
+  if (!hasShownSimilarArtistsInfo) {
+    hasShownSimilarArtistsInfo = true;
+    infoHtml = `<p class="related-info">Similar artists are based on shared music genres from public databases (Last.fm and MusicBrainz), not Spotify's recommendation engine. Results may vary for smaller or local artists.</p>`;
+  }
+
   container.innerHTML = `
+    ${infoHtml}
     <p class="related-header">Other artists at Treefort you might like:</p>
     <ul class="related-list">${items}</ul>`;
 }
