@@ -59,6 +59,14 @@ header h1 {
   margin-top: 0;
 }
 
+.header-intro {
+  font-size: 0.95rem;
+  color: #444;
+  max-width: 500px;
+  margin: 1rem auto 0;
+  line-height: 1.5;
+}
+
 main {
   flex: 1;
 }
@@ -813,21 +821,54 @@ footer {
   box-shadow: 2px 2px 0 var(--black);
 }
 
-/* Preview Section */
-#intro-section {
-  max-width: 600px;
-  margin: 0 auto 2rem;
-  text-align: center;
+/* Landing Grid - Preview + Auth side by side on wide screens */
+.landing-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-#intro-section p {
-  font-size: 1.1rem;
-  line-height: 1.6;
+/* Mobile: auth/setup first, preview second */
+.landing-grid #auth-section,
+.landing-grid #setup-section {
+  order: 1;
+}
+
+.landing-grid #preview-section {
+  order: 2;
+}
+
+/* Desktop: two columns, preview left, auth/setup right */
+@media (min-width: 900px) {
+  .landing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: stretch;
+  }
+
+  .landing-grid #preview-section {
+    order: 1;
+    max-width: none;
+    margin: 0;
+  }
+
+  .landing-grid #auth-section,
+  .landing-grid #setup-section {
+    order: 2;
+    margin: 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 #preview-section {
   max-width: 500px;
-  margin: 0 auto 2rem;
+  margin: 0 auto;
 }
 
 #preview-section h2 {

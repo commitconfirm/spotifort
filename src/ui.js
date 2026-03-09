@@ -28,6 +28,7 @@ export function showSetup() {
   const authSection = document.getElementById('auth-section');
   const resultsSection = document.getElementById('results-section');
   const loadingSection = document.getElementById('loading-section');
+  const landingGrid = document.querySelector('.landing-grid');
 
   if (authSection) authSection.classList.add('hidden');
   if (resultsSection) resultsSection.classList.add('hidden');
@@ -38,7 +39,12 @@ export function showSetup() {
   if (!setupSection) {
     setupSection = document.createElement('section');
     setupSection.id = 'setup-section';
-    main.insertBefore(setupSection, main.firstChild);
+    // Insert inside landing-grid if it exists, otherwise at start of main
+    if (landingGrid) {
+      landingGrid.appendChild(setupSection);
+    } else {
+      main.insertBefore(setupSection, main.firstChild);
+    }
   }
   setupSection.classList.remove('hidden');
 
