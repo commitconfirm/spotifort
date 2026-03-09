@@ -23,14 +23,24 @@ async function init() {
   console.log('[spotifort] search:', window.location.search);
 
   // Check if we're returning from Spotify auth callback
-  if (window.location.pathname === '/callback') {
+  // Handle both /callback and /callback/ (with or without trailing slash)
+  const pathname = window.location.pathname.replace(/\/$/, ''); // Remove trailing slash
+  console.log('[spotifort] normalized pathname:', pathname);
+
+  if (pathname === '/callback') {
     console.log('[spotifort] handling callback...');
+    console.log('[spotifort] sessionStorage keys:', Object.keys(sessionStorage));
+    console.log('[spotifort] verifier present:', !!sessionStorage.getItem('spotifort_pkce_verifier'));
+    console.log('[spotifort] clientId present:', !!sessionStorage.getItem('spotifort_client_id'));
     try {
       const token = await handleCallback();
       console.log('[spotifort] token received:', token ? 'yes' : 'no');
       if (token) {
         console.log('[spotifort] running matching...');
         await runMatching(token);
+      } else {
+        console.log('[spotifort] no token - showing error');
+        showError('Authentication failed. Please try again.');
       }
     } catch (err) {
       console.error('[spotifort] callback error:', err);

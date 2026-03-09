@@ -244,44 +244,51 @@ export async function initiateAuth() {
  * @returns {Promise<string|null>} - Access token or null if not on callback page
  */
 export async function handleCallback() {
+  console.log('[spotifort] handleCallback started');
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
   const error = urlParams.get('error');
+  console.log('[spotifort] code:', code ? 'present' : 'missing');
+  console.log('[spotifort] error:', error || 'none');
 
   // Not on callback page
   if (!code && !error) {
+    console.log('[spotifort] no code or error, returning null');
     return null;
   }
 
   // Handle error from Spotify
   if (error) {
-    log.error('Spotify auth error:', error);
+    console.error('[spotifort] Spotify auth error:', error);
     // Clean up URL
     window.history.replaceState({}, document.title, '/');
     throw new Error(`Spotify authorization failed: ${error}`);
   }
 
-  log.info('Received auth code, exchanging for token');
+  console.log('[spotifort] received auth code, exchanging for token');
 
   // Get Client ID (from sessionStorage, survives the redirect)
   const clientId = getClientId();
+  console.log('[spotifort] clientId:', clientId ? 'present' : 'missing');
   if (!clientId) {
-    log.error('Client ID not found after redirect');
+    console.error('[spotifort] Client ID not found after redirect');
     window.history.replaceState({}, document.title, '/');
     throw new Error('Client ID lost during auth flow');
   }
 
   // Retrieve code verifier from sessionStorage
   const codeVerifier = sessionStorage.getItem(VERIFIER_KEY);
+  console.log('[spotifort] codeVerifier:', codeVerifier ? 'present' : 'missing');
   sessionStorage.removeItem(VERIFIER_KEY); // Clean up immediately
 
   if (!codeVerifier) {
-    log.warn('Code verifier not found — auth flow interrupted');
+    console.warn('[spotifort] code verifier not found — auth flow interrupted');
     window.history.replaceState({}, document.title, '/');
     return null;
   }
 
   try {
+    console.log('[spotifort] exchanging code for token...');
     // Exchange code for access token
     const response = await fetch(TOKEN_URL, {
       method: 'POST',
@@ -297,14 +304,17 @@ export async function handleCallback() {
       }),
     });
 
+    console.log('[spotifort] token exchange response:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json();
-      log.error('Token exchange failed:', errorData);
+      console.error('[spotifort] token exchange failed:', errorData);
       throw new Error(`Token exchange failed: ${errorData.error_description || errorData.error}`);
     }
 
     const data = await response.json();
     accessToken = data.access_token;
+    console.log('[spotifort] token obtained successfully');
 
     // Restore Client ID to memory from sessionStorage
     const storedClientId = sessionStorage.getItem(CLIENT_ID_KEY);
@@ -314,17 +324,15 @@ export async function handleCallback() {
     // Clean up sessionStorage (but keep Client ID for potential re-auth)
     // sessionStorage.removeItem(CLIENT_ID_KEY); // Keep it for re-auth
 
-    log.info('Successfully obtained access token');
-    log.info('Token type:', data.token_type);
-    log.info('Expires in:', data.expires_in, 'seconds');
-    log.info('Access token:', accessToken);
+    console.log('[spotifort] token type:', data.token_type);
+    console.log('[spotifort] expires in:', data.expires_in, 'seconds');
 
     // Clean up URL (remove code from URL bar)
     window.history.replaceState({}, document.title, '/');
 
     return accessToken;
   } catch (err) {
-    log.error('Failed to exchange code for token:', err);
+    console.error('[spotifort] failed to exchange code for token:', err);
     window.history.replaceState({}, document.title, '/');
     throw err;
   }
