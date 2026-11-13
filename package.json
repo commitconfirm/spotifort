@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "try": "node scripts/try-recommend.js",
     "check:dist": "node scripts/check-dist.js",
     "lineup": "npm run lineup:scrape && npm run lineup:spotify && npm run lineup:musicbrainz && npm run lineup:lastfm && npm run lineup:build",
     "lineup:scrape": "node scripts/lineup-scrape.js",

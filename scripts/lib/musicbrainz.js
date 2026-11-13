@@ -1,8 +1,8 @@
 /**
  * Pure parsing of MusicBrainz responses. No network, no file I/O.
- * Only https URLs on the per-platform host allow-list (src/core/link-hosts.js) are ever kept.
+ * Only https URLs on the per-platform host allow-list (src/core/links.js) are ever kept.
  */
-import { cleanPlatformUrl } from '../../src/core/link-hosts.js';
+import { cleanPlatformUrl } from '../../src/core/links.js';
 
 // Artist-page paths that carry a platform id, optionally behind a locale or "browse" segment.
 const ID_PATHS = {

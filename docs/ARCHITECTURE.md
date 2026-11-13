@@ -172,18 +172,29 @@ By platform ID where the source provides one (Spotify ID in `spotifyIds`, later 
 
 ```
 src/core/      pure logic, no DOM, no fetch — all unit tested
-  normalize.js   name normalisation (imported by scripts/ too)
-  pool.js        add, remove, merge sources, serialise
-  match.js       pool × lineup → matches (confirmed / unconfirmed)
-  recommend.js   pool × lineup × similarity → ranked list with reasons
-  share.js       picks ↔ URL fragment
-  links.js       verified link or generated search link per platform; URL allow-list
-src/data/      lazy loaders for the two JSON files
+  normalize.js        name normalisation (imported by scripts/ too)
+  search.js           shared autocomplete: prefix, then word-prefix, then substring; shorter first
+  similarity-index.js prepareSimilarity(json): outside artist key -> [{ n, score }], display name, search
+  lineup-index.js     prepareLineup(json): by n, Spotify id, platform id, name; neighbours; search; tag counts
+  pool.js             add, remove, merge sources, weights, serialise (pure functions over plain data)
+  match.js            pool × lineup → matches (confirmed / unconfirmed)
+  recommend.js        pool × lineup × similarity → ranked list with reasons; recommendByTags, listTags
+  share.js            picks ↔ URL fragment
+  links.js            URL allow-list (shared with scripts/), verified link or generated search link per platform
+src/data/load.js lazy, memoised loaders for the two JSON files
 src/sources/   one module per library source, same interface
   spotify.js     { id, label, isAvailable(), connect(), fetchArtists(onProgress) → [{ name, ids, weight }] }
 src/ui/        rendering and events only
 src/store.js   localStorage wrapper: versioned keys, pool and Client ID only, never tokens
 ```
+
+Built in PR 2.4 (everything above except `src/sources/` and `src/ui/`), with these precisions:
+
+- **Pool entries** are `{ key, name, weight, sources, sourceWeights, ids, n? }`, unique by key. `sourceWeights` keeps each source's weight so that clearing a source can re-weight an entry; `weight` is the highest. Sources are `typed`, `picked` (a lineup artist chosen from autocomplete, carries `n`) and library ids such as `spotify:liked`. Serialised form is `{ v: 1, entries: [{ name, sw, n?, ids? }] }`; keys and weights are recomputed on load, malformed entries are dropped, and the pool is capped at 5,000 entries.
+- **Matching.** A pick matches by `n`; otherwise by Spotify id (any of the lineup artist's ids), then other platform ids, then normalised name (unconfirmed). `confirmed` is true when some entry matched by pick, or by id on a record that is not `unverified`.
+- **Recommendations.** Lineup artists the visitor already matched (including by name) are excluded. `noData` lists pool artists that are not on the lineup and have no reverse-index entry; a lineup artist with no neighbours is not "no data". Scores of 0.10 count despite floating-point error.
+- **Share fragments** are `s=<year>.<base64url>` (the caller adds `#`); bit `n - 1` of the set is bit `(n - 1) mod 8` of byte `(n - 1) div 8`. Numbers above 24,000 and fragments over 4,096 characters are refused; unknown numbers are dropped on decode.
+- **Links.** `links.js` is the one source of truth for allowed hosts (it replaces `link-hosts.js`); `bandcamp.com` itself is allowed only for `/search`.
 
 - **Share link.** `#s=<year>.<base64url of a bitset over n>`; picks only. Because `n` is stable, links survive lineup updates.
 - **Listen links.** A verified link when `links` has one; otherwise a search URL on that platform built from the name and marked as a search. Every rendered URL passes a host allow-list.

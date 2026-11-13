@@ -12,7 +12,7 @@
  *   note         string              why (free text, never used by the pipeline)
  */
 import { normalizeName } from '../../src/core/normalize.js';
-import { PLATFORMS, cleanPlatformUrl } from '../../src/core/link-hosts.js';
+import { PLATFORMS, cleanPlatformUrl } from '../../src/core/links.js';
 
 export const OVERRIDE_FIELDS = ['spotifyIds', 'mbid', 'lastfmName', 'links', 'ids', 'tags', 'unverified', 'note'];
 const ID_PLATFORMS = ['tidal', 'appleMusic', 'deezer'];

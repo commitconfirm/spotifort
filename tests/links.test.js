@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cleanPlatformUrl, isAllowedUrlForAnyPlatform } from '../src/core/link-hosts.js';
+import { cleanPlatformUrl, isAllowedUrlForAnyPlatform } from '../src/core/links.js';
 
 describe('cleanPlatformUrl', () => {
   it('accepts https on the platform host and strips the fragment', () => {
