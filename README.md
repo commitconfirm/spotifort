@@ -85,26 +85,34 @@ Every change lands through a pull request. CI runs the tests, build, `npm audit`
 
 ### Updating Lineup Data
 
-The festival year and dates live in one place, `festival.config.js`. Lineup data is stored per year in `public/lineups/<year>.json`.
+The festival year and dates live in one place, `festival.config.js`. The lineup is built in stages; each is incremental and safe to rerun.
 
 ```bash
-# Scrape the Treefort lineup page and look up new artists on Spotify.
-# Existing records are kept; only new artists are searched.
-# Uses SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET from .env.local if set
-# (see .env.local.example), else SPOTIFY_ACCESS_TOKEN, else prompts (hidden) for an access token.
+# Everything, in order: scrape, Spotify, MusicBrainz, Last.fm, build.
+# A rerun with nothing new only fetches the Treefort page.
 npm run lineup
 
-# Scrape only and print artist names (no Spotify, no file written)
-node scripts/fetch-lineup.js --names-only
-
-# Add genre data to the existing lineup file (needs LASTFM_API_KEY for the Last.fm fallback)
-npm run lineup:genres
-
-# Strip non-genre tags (countries, places, meta tags) from existing genres; no network
-npm run lineup:clean-genres
+# Or one stage at a time
+npm run lineup:scrape       # artist names from the Treefort page
+npm run lineup:spotify      # Spotify ids (SPOTIFY_CLIENT_ID + SPOTIFY_CLIENT_SECRET in .env.local, see .env.local.example)
+npm run lineup:musicbrainz  # links to other platforms (1 request per second; a first run takes about 7 minutes)
+npm run lineup:lastfm       # similar artists and tags (LASTFM_API_KEY in .env.local)
+npm run lineup:build        # outputs and the review and sanity reports; no network
 ```
 
-Genre data comes from [MusicBrainz](https://musicbrainz.org/) and [Last.fm](https://www.last.fm/).
+What it writes:
+
+| File | What | Edited by |
+|---|---|---|
+| `data/<year>/state.json` | everything resolved so far | the pipeline |
+| `data/<year>/overrides.json` | hand corrections the pipeline always respects | you |
+| `data/<year>/review.md` | matches to check, new and removed artists | the build |
+| `public/data/<year>/lineup.json`, `similarity.json` | static data for the new experience | the build |
+| `public/lineups/<year>.json` | the current site's format | the build |
+
+To fix a wrong match, add the artist to `overrides.json` (see `docs/ARCHITECTURE.md`) and run `npm run lineup:build`. Raw API answers are cached in `~/.cache/spotifort/`, outside the repository; set `SPOTIFORT_CACHE_DIR` to put them elsewhere.
+
+Similar artists, tags and listener counts come from [Last.fm](https://www.last.fm/); links to other platforms come from [MusicBrainz](https://musicbrainz.org/).
 
 ## Disclaimer
 
