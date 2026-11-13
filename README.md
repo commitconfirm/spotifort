@@ -146,6 +146,10 @@ Use at your own risk. No guarantees of accuracy or availability. Lineup data may
 
 Contributions are welcome. If you find an artist missing from the lineup or matched incorrectly, open an issue. If you want to add a feature, check the issues or open a discussion first.
 
+## Security
+
+Found a security problem? Please report it privately; see [SECURITY.md](SECURITY.md). Do not open a public issue for it.
+
 ## Built With
 
 This project was built with [Claude Code](https://claude.ai/code) by Anthropic.
