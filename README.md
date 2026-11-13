@@ -126,6 +126,14 @@ What it writes:
 
 To fix a wrong match, add the artist to `overrides.json` (see `docs/ARCHITECTURE.md`) and run `npm run lineup:build`. Raw API answers are cached in `~/.cache/spotifort/`, outside the repository; set `SPOTIFORT_CACHE_DIR` to put them elsewhere.
 
+### Lineup updates
+
+A scheduled GitHub Actions workflow (`.github/workflows/lineup.yml`) reruns `npm run lineup` twice a day, at 14:17 and 02:43 UTC (about 7:17 am and 7:43 pm Mountain Standard Time, one hour later in daylight time). If the data changed it runs the tests and the build, pushes the branch `lineup-update` (rebuilt from `main` each run) and opens or updates one pull request whose description carries the review report. Merge it when `check` and `Cloudflare Pages` are green. If nothing changed, nothing is pushed.
+
+It needs three repository secrets (Settings, Secrets and variables, Actions): `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `LASTFM_API_KEY`. While any is missing the job ends green with a notice and does nothing. To run it by hand: Actions tab, "Lineup update", "Run workflow" (on `main`).
+
+To correct a match, add the artist to `data/<year>/overrides.json` on `main` and merge that; the next run applies it and the pull request updates itself. A failed stage turns the run red and the run summary names the stage and shows the end of its output.
+
 Similar artists, tags and listener counts come from [Last.fm](https://www.last.fm/); links to other platforms come from [MusicBrainz](https://musicbrainz.org/).
 
 ## Disclaimer

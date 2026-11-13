@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+  workflow_dispatch: # the scheduled lineup job runs CI on its branch this way (see lineup.yml)
   push:
     branches: [main]
 

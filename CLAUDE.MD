@@ -90,6 +90,8 @@ npm run lineup:festival -- --refresh   # re-fetch every performer (when the fest
 ```
 Each stage is incremental and resumable. An API failure never becomes a negative fact (the artist stays unresolved and is retried); a stage stops after 3 consecutive failures. Artists gone from the lineup are marked `removed` in state and excluded from outputs. Credentials in `.env.local` (see `.env.local.example`): `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (else `SPOTIFY_ACCESS_TOKEN`, else a hidden prompt) and `LASTFM_API_KEY`. MusicBrainz needs none and runs at 1 request per second. Pure logic is in `scripts/lib/`; fix a wrong match by adding an entry to `overrides.json` and running `npm run lineup:build`. The name normaliser `src/core/normalize.js` is shared with the app.
 
+**Scheduled run:** `.github/workflows/lineup.yml` runs `npm run lineup` twice daily (14:17 and 02:43 UTC) and `workflow_dispatch`, on `main` only, with secrets `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `LASTFM_API_KEY` (missing: the job ends green with a notice). On a change it runs tests, build and `check-dist`, force-pushes branch `lineup-update` (fresh from `main`), opens or updates the PR (text from `scripts/lineup-pr-text.js`), and dispatches `ci.yml` on the branch because pushes made with `GITHUB_TOKEN` do not trigger `pull_request` runs. Never commit to `lineup-update` by hand: it is rebuilt each run.
+
 ## Tech Stack
 
 - **Language:** Vanilla JavaScript (no TypeScript, no framework)
