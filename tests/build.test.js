@@ -101,7 +101,7 @@ describe('buildOutputs', () => {
     expect(out.stats.confirmedByMusicbrainz).toBe(1);
   });
 
-  it('an override can carry unverified: true, and MusicBrainz still clears it', () => {
+  it('an override with unverified: true stays flagged even when MusicBrainz knows the artist', () => {
     const id = '6hhmxPotJ2kCsQjUGPtH14';
     const o = { Gamma: { spotifyIds: [id], unverified: true } };
     let out = buildOutputs({ state: fixture(), overrides: o });
@@ -110,7 +110,7 @@ describe('buildOutputs', () => {
     const s = fixture();
     Object.assign(s.artists[2], { mbid: 'm3', mbFor: id, mbFetched: 'm3', mbName: 'Gamma' });
     out = buildOutputs({ state: s, overrides: o });
-    expect(out.lineup.artists[2].unverified).toBeUndefined();
+    expect(out.lineup.artists[2].unverified).toBe(true);
   });
 
   it('applies overrides: Spotify ids, links, ids, tags, and null clears', () => {

@@ -1,20 +1,7 @@
 {
-  "Barbara": {
-    "spotifyIds": ["6hhmxPotJ2kCsQjUGPtH14"],
-    "note": "Phase 1 hand correction: Spotify id set by hand."
-  },
   "Fatal Femmes": {
     "spotifyIds": [],
     "note": "Owner decision 2026-11-13: kept as not on Spotify."
-  },
-  "JÜN": {
-    "spotifyIds": ["3hV7q0P8wimZFHmdykKaRN"],
-    "unverified": true,
-    "note": "Owner decision 2026-11-13: exact-name Spotify artist accepted; unconfirmed, could be a different act with the same name."
-  },
-  "Mabe Fratti & Bill Orcutt": {
-    "spotifyIds": ["49ECnwhYzm6Nu97puMvwjG", "7yHfb2D8qIBgrzclpSsTeo"],
-    "note": "Phase 1 hand correction: duo billing, both members listed."
   },
   "PLAYDEAD": {
     "spotifyIds": ["6rZf3CPChuam4RdRiT0lR9"],

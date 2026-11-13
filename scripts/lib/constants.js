@@ -8,6 +8,13 @@ export const LASTFM_MIN_TAG_COUNT = 10;     // tags below this count are noise
 export const LASTFM_MIN_INTERVAL_MS = 260;  // <= 4 requests per second
 export const MUSICBRAINZ_MIN_INTERVAL_MS = 1100; // strictly one request per second, with margin
 export const MUSICBRAINZ_USER_AGENT = 'Spotifort/2.0 (https://spotifort.com)';
+export const FESTIVAL_CLIENT_NAME = 'Spotifort lineup script (https://spotifort.com)'; // generic client name for the lineup page and the performer feed
+export const FESTIVAL_REST_BASE = 'https://treefortmusicfest.com/wp-json/tmf/v1/performer/'; // fallback; the lineup page's tmfLineup config wins
+export const FESTIVAL_HOST = 'treefortmusicfest.com';
+export const FESTIVAL_MIN_INTERVAL_MS = 400; // one performer request at most every 400 ms
+export const FESTIVAL_MAX_ATTEMPTS = 3;     // one try plus two retries with backoff
+export const FESTIVAL_STOP_MIN_REQUESTS = 10; // judge the failure rate only after this many performers
+export const FESTIVAL_MAX_SHOWTIMES = 40;   // keep showtimes only when the list is this small
 export const MAX_CONSECUTIVE_ERRORS = 3;    // abort a stage after this many failed records in a row
 
 // The public reverse index keeps only matches at or above a cutoff. The build starts at the first rung and

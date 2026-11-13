@@ -42,6 +42,7 @@ function main() {
   }
   const s = out.stats;
   console.log(`\nactive ${s.active}, removed ${s.removed}; Spotify ${JSON.stringify(s.confidence)}`);
+  console.log(`Spotify ids by source ${JSON.stringify(s.spotifySources)}; unverified ${s.unverified}`);
   console.log(`MBIDs ${s.mbids}; links ${JSON.stringify(s.linksPerPlatform)}; ids ${JSON.stringify(s.idsPerPlatform)}`);
   console.log(`similar data ${s.withSimilar}, tags ${s.withTags}; neighbours ${JSON.stringify(s.neighbourCounts)}; signals ${JSON.stringify(s.neighbourSignals)}`);
   console.log(`reverse index: cutoff ${s.reverseMinMatch}; ${s.reverseNames} names, ${s.reversePairs} pairs`);

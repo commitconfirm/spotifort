@@ -24,6 +24,30 @@ export function parseUrlLookup(status, body) {
   return rel ? { kind: 'found', mbid: rel.artist.id } : { kind: 'none' };
 }
 
+/** Platforms whose links we keep, beyond Spotify (which has its own id handling). */
+export const LINK_PLATFORMS = ['appleMusic', 'tidal', 'deezer', 'bandcamp', 'youtube', 'soundcloud', 'lastfm'];
+
+/**
+ * Accept one URL as an artist link for a platform: https, on the platform's host allow-list, and shaped like an
+ * artist page (Apple Music, Tidal and Deezer need a numeric artist id; YouTube needs a channel/user/handle path;
+ * SoundCloud search pages are not artist pages). Used for MusicBrainz relations and for festival feed links.
+ * @param {string} platform
+ * @param {unknown} resource
+ * @returns {{url: string, id?: string}|null}
+ */
+export function platformLink(platform, resource) {
+  const url = cleanPlatformUrl(platform, resource);
+  if (!url) return null;
+  const u = new URL(url);
+  if (ID_PATHS[platform]) {
+    const m = u.pathname.match(ID_PATHS[platform]);
+    return m ? { url, id: m[1] } : null;
+  }
+  if (platform === 'youtube' && !YOUTUBE_PATH.test(u.pathname)) return null;
+  if (platform === 'soundcloud' && /^\/search(?:\/|$)/i.test(u.pathname)) return null;
+  return { url };
+}
+
 /**
  * @param {Array} relations url-rels from an artist lookup
  * @returns {{links: Record<string, string>, ids: Record<string, string>}}
@@ -37,19 +61,12 @@ export function extractLinks(relations) {
   for (const rel of relations ?? []) {
     const resource = rel?.url?.resource;
     if (typeof resource !== 'string') continue;
-    for (const platform of ['appleMusic', 'tidal', 'deezer', 'bandcamp', 'youtube', 'soundcloud', 'lastfm']) {
+    for (const platform of LINK_PLATFORMS) {
       if (links[platform]) continue;
-      const url = cleanPlatformUrl(platform, resource);
-      if (!url) continue;
-      const u = new URL(url);
-      if (ID_PATHS[platform]) {
-        const m = u.pathname.match(ID_PATHS[platform]);
-        if (!m) continue;
-        ids[platform] = m[1];
-      } else if (platform === 'youtube' && !YOUTUBE_PATH.test(u.pathname)) {
-        continue;
-      }
-      links[platform] = url;
+      const found = platformLink(platform, resource);
+      if (!found) continue;
+      if (found.id) ids[platform] = found.id;
+      links[platform] = found.url;
     }
   }
   return { links, ids };
