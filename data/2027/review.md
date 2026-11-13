@@ -5,6 +5,12 @@ Fix anything below by adding an entry to `data/2027/overrides.json`, then run `n
 
 similarity.json: reverse-index cutoff 0.1 (lowest that fits the size budget), 11005 names, 121.9 KB gzip.
 
+## Lineup source
+Source this run: the vendor API. 188 performers included.
+Excluded by status (0): none.
+Excluded by tag, not matched against music services (0):
+- none
+
 ## Spotify ids by source
 override 4, festival artist link 179, festival album link 2, search 3, none 0
 
@@ -20,13 +26,16 @@ The festival link wins. Check the earlier result was wrong, not the festival lin
 - LP Giobbi -> LP Giobbi https://open.spotify.com/artist/3oKnyRhYWzNsTiss5n4Z1J (ambiguous)
 - Thomas Dollbaum -> Thomas Dollbaum https://open.spotify.com/artist/3TBOFVWrSRdDxKjNxBdlKZ (exact)
 
-## Festival feed: not fetched (0); artists without a slug (0)
+## Fallback feed: not fetched (0); artists with neither a slug nor festival data (0)
 - none
 
-## Added (scrape of 2026-11-13): 0
+## Added (lineup update of 2026-11-13): 0
 - none
 
-## Removed from the festival site: 0
+## Removed from the festival lineup: 0
+- none
+
+## Renamed by the festival, number kept (0)
 - none
 
 ## Spotify: inexact matches, top hit used (1)
@@ -55,3 +64,8 @@ LP Giobbi
 - Sam & Louise Sullivan: Last.fm returned an empty list (11 listeners)
 - Sautrah: Last.fm returned an empty list (3 listeners)
 - Sunbloc: skipped by override
+
+## Schedule (groundwork, not shown on the site)
+68 venues, 0 events.
+Events with performers not on the lineup: 0 (0 distinct performer ids). Events with a venue not in the venue list: 0. Events with no venue: 0.
+The festival has not published set times yet.

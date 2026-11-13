@@ -20,7 +20,7 @@ const kb = (n) => (n / 1024).toFixed(1) + ' KB';
 
 function main() {
   const state = loadState();
-  if (state.artists.length === 0) throw new Error('state.json is empty. Run npm run lineup:scrape first.');
+  if (state.artists.length === 0) throw new Error('state.json is empty. Run npm run lineup:source first.');
   const out = buildOutputs({ state, overrides: loadOverrides() });
 
   const files = [

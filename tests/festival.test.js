@@ -12,7 +12,7 @@ import {
   performerUrl,
 } from '../scripts/lib/festival.js';
 import { parseLineupCards, parseLineupHtml } from '../scripts/lib/lineup-pipeline.js';
-import { applyFestivalSpotify, mergeScrape, needsSpotify, spotifySource } from '../scripts/lib/state.js';
+import { applyFestivalSpotify, mergeLineup, needsSpotify, spotifySource } from '../scripts/lib/state.js';
 import { resolveRecord, buildOutputs } from '../scripts/lib/build.js';
 import { FESTIVAL_REST_BASE } from '../scripts/lib/constants.js';
 
@@ -193,17 +193,17 @@ describe('scrape slugs', () => {
     ]);
     expect(parseLineupHtml(html)).toEqual(['A & B', 'No Slug', 'C']);
   });
-  it('mergeScrape stores slugs, updates them and drops them when the card has none', () => {
+  it('mergeLineup stores slugs, updates them and drops them when the card has none', () => {
     const names = Array.from({ length: 52 }, (_, i) => `Artist ${i}`);
-    const first = mergeScrape({ year: 2027, artists: [] }, names.map((name, i) => ({ name, slug: i === 1 ? null : `s${i}` })), '2026-11-13');
+    const first = mergeLineup({ year: 2027, artists: [] }, names.map((name, i) => ({ name, slug: i === 1 ? null : `s${i}` })), '2026-11-13');
     expect(first.state.artists[0].slug).toBe('s0');
     expect('slug' in first.state.artists[1]).toBe(false);
-    const second = mergeScrape(first.state, names.map((name, i) => ({ name, slug: i === 0 ? 'renamed' : i === 1 ? 'now' : null })), '2026-11-14');
+    const second = mergeLineup(first.state, names.map((name, i) => ({ name, slug: i === 0 ? 'renamed' : i === 1 ? 'now' : null })), '2026-11-14');
     expect(second.state.artists[0].slug).toBe('renamed');
     expect(second.state.artists[1].slug).toBe('now');
     expect('slug' in second.state.artists[2]).toBe(false);
     // plain names still work
-    expect(mergeScrape(first.state, names, '2026-11-14').state.artists).toHaveLength(52);
+    expect(mergeLineup(first.state, names, '2026-11-14').state.artists).toHaveLength(52);
   });
 });
 

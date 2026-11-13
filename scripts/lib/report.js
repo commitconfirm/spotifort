@@ -2,6 +2,7 @@
  * Text reports written by the build stage. Pure: same inputs, same text (no dates except state's own).
  */
 import { normalizeName } from '../../src/core/normalize.js';
+import { scheduleSummary } from './dionysus.js';
 import {
   MIN_SIMILARITY,
   NEIGHBOURS_PER_ARTIST,
@@ -40,8 +41,9 @@ export function formatReview({ state, artists, warnings, stats }) {
   const nonArtistLinks = artists.filter((a) => a.festival?.spotify && a.festival.spotify.kind !== 'artist' && a.festival.spotify.kind !== 'album');
   const searchOnly = artists.filter((a) => a.spotifySource === 'search' && !a.festival?.spotify);
   const notFetched = artists.filter((a) => a.hasSlug && !a.festival);
-  const noSlug = artists.filter((a) => !a.hasSlug);
+  const noSlug = artists.filter((a) => !a.hasSlug && !a.festival);
   const changedByFestival = artists.filter((a) => a.supersedes);
+  const renames = (scrape.renamed ?? []).map((r) => ({ ...r, rekey: Boolean(artists.find((a) => a.n === r.n)?.formerNames.includes(r.from)) }));
   const out = [];
   out.push(`# Lineup review, ${state.year}`);
   out.push('');
@@ -49,6 +51,8 @@ export function formatReview({ state, artists, warnings, stats }) {
   out.push('Fix anything below by adding an entry to `data/' + state.year + '/overrides.json`, then run `npm run lineup:build`.');
   out.push('');
   out.push(`similarity.json: reverse-index cutoff ${stats.reverseMinMatch} (lowest that fits the size budget), ${stats.reverseNames} names, ${(stats.similarityGzip / 1024).toFixed(1)} KB gzip.`);
+  out.push('');
+  out.push(...sourceSection(state.source));
   out.push('');
   out.push('## Spotify ids by source');
   out.push(`override ${src.override}, festival artist link ${src.festival}, festival album link ${src['festival-album']}, search ${src.search}, none ${src.none}${src.unresolved ? `, unresolved ${src.unresolved}` : ''}`);
@@ -63,15 +67,18 @@ export function formatReview({ state, artists, warnings, stats }) {
   out.push(`## No festival Spotify link, resolved by search: the weakest matches (${searchOnly.length})`);
   out.push(list(searchOnly, (a) => `${a.name} -> ${a.matchedName ?? '?'} ${spotifyUrl(a.spotifyIds[0])} (${a.confidence}${a.unverified ? ', unverified' : ''})`));
   out.push('');
-  out.push(`## Festival feed: not fetched (${notFetched.length}); artists without a slug (${noSlug.length})`);
+  out.push(`## Fallback feed: not fetched (${notFetched.length}); artists with neither a slug nor festival data (${noSlug.length})`);
   out.push(list(notFetched, (a) => `${a.name} (retried next run)`));
-  if (noSlug.length) out.push(`No slug on the lineup page: ${noSlug.map((a) => a.name).join(', ')}`);
+  if (noSlug.length) out.push(`No slug on the lineup page and no API data: ${noSlug.map((a) => a.name).join(', ')}`);
   out.push('');
-  out.push(`## Added (scrape of ${scrape.date ?? 'n/a'}): ${scrape.added.length}`);
+  out.push(`## Added (lineup update of ${scrape.date ?? 'n/a'}): ${scrape.added.length}`);
   out.push(list(scrape.added, (n) => n));
   out.push('');
-  out.push(`## Removed from the festival site: ${scrape.removed.length}`);
+  out.push(`## Removed from the festival lineup: ${scrape.removed.length}`);
   out.push(list(scrape.removed, (n) => n));
+  out.push('');
+  out.push(`## Renamed by the festival, number kept (${renames.length})`);
+  out.push(list(renames, (r) => `${r.from} -> ${r.to} (n=${r.n})${r.rekey ? `. OVERRIDE KEYED "${r.from}" STILL APPLIES; RE-KEY IT to "${r.to}" in overrides.json` : r.cosmetic ? ' (spelling only)' : ''}`));
   out.push('');
   out.push(`## Spotify: inexact matches, top hit used (${inexact.length})`);
   out.push(list(inexact, (a) => `${a.name} -> ${a.matchedName} ${spotifyUrl(a.spotifyIds[0])}`));
@@ -93,6 +100,8 @@ export function formatReview({ state, artists, warnings, stats }) {
   out.push('');
   out.push(`## No Last.fm similar artists (${noSimilar.length})`);
   out.push(list(noSimilar, (a) => `${a.name}: ${a.lastfmWhy ?? `Last.fm returned an empty list (${a.lastfm?.listeners ?? '?'} listeners)`}`));
+  out.push('');
+  out.push(...scheduleSection(state.schedule));
   if (unresolved.length) {
     out.push('');
     out.push(`## Spotify not resolved yet (${unresolved.length})`);
@@ -105,6 +114,41 @@ export function formatReview({ state, artists, warnings, stats }) {
   }
   out.push('');
   return out.join('\n');
+}
+
+function sourceSection(source) {
+  const out = ['## Lineup source'];
+  if (!source) {
+    out.push('Not recorded (the state predates the vendor API source).');
+  } else if (source.kind === 'fallback') {
+    out.push('**Source this run: FALLBACK** (page scrape for names, the festival\'s undocumented performer feed for links).');
+    out.push(`The vendor API was not used: ${source.reason}.`);
+  } else {
+    const ex = source.excluded ?? { byStatus: {}, byTag: [] };
+    const statuses = Object.entries(ex.byStatus ?? {});
+    const byTag = ex.byTag ?? [];
+    out.push(`Source this run: the vendor API. ${source.performers} performers included.`);
+    out.push(`Excluded by status (${statuses.reduce((n, [, v]) => n + v, 0)}): ${statuses.length ? statuses.map(([k, v]) => `${k} ${v}`).join(', ') : 'none'}.`);
+    out.push(`Excluded by tag, not matched against music services (${byTag.length}):`);
+    out.push(list(byTag, (t) => `${t.name} (${t.tags.join(', ')})`));
+    if (source.excluded?.unusable) out.push(`Entries with no id or name, skipped: ${source.excluded.unusable}.`);
+    if (source.duplicateNames?.length) out.push(`Performers sharing a normalised name with another, skipped: ${source.duplicateNames.join(', ')}.`);
+    if (source.musicTagsNotInTagList?.length) out.push(`WARNING: configured music tags not in the festival's tag list: ${source.musicTagsNotInTagList.join(', ')}.`);
+  }
+  return out;
+}
+
+function scheduleSection(schedule) {
+  const s = scheduleSummary(schedule);
+  const out = ['## Schedule (groundwork, not shown on the site)'];
+  if (!schedule) {
+    out.push('No schedule data fetched yet.');
+    return out;
+  }
+  out.push(`${s.venues} venues, ${s.events} events${s.first ? `, ${s.first} to ${s.last}` : ''}${s.canceled ? `, ${s.canceled} canceled` : ''}.`);
+  out.push(`Events with performers not on the lineup: ${s.withUnknownPerformers} (${s.unknownPerformerIds} distinct performer ids). Events with a venue not in the venue list: ${s.withUnknownVenue}. Events with no venue: ${s.withoutVenue}.`);
+  if (s.events === 0) out.push('The festival has not published set times yet.');
+  return out;
 }
 
 const find = (artists, name) => artists.find((a) => normalizeName(a.name) === normalizeName(name));

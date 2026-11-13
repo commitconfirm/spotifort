@@ -19,7 +19,7 @@ async function main() {
   loadEnv();
   const state = loadState();
   const index = indexOverrides(loadOverrides());
-  const ov = (r) => overrideFor(index, r.name);
+  const ov = (r) => overrideFor(index, r);
   const todo = state.artists.filter((r) => needsLastfm(r, ov(r)));
   console.log(`Last.fm: ${todo.length} artist(s) to look up`);
   if (todo.length === 0) return;

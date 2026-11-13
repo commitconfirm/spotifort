@@ -52,61 +52,102 @@ function setSlug(record, slug) {
 }
 
 /**
- * Merge the festival site's names into the state.
+ * Merge the festival's lineup into the state. The lineup comes from the vendor API (entries carry `apiId` and a
+ * ready `festival` block) or, as the fallback, from the festival's lineup page (entries carry the card's `slug`).
+ *
+ * An entry is matched to a record first by API id (`record.festival.id`), then by normalised name, so a performer
+ * the festival renamed keeps its `n`, its resolved data and its overrides. A rename keeps the old name in
+ * `formerNames` for as long as an override is still keyed by it (see overrideFor).
  * New names get the next n (never reused, removed records keep theirs). Names that vanished are marked
- * `removed` (never deleted); names that come back are restored with their old n.
- * Matching is exact first, then by normalised name, so a cosmetic site edit keeps the artist's n
- * (the record then takes the site's current spelling).
+ * `removed` (never deleted); names that come back are restored with their old n. A cosmetic edit (same
+ * normalised name) keeps the record, which then takes the festival's current spelling.
+ * Refuses (throws, state untouched) under MIN_SCRAPED_NAMES names, or when more than half the lineup would go.
+ *
  * @param {object} state
- * @param {(string|{name: string, slug?: string|null})[]} names scraped names (or cards with their festival slug), page order
+ * @param {(string|{name: string, slug?: string|null, apiId?: string, festival?: object})[]} scraped in source order.
+ *   `slug`: when the key is present it replaces the record's slug (null deletes it); absent leaves it alone.
+ *   `festival`: replaces the record's festival block.
  * @param {string} date YYYY-MM-DD
- * @returns {{state: object, added: string[], removed: string[], restored: string[], renamed: string[]}}
+ * @param {{overrideIndex?: Map<string, object>}} [opts] from indexOverrides; prunes `formerNames` that no override uses
+ * @returns {{state: object, added: string[], removed: string[], restored: string[], renamed: string[],
+ *   renames: {from: string, to: string, n: number, cosmetic: boolean}[], duplicates: string[], festivalChanged: number}}
  */
-export function mergeScrape(state, scraped, date) {
-  const unique = [];
-  const slugs = new Map(); // normalised name -> slug (null when the card had none)
+export function mergeLineup(state, scraped, date, { overrideIndex = null } = {}) {
+  const entries = [];
   const seenKeys = new Set();
-  for (const entry of scraped) {
-    const name = typeof entry === 'string' ? entry : entry?.name;
-    const key = normalizeName(name);
-    if (!key || seenKeys.has(key)) continue;
+  const duplicates = [];
+  for (const raw of scraped) {
+    const entry = typeof raw === 'string' ? { name: raw } : { ...raw };
+    const key = normalizeName(entry.name);
+    if (!key) continue;
+    if (seenKeys.has(key)) {
+      duplicates.push(entry.name);
+      continue;
+    }
     seenKeys.add(key);
-    unique.push(name);
-    slugs.set(key, (typeof entry === 'object' && entry?.slug) || null);
+    entries.push(entry);
   }
 
   const active = state.artists.filter((a) => !a.removed);
-  if (unique.length < MIN_SCRAPED_NAMES) {
-    throw new Error(`Only ${unique.length} artist names scraped (expected at least ${MIN_SCRAPED_NAMES}). Refusing to change the state.`);
+  if (entries.length < MIN_SCRAPED_NAMES) {
+    throw new Error(`Only ${entries.length} artist names in the lineup (expected at least ${MIN_SCRAPED_NAMES}). Refusing to change the state.`);
   }
-  const stillThere = state.artists.filter((a) => seenKeys.has(normalizeName(a.name))).length;
-  const wouldRemove = active.filter((a) => !seenKeys.has(normalizeName(a.name))).length;
+
+  const artists = state.artists.map((a) => ({ ...a }));
+  const match = new Map(); // entry -> record
+  const claimed = new Set();
+  const byApiId = new Map();
+  for (const a of artists) if (a.festival?.id && !byApiId.has(a.festival.id)) byApiId.set(a.festival.id, a);
+  for (const e of entries) {
+    const rec = e.apiId ? byApiId.get(e.apiId) : undefined;
+    if (rec && !claimed.has(rec)) {
+      match.set(e, rec);
+      claimed.add(rec);
+    }
+  }
+  const byName = new Map(artists.filter((a) => !claimed.has(a)).map((a) => [normalizeName(a.name), a]));
+  for (const e of entries) {
+    if (match.has(e)) continue;
+    const rec = byName.get(normalizeName(e.name));
+    if (rec && !claimed.has(rec)) {
+      match.set(e, rec);
+      claimed.add(rec);
+    }
+  }
+
+  const stillThere = claimed.size;
+  const wouldRemove = artists.filter((a) => !a.removed && !claimed.has(a)).length;
   if (active.length > 0 && wouldRemove > active.length * MAX_REMOVED_FRACTION) {
     throw new Error(
-      `The scrape would remove ${wouldRemove} of ${active.length} artists (only ${stillThere} names matched). ` +
-      'The page probably changed. Refusing to change the state.'
+      `The new lineup would remove ${wouldRemove} of ${active.length} artists (only ${stillThere} names matched). ` +
+      'The source probably changed. Refusing to change the state.'
     );
   }
 
   const taken = new Set(state.artists.map((a) => a.id));
   let nextN = state.artists.reduce((m, a) => Math.max(m, a.n), 0) + 1;
-
   const added = [];
   const restored = [];
   const renamed = [];
-  const touched = new Set();
-  const artists = state.artists.map((a) => ({ ...a }));
-  const index = new Map(artists.map((a) => [normalizeName(a.name), a]));
+  const renames = [];
+  let festivalChanged = 0;
   const existing = new Set(artists);
+  const newFormer = new Map(); // record -> old names from real renames
 
-  for (const name of unique) {
-    const key = normalizeName(name);
-    const rec = index.get(key);
+  for (const e of entries) {
+    const name = e.name;
+    let rec = match.get(e);
     if (rec) {
-      touched.add(rec);
-      setSlug(rec, slugs.get(key));
+      if ('slug' in e) setSlug(rec, e.slug ?? null);
+      if (e.festival && JSON.stringify(rec.festival) !== JSON.stringify(e.festival)) {
+        rec.festival = e.festival;
+        festivalChanged++;
+      }
       if (rec.name !== name) {
+        const cosmetic = normalizeName(rec.name) === normalizeName(name);
         renamed.push(`${rec.name} -> ${name}`);
+        renames.push({ from: rec.name, to: name, n: rec.n, cosmetic });
+        if (!cosmetic) newFormer.set(rec, [...(newFormer.get(rec) ?? []), rec.name]);
         rec.name = name;
       }
       if (rec.removed) {
@@ -115,30 +156,52 @@ export function mergeScrape(state, scraped, date) {
       }
     } else {
       const n = nextN++;
-      const fresh = { n, id: uniqueId(name, n, taken), name, firstSeen: date };
-      setSlug(fresh, slugs.get(key));
-      artists.push(fresh);
-      touched.add(fresh);
+      rec = { n, id: uniqueId(name, n, taken), name, firstSeen: date };
+      if ('slug' in e) setSlug(rec, e.slug ?? null);
+      if (e.festival) {
+        rec.festival = e.festival;
+        festivalChanged++;
+      }
+      artists.push(rec);
+      claimed.add(rec);
       added.push(name);
     }
   }
 
   const removed = [];
   for (const rec of artists) {
-    if (existing.has(rec) && !touched.has(rec) && !rec.removed) {
+    if (existing.has(rec) && !claimed.has(rec) && !rec.removed) {
       rec.removed = date;
       removed.push(rec.name);
     }
   }
 
+  // formerNames: keep a name only while an override is keyed by it, and never one an active artist now uses.
+  const currentKeys = new Set(artists.filter((a) => !a.removed).map((a) => normalizeName(a.name)));
+  for (const rec of artists) {
+    const all = [...(rec.formerNames ?? []), ...(newFormer.get(rec) ?? [])];
+    const keep = [];
+    for (const old of all) {
+      const k = normalizeName(old);
+      if (k === normalizeName(rec.name) || currentKeys.has(k) || keep.some((x) => normalizeName(x) === k)) continue;
+      if (overrideIndex && !overrideIndex.has(k)) continue;
+      keep.push(old);
+    }
+    if (keep.length) rec.formerNames = keep;
+    else delete rec.formerNames;
+  }
+
   const changed = added.length + removed.length + restored.length + renamed.length > 0;
   const next = { ...state, artists };
-  if (changed) next.lastUpdated = date;
-  // Keep the last non-empty change list for the review report until a later day's scrape replaces it.
-  if (changed || !state.lastScrape || state.lastScrape.date !== date) {
-    next.lastScrape = { date, added, removed };
+  if (changed || festivalChanged > 0) next.lastUpdated = date;
+  // The report shows the last change list. Replace it when something changed, or on the first quiet later day
+  // after a list that had entries; a quiet run after a quiet list leaves it alone so unchanged data changes no file.
+  const prev = state.lastScrape;
+  const prevQuiet = prev && (prev.added ?? []).length + (prev.removed ?? []).length + (prev.renamed ?? []).length === 0;
+  if (changed || !prev || (!prevQuiet && prev.date !== date)) {
+    next.lastScrape = { date, added, removed, ...(renames.length > 0 && { renamed: renames }) };
   }
-  return { state: next, added, removed, restored, renamed };
+  return { state: next, added, removed, restored, renamed, renames, duplicates, festivalChanged };
 }
 
 /**

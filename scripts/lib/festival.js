@@ -17,6 +17,9 @@ const INTL_PREFIX = /^intl-[a-z]{2}(?:-[a-z]+)?$/i;
 // Festival social type -> our platform key. Spotify is handled by parseSpotifyLink; other types are kept as given.
 const PLATFORM_OF_TYPE = { applemusic: 'appleMusic', bandcamp: 'bandcamp', youtube: 'youtube', soundcloud: 'soundcloud', tidal: 'tidal', deezer: 'deezer' };
 
+// Some sources spell a type differently; the state keeps one key per type.
+const TYPE_ALIAS = { twitter: 'x' };
+
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 /** @param {unknown} slug @returns {string|null} the slug when it is safe to put in a URL path */
@@ -80,28 +83,23 @@ export function parseSpotifyLink(url) {
 }
 
 /**
- * Parse one performer answer.
- * @param {unknown} body parsed JSON
- * @param {string} slug the slug that was requested
- * @param {string} date YYYY-MM-DD fetch date
- * @returns {{ok: true, festival: object}|{ok: false, reason: string}}
- *   festival: {slug, fetched, hometown?, spotify?, links, showtimes?}
- *   spotify is {kind:'artist'|'album', id} or {kind, url} (a non-artist link); links holds one https URL per
- *   social type (platform keys for the ones we support, validated like MusicBrainz links; others as given).
- *   `bio`, image URLs and `music` are not kept: the text is the festival's, and `music` is one Apple Music album link.
+ * Parse a list of `{<typeKey>: 'Apple Music', url}` social links, the shape shared by the performer feed
+ * (`social`, key `type`) and the vendor API (`socialLinks`, key `name`).
+ * Types are lowercased with everything but letters and digits removed ("Apple Music" -> "applemusic"); X is
+ * kept under "x" whichever way it is spelled. Spotify links are classified (see parseSpotifyLink); supported
+ * platforms must pass the shared `platformLink` checks; any other type keeps one https URL as given.
+ * @param {unknown} items
+ * @param {'type'|'name'} typeKey
+ * @returns {{spotify: object|undefined, links: Record<string, string>}} links sorted by key, one URL per type
  */
-export function parsePerformer(body, slug, date) {
-  if (!isObject(body)) return { ok: false, reason: 'answer is not a JSON object' };
-  if (body.found !== true) return { ok: false, reason: body.found === false ? 'feed says the performer was not found' : 'answer has no found:true' };
-  const festival = { slug, fetched: date };
-  if (typeof body.hometown === 'string' && body.hometown.trim()) festival.hometown = body.hometown.replace(/\s+/g, ' ').trim().slice(0, 120);
-
+export function parseSocialLinks(items, typeKey) {
   const spotifyLinks = [];
   const links = {};
-  for (const item of Array.isArray(body.social) ? body.social : []) {
-    if (!isObject(item) || typeof item.type !== 'string' || typeof item.url !== 'string') continue;
-    const type = item.type.trim().toLowerCase();
+  for (const item of Array.isArray(items) ? items : []) {
+    if (!isObject(item) || typeof item[typeKey] !== 'string' || typeof item.url !== 'string') continue;
+    let type = item[typeKey].toLowerCase().replace(/[^a-z0-9]/g, '');
     if (!/^[a-z0-9]{1,20}$/.test(type)) continue;
+    type = TYPE_ALIAS[type] ?? type;
     if (type === 'spotify') {
       const parsed = parseSpotifyLink(item.url);
       if (parsed) spotifyLinks.push(parsed);
@@ -126,8 +124,29 @@ export function parsePerformer(body, slug, date) {
   }
   // A performer may list several; the artist page is the one we want, then an album, then whatever else.
   const spotify = spotifyLinks.find((l) => l.kind === 'artist') ?? spotifyLinks.find((l) => l.kind === 'album') ?? spotifyLinks[0];
+  return { spotify, links: Object.fromEntries(Object.entries(links).sort(([a], [b]) => a.localeCompare(b))) };
+}
+
+/**
+ * Parse one performer answer.
+ * @param {unknown} body parsed JSON
+ * @param {string} slug the slug that was requested
+ * @param {string} date YYYY-MM-DD fetch date
+ * @returns {{ok: true, festival: object}|{ok: false, reason: string}}
+ *   festival: {slug, fetched, hometown?, spotify?, links, showtimes?}
+ *   spotify is {kind:'artist'|'album', id} or {kind, url} (a non-artist link); links holds one https URL per
+ *   social type (platform keys for the ones we support, validated like MusicBrainz links; others as given).
+ *   `bio`, image URLs and `music` are not kept: the text is the festival's, and `music` is one Apple Music album link.
+ */
+export function parsePerformer(body, slug, date) {
+  if (!isObject(body)) return { ok: false, reason: 'answer is not a JSON object' };
+  if (body.found !== true) return { ok: false, reason: body.found === false ? 'feed says the performer was not found' : 'answer has no found:true' };
+  const festival = { slug, fetched: date };
+  if (typeof body.hometown === 'string' && body.hometown.trim()) festival.hometown = body.hometown.replace(/\s+/g, ' ').trim().slice(0, 120);
+
+  const { spotify, links } = parseSocialLinks(body.social, 'type');
   if (spotify) festival.spotify = spotify;
-  festival.links = Object.fromEntries(Object.entries(links).sort(([a], [b]) => a.localeCompare(b)));
+  festival.links = links;
 
   // Showtimes: kept only when it is a short list of flat objects (shape unknown until the schedule is published).
   const st = body.showtimes;

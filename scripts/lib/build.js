@@ -84,6 +84,7 @@ export function resolveRecord(record, override) {
     supersedes: !Array.isArray(override.spotifyIds) && record.spotify?.confidence === 'festival' ? (record.spotify.supersedes ?? null) : null,
     festival: record.festival ?? null,
     hasSlug: Boolean(record.slug),
+    formerNames: record.formerNames ?? [],
     mbConfirmed,
     confirmedByMb: doubtfulSearch && mbConfirmed,
     unverified,
@@ -113,7 +114,7 @@ export function buildOutputs({ state, overrides }) {
   for (const name of unusedOverrides(index, state.artists)) warnings.push(`override "${name}" matches no artist in the state`);
 
   const active = state.artists.filter((a) => !a.removed).sort((a, b) => a.n - b.n);
-  const artists = active.map((r) => resolveRecord(r, overrideFor(index, r.name)));
+  const artists = active.map((r) => resolveRecord(r, overrideFor(index, r)));
 
   const seen = new Map();
   for (const a of artists) {
@@ -121,6 +122,11 @@ export function buildOutputs({ state, overrides }) {
       if (seen.has(k) && seen.get(k) !== a.n) warnings.push(`"${a.name}" and artist n=${seen.get(k)} share the normalised name "${k}"`);
       else seen.set(k, a.n);
     }
+  }
+
+  for (const a of artists) {
+    const ov = a.formerNames.filter((f) => index.has(normalizeName(f)));
+    for (const f of ov) warnings.push(`the festival renamed "${f}" to "${a.name}" (n=${a.n}); the override keyed "${f}" still applies, re-key it to "${a.name}" in overrides.json`);
   }
 
   const neighbours = computeLineupSimilarity(artists);

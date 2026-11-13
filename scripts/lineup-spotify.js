@@ -71,7 +71,7 @@ async function main() {
   loadEnv();
   const state = loadState();
   const index = indexOverrides(loadOverrides());
-  const todo = state.artists.filter((a) => needsSpotify(a, overrideFor(index, a.name)));
+  const todo = state.artists.filter((a) => needsSpotify(a, overrideFor(index, a)));
   const viaArtist = todo.filter((a) => festivalSpotifyTarget(a)?.kind === 'artist');
   const viaAlbum = todo.filter((a) => festivalSpotifyTarget(a)?.kind === 'album');
   const toSearch = todo.filter((a) => !festivalSpotifyTarget(a));

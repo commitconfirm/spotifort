@@ -64,10 +64,10 @@ Dev Mode limits each app to 5 authorized users. Extended Quota Mode requires a r
 
 ### Treefort Lineup Data
 
-The lineup is built by a staged pipeline (Pipeline v2; design in `docs/ARCHITECTURE.md`). Year comes from `festival.config.js`. The Treefort Spotify playlist cannot be read by new Dev Mode apps, so names come from the website and everything else is looked up per artist:
+The lineup is built by a staged pipeline (Pipeline v2; design in `docs/ARCHITECTURE.md`). Year, dates and the festival's API id come from `festival.config.js` (next year: change those three). The Treefort Spotify playlist cannot be read by new Dev Mode apps, so names and links come from the festival app vendor's documented public API and everything else is looked up per artist:
 
-1. `scrape`: artist names from the Treefort website (`lineupUrl`; parses `<h3 class="lineup-artist-name">` and each card's `data-slug`), the ground truth for who is performing. Each artist gets a stable number `n`.
-2. `festival`: the festival's own performer feed (`GET /wp-json/tmf/v1/performer/<slug>`, undocumented, no auth; REST base read from the lineup page's `tmfLineup` config). Stores the Spotify link the festival chose, other links and hometown. A failed fetch is retried next run; if over half fail the stage stops with a warning and exits 0.
+1. `source` (`npm run lineup:source`): the lineup from the vendor's API (`https://admin.dionysustickets.com/api/v1/festivals/<festivalId>/performers`; documented at dionysustickets.com/api-docs, read-only, no credentials). Published performers with no tag or a tag in `api.musicTags` (default `Music`) become artists; other statuses and non-music tags are excluded and listed in the review report. Each artist gets a stable number `n`; a performer renamed by the festival is matched by its API id and keeps it. Stores the Spotify link the festival chose, other links and hometown, plus venues and events as a `schedule` section (groundwork; no UI yet). **Fallback:** if the API fails, is not a JSON array or yields under 50 performers, the stage scrapes the lineup page (`lineupUrl`) for names and then runs `festival`; the review report says which source was used. `SPOTIFORT_LINEUP_SOURCE=fallback|api` forces one.
+2. `festival` (fallback only; `npm run lineup:festival`): the festival's own performer feed (`GET /wp-json/tmf/v1/performer/<slug>`, undocumented, no auth; REST base read from the lineup page's `tmfLineup` config). Stores the Spotify link the festival chose, other links and hometown. A failed fetch is retried next run; if over half fail the stage stops with a warning and exits 0.
 3. `spotify`: Spotify id by override, then the festival's artist link, then its album link (resolved through `GET /albums/{id}`), then Search. Confidence `festival` counts as confirmed; search gives `exact`, `inexact`, `ambiguous`.
 4. `musicbrainz`: Spotify URL to MusicBrainz ID to verified links (Apple Music, Tidal, Deezer, Bandcamp, YouTube, SoundCloud, Last.fm) and platform ids.
 5. `lastfm`: similar artists, tags and listener counts by name.
@@ -84,11 +84,11 @@ Matching is by platform ID (Spotify ID for a library import), by lineup number f
 
 **To update the lineup:**
 ```bash
-npm run lineup               # all stages in order; a rerun with nothing new only touches the Treefort page
-npm run lineup:scrape        # one stage at a time: scrape | festival | spotify | musicbrainz | lastfm | build
+npm run lineup               # all stages in order; a rerun with nothing new makes four API requests and changes no file
+npm run lineup:source        # one stage at a time: source | festival (fallback only) | spotify | musicbrainz | lastfm | build
 npm run lineup:festival -- --refresh   # re-fetch every performer (when the festival may have corrected links)
 ```
-Each stage is incremental and resumable. An API failure never becomes a negative fact (the artist stays unresolved and is retried); a stage stops after 3 consecutive failures. Artists gone from the website are marked `removed` in state and excluded from outputs. Credentials in `.env.local` (see `.env.local.example`): `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (else `SPOTIFY_ACCESS_TOKEN`, else a hidden prompt) and `LASTFM_API_KEY`. MusicBrainz needs none and runs at 1 request per second. Pure logic is in `scripts/lib/`; fix a wrong match by adding an entry to `overrides.json` and running `npm run lineup:build`. The name normaliser `src/core/normalize.js` is shared with the app.
+Each stage is incremental and resumable. An API failure never becomes a negative fact (the artist stays unresolved and is retried); a stage stops after 3 consecutive failures. Artists gone from the lineup are marked `removed` in state and excluded from outputs. Credentials in `.env.local` (see `.env.local.example`): `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (else `SPOTIFY_ACCESS_TOKEN`, else a hidden prompt) and `LASTFM_API_KEY`. MusicBrainz needs none and runs at 1 request per second. Pure logic is in `scripts/lib/`; fix a wrong match by adding an entry to `overrides.json` and running `npm run lineup:build`. The name normaliser `src/core/normalize.js` is shared with the app.
 
 ## Tech Stack
 
@@ -109,9 +109,9 @@ spotifort/
 │   ├── data/<year>/             # lineup.json, similarity.json (generated by the pipeline)
 │   └── _headers                 # Security headers and CSP for Cloudflare Pages
 ├── data/<year>/                 # state.json, overrides.json, review.md, sanity.md
-├── festival.config.js           # Festival year, dates, lineup URL, example artists for the "Try:" chips
+├── festival.config.js           # Festival year, dates, API festival id and music tags, fallback lineup URL, example artists for the "Try:" chips
 ├── scripts/
-│   ├── lineup-{scrape,spotify,musicbrainz,lastfm,build}.js   # Pipeline stages (I/O only)
+│   ├── lineup-{source,festival,spotify,musicbrainz,lastfm,build}.js   # Pipeline stages (I/O only)
 │   ├── try-recommend.js, eval-*.js                          # Engine from the command line, evaluations
 │   └── lib/                     # Pure, tested pipeline logic and check-dist
 ├── src/
@@ -219,7 +219,7 @@ npm run preview
 # Regenerate lineup data (all pipeline stages; see Treefort Lineup Data)
 npm run lineup
 
-# One stage: lineup:scrape, lineup:festival, lineup:spotify, lineup:musicbrainz, lineup:lastfm, lineup:build
+# One stage: lineup:source, lineup:festival (fallback only), lineup:spotify, lineup:musicbrainz, lineup:lastfm, lineup:build
 npm run lineup:build
 
 # After a build, check dist/ against the CSP, data shapes and size budgets
@@ -231,7 +231,7 @@ npm run check:dist
 1. **Client-side only** — privacy-first, no backend, no data storage
 2. **PKCE auth** — recommended by Spotify for SPAs, no client secret needed
 3. **Static per-year lineup file** — generated by pipeline script, more reliable than API-dependent approaches
-4. **Lineup pipeline** — scrape Treefort website for ground truth names → Spotify search for IDs → MusicBrainz links → Last.fm similar artists and tags → static outputs. Avoids the blocked playlist endpoint and Spotify's deprecated genres.
+4. **Lineup pipeline** — the festival vendor's documented API for names and links (page scrape + performer feed as the fallback) → Spotify search for IDs → MusicBrainz links → Last.fm similar artists and tags → static outputs. Avoids the blocked playlist endpoint and Spotify's deprecated genres.
 5. **Match on Spotify artist IDs** — not string names, to avoid mismatches
 6. **Last.fm similar artists** — replace Spotify's Related Artists endpoint (blocked in Dev Mode); tags are only a fallback (genre picker)
 7. **Vanilla JS + Vite** — minimal dependencies, fast builds, simple

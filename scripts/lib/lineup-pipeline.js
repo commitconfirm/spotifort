@@ -1,6 +1,6 @@
 /**
  * Pure helpers for the lineup scrape and HTTP politeness (no network, no file I/O).
- * Imported by scripts/lineup-scrape.js, scripts/lib/http.js and the tests.
+ * Imported by scripts/lineup-source.js, scripts/lib/http.js and the tests.
  */
 
 /**
