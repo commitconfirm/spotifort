@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseLineupHtml, decodeEntities, parseRetryAfter } from '../scripts/lib/lineup-pipeline.js';
+import { parseLineupHtml, decodeEntities, parseRetryAfter, stripTags } from '../scripts/lib/lineup-pipeline.js';
 
 const card = (name, cls = 'lineup-artist-name') => `<div class="card"><h3 class="${cls}">${name}</h3></div>`;
 
@@ -43,5 +43,26 @@ describe('parseRetryAfter', () => {
   it('returns null when absent or invalid', () => {
     expect(parseRetryAfter(null)).toBeNull();
     expect(parseRetryAfter('soon')).toBeNull();
+  });
+});
+
+describe('stripTags', () => {
+  it('removes tags and keeps the text', () => {
+    expect(stripTags('<span class="x">A <b>&amp;</b> B</span>')).toBe('A &amp; B');
+  });
+  it('leaves no angle bracket behind when removing a tag splices a new one together', () => {
+    expect(stripTags('<scr<b>ipt>alert(1)</scr</b>ipt>')).not.toMatch(/[<>]/);
+    expect(stripTags('a < b > c')).toBe('a  c');
+    expect(stripTags('<<i>script>x')).not.toContain('<');
+  });
+  it('does not decode entities (that happens afterwards)', () => {
+    expect(stripTags('&lt;script&gt;')).toBe('&lt;script&gt;');
+  });
+});
+
+describe('parseLineupHtml with hostile markup', () => {
+  it('never yields a name containing a tag', () => {
+    const html = '<h3 class="lineup-artist-name"><scr<b>ipt>Evil</scr</b>ipt> Band</h3>';
+    for (const name of parseLineupHtml(html)) expect(name).not.toMatch(/[<>]/);
   });
 });

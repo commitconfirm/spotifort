@@ -28,11 +28,28 @@ function isSameOrigin(url) {
   return !/^[a-z][a-z0-9+.-]*:/i.test(u);
 }
 
+/**
+ * Remove HTML comments. Repeats until nothing changes, because removing one comment can splice a new
+ * `<!--` together (`<!-<!-- x -->-`) that a single pass would leave behind.
+ * @param {string} html
+ * @returns {string}
+ */
+export function stripComments(html) {
+  let text = String(html);
+  let previous;
+  do {
+    previous = text;
+    text = text.replace(/<!--[\s\S]*?-->/g, '');
+  } while (text !== previous);
+  return text;
+}
+
 /** Returns an array of violation strings for one HTML document. */
 export function checkHtml(name, html) {
   const out = [];
   const bad = (msg) => out.push(`${name}: ${msg}`);
-  const text = html.replace(/<!--[\s\S]*?-->/g, '');
+  const text = stripComments(html);
+  if (text.includes('<!--')) bad('unterminated HTML comment: what follows it would be hidden from these checks');
 
   for (const m of text.matchAll(TAG_RE)) {
     const tag = m[1].toLowerCase();
