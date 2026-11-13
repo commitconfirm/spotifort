@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { checkHtml, checkHeaders, checkAppPages, checkExamples, checkSecrets, checkData, dataSizes } from '../scripts/lib/check-dist.js';
+import { checkHtml, checkHeaders, checkAppPages, checkExamples, checkSecrets, checkData, dataSizes, stripComments } from '../scripts/lib/check-dist.js';
 import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP, GZIP_GUARD_HEADROOM } from '../scripts/lib/constants.js';
 
 const page = (body = '', head = '') =>
@@ -213,5 +213,24 @@ describe('checkData', () => {
     expect(r.lineup.raw).toBe(t.length);
     expect(r.lineup.gzip).toBeGreaterThan(0);
     expect(r.similarity).toBeNull();
+  });
+});
+
+describe('stripComments', () => {
+  it('removes comments', () => {
+    expect(stripComments('a<!-- x -->b<!--y-->c')).toBe('abc');
+  });
+  it('removes comments that only appear after another one is removed', () => {
+    expect(stripComments('a<!-<!-- x -->- hidden -->b')).toBe('ab');
+  });
+});
+
+describe('checkHtml and comments', () => {
+  it('flags an unterminated comment, since it could hide what follows', () => {
+    const out = checkHtml('p.html', '<!doctype html><p>ok</p><!-- never closed <script>alert(1)</script>');
+    expect(out.join(' ')).toMatch(/unterminated HTML comment/);
+  });
+  it('still ignores a violation inside a properly closed comment', () => {
+    expect(checkHtml('p.html', '<!doctype html><!-- <script>x</script> --><p>ok</p>')).toEqual([]);
   });
 });

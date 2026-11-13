@@ -4,6 +4,23 @@
  */
 
 /**
+ * Text content of an HTML fragment. Removing tags in one pass can splice a new tag together
+ * (`<scr<b>ipt>` becomes `<script>`), so tags are removed until nothing changes and any angle bracket
+ * still left is dropped: no `<` or `>` survives. Entities are untouched: `&lt;` still decodes to a literal `<` afterwards.
+ * @param {string} fragment
+ * @returns {string}
+ */
+export function stripTags(fragment) {
+  let text = String(fragment);
+  let previous;
+  do {
+    previous = text;
+    text = text.replace(/<[^>]*>/g, '');
+  } while (text !== previous);
+  return text.replace(/[<>]/g, '');
+}
+
+/**
  * Decode HTML entities (common named ones plus numeric) without a dependency
  * @param {string} text
  * @returns {string}
@@ -42,7 +59,7 @@ export function parseLineupCards(html) {
       slug = decodeEntities(match[2]).trim() || null;
       continue;
     }
-    const name = decodeEntities(match[1].replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim();
+    const name = decodeEntities(stripTags(match[1])).replace(/\s+/g, ' ').trim();
     const key = name.toLowerCase();
     const cardSlug = slug;
     slug = null;
