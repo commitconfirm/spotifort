@@ -49,3 +49,17 @@ describe('overrideFor / unusedOverrides', () => {
     expect(unusedOverrides(idx, [{ name: 'Mabe Fratti & Bill Orcutt' }, { name: 'Other' }])).toEqual(['Typo']);
   });
 });
+
+describe('renamed artists (formerNames)', () => {
+  const idx = indexOverrides({ 'Old Name': { note: 'old' } });
+  it('finds an override keyed by a former name, and the current name wins', () => {
+    expect(overrideFor(idx, { name: 'New Name', formerNames: ['Old Name'] })).toEqual({ note: 'old' });
+    expect(overrideFor(idx, { name: 'New Name' })).toEqual({});
+    const both = indexOverrides({ 'Old Name': { note: 'old' }, 'New Name': { note: 'new' } });
+    expect(overrideFor(both, { name: 'New Name', formerNames: ['Old Name'] })).toEqual({ note: 'new' });
+  });
+  it('a former name counts as used', () => {
+    expect(unusedOverrides(idx, [{ name: 'New Name', formerNames: ['Old Name'] }])).toEqual([]);
+    expect(unusedOverrides(idx, [{ name: 'New Name' }])).toEqual(['Old Name']);
+  });
+});

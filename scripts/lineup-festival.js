@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
- * Stage 2: the festival's own performer feed. For each active artist with a slug (captured by the scrape),
- * GET <restBase><slug> and keep the Spotify link the festival chose, plus its other links and hometown.
+ * Fallback link fetcher: the festival's own performer feed. Used only when the vendor API (stage `source`) is
+ * unavailable: `npm run lineup:source` calls it after a page scrape, and it can be run alone after that. For
+ * each active artist with a slug (captured by the scrape), GET <restBase><slug> and keep the Spotify link the
+ * festival chose, plus its other links and hometown. When the last source run used the API the records already
+ * carry their links from it and this script does nothing (a record's links would be replaced by the feed's).
  *
  * The feed is undocumented (it is what the lineup page's own script calls), so this stage is defensive:
  * a performer that cannot be fetched or parsed is left as "not fetched" and retried next run, never recorded
@@ -11,13 +14,12 @@
  * Usage: node scripts/lineup-festival.js [--refresh]   (--refresh: fetch every performer again, ignoring the cache,
  *                                                       for when the festival may have corrected links)
  */
+import { pathToFileURL } from 'node:url';
 import { FESTIVAL, loadEnv, loadState, paths, saveState, today } from './lib/store.js';
 import { ApiError, createClient } from './lib/http.js';
 import { processItems, progressLine } from './lib/stage.js';
 import { cleanSlug, discoverRestBase, feedLooksBroken, needsFestival, parsePerformer, performerUrl, sameName } from './lib/festival.js';
 import { FESTIVAL_CLIENT_NAME, FESTIVAL_MAX_ATTEMPTS, FESTIVAL_MIN_INTERVAL_MS, FESTIVAL_REST_BASE } from './lib/constants.js';
-
-const refresh = process.argv.includes('--refresh');
 
 /** Only a performer the feed knows is a final answer; found:false and 4xx are failures for that performer, not cached. */
 const classify = (status, body) => {
@@ -36,9 +38,13 @@ async function discoverBase(headers) {
   return { base: FESTIVAL_REST_BASE, fromPage: false };
 }
 
-async function main() {
+export async function fetchFestivalLinks({ refresh = false } = {}) {
   loadEnv(); // only for SPOTIFORT_CACHE_DIR; the feed needs no key
   const state = loadState();
+  if (state.source?.kind === 'api') {
+    console.log('Festival feed: skipped. The last lineup source was the vendor API, which already supplied the links.');
+    return;
+  }
   const todo = state.artists.filter((r) => needsFestival(r, refresh));
   const noSlug = state.artists.filter((r) => !r.removed && !cleanSlug(r.slug)).length;
   console.log(`Festival feed: ${todo.length} performer(s) to fetch${refresh ? ' (refresh)' : ''}; ${noSlug} active artist(s) without a slug`);
@@ -76,7 +82,7 @@ async function main() {
         const parsed = parsePerformer(body, slug, date);
         if (!parsed.ok) throw new Error(parsed.reason);
         if (typeof body.name === 'string' && !sameName(body.name, record.name)) console.log(`\n  note: slug "${slug}" is "${body.name}" in the feed, "${record.name}" on the lineup page`);
-        record.festival = parsed.festival;
+        record.festival = { ...(record.festival?.id && { id: record.festival.id }), ...parsed.festival };
         if (parsed.festival.spotify) spotifyLinks++;
         changed = true;
       } catch (err) {
@@ -107,7 +113,9 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  // Never fail the pipeline over this feed: later stages work from search.
-  console.warn(`\nWARNING: festival stage did not complete: ${err.message}`);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  fetchFestivalLinks({ refresh: process.argv.includes('--refresh') }).catch((err) => {
+    // Never fail the pipeline over this feed: later stages work from search.
+    console.warn(`\nWARNING: festival stage did not complete: ${err.message}`);
+  });
+}

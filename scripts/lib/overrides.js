@@ -85,21 +85,29 @@ export function indexOverrides(overrides) {
 }
 
 /**
+ * The override for an artist. Pass the record (or just a name). When the festival renamed an artist, the record's
+ * `formerNames` still find an override keyed by the old name until it is re-keyed; the current name wins.
  * @param {Map<string, {name: string, value: object}>} index from indexOverrides
- * @param {string} artistName
+ * @param {string|{name: string, formerNames?: string[]}} artist
  * @returns {object} the override, or {} when there is none
  */
-export function overrideFor(index, artistName) {
-  return index.get(normalizeName(artistName))?.value ?? {};
+export function overrideFor(index, artist) {
+  const names = typeof artist === 'string' ? [artist] : [artist.name, ...(artist.formerNames ?? [])];
+  for (const name of names) {
+    const hit = index.get(normalizeName(name));
+    if (hit) return hit.value;
+  }
+  return {};
 }
 
 /**
  * Override names that match no artist in the state (typos, or artists that left the lineup).
+ * A renamed artist's former names count as matching.
  * @param {Map<string, {name: string}>} index
- * @param {{name: string}[]} records every record, removed or not
+ * @param {{name: string, formerNames?: string[]}[]} records every record, removed or not
  * @returns {string[]}
  */
 export function unusedOverrides(index, records) {
-  const used = new Set(records.map((r) => normalizeName(r.name)));
+  const used = new Set(records.flatMap((r) => [r.name, ...(r.formerNames ?? [])]).map(normalizeName));
   return [...index].filter(([k]) => !used.has(k)).map(([, v]) => v.name);
 }

@@ -17,7 +17,7 @@ async function main() {
   loadEnv(); // only for SPOTIFORT_CACHE_DIR; MusicBrainz needs no key
   const state = loadState();
   const index = indexOverrides(loadOverrides());
-  const ov = (r) => overrideFor(index, r.name);
+  const ov = (r) => overrideFor(index, r);
   const todo = state.artists.filter((r) => needsMbid(r, ov(r)) || needsMbLinks(r, ov(r)));
   console.log(`MusicBrainz: ${todo.length} artist(s) to look up (about ${Math.ceil((todo.length * 2 * MUSICBRAINZ_MIN_INTERVAL_MS) / 60000)} min at most)`);
   if (todo.length === 0) return;

@@ -45,6 +45,7 @@ const sleepReal = (ms) => new Promise((r) => setTimeout(r, ms));
  * @param {Record<string,string>} [opts.headers]
  * @param {number} [opts.maxAttempts]
  * @param {number} [opts.maxWaitSeconds] longest Retry-After we will wait out; longer aborts the stage
+ * @param {number} [opts.timeoutMs] abort a request (body included) after this long; a timeout is retried like a network error
  * @param {typeof fetch} [opts.fetchImpl]
  * @param {(ms:number)=>Promise<void>} [opts.sleep]
  * @param {()=>number} [opts.now]
@@ -58,6 +59,7 @@ export function createClient(opts) {
     headers = {},
     maxAttempts = 5,
     maxWaitSeconds = 120,
+    timeoutMs = 0,
     fetchImpl = fetch,
     sleep = sleepReal,
     now = Date.now,
@@ -113,7 +115,7 @@ export function createClient(opts) {
 
       let res;
       try {
-        res = await fetchImpl(url, { headers: { Accept: 'application/json', ...headers } });
+        res = await fetchImpl(url, { headers: { Accept: 'application/json', ...headers }, ...(timeoutMs > 0 && { signal: AbortSignal.timeout(timeoutMs) }) });
       } catch (err) {
         last = `network error (${redact(err?.cause?.code ?? err?.message ?? 'unknown')})`;
         await sleep(Math.min(30000, 1000 * 2 ** attempt));

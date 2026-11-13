@@ -6,6 +6,360 @@
     "added": [],
     "removed": []
   },
+  "source": {
+    "kind": "api",
+    "performers": 188,
+    "excluded": {
+      "byStatus": {},
+      "byTag": []
+    }
+  },
+  "schedule": {
+    "venues": [
+      {
+        "id": "2FZZuPzWQVdAh4qa0c42",
+        "title": "10th Street Station",
+        "address": "104 N 10th St, Boise, ID 83702"
+      },
+      {
+        "id": "z535acJq8rOrwib64Op2",
+        "title": "Adelmann North",
+        "address": "622 W Idaho St Boise, ID 83702"
+      },
+      {
+        "id": "hUDqpl4TkiS8LjGUj6ql",
+        "title": "Adelmann South",
+        "address": "622 W Idaho St Boise, ID 83702"
+      },
+      {
+        "id": "xfZKNlEUJUe39GCflgUg",
+        "title": "Albertsons Library",
+        "address": "1865 W Cesar Chavez Ln, Boise, ID 83725"
+      },
+      {
+        "id": "FiKASSKAtFftXbXXYKqC",
+        "title": "Alefort Lounge - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "sjWvrx99RAiEKMmAVOZI",
+        "title": "Ananda Yoga Space",
+        "address": "3520 W Chinden Blvd, Garden City, ID 83714"
+      },
+      {
+        "id": "HpPldMGoWGIXSuvbojwP",
+        "title": "Bishops' House",
+        "address": "2420 Old Penitentiary Rd, Boise, ID 83712"
+      },
+      {
+        "id": "Uf7o59ehfuGVmDEHRyF2",
+        "title": "Boise Brewing",
+        "address": "521 W Broad St, Boise, ID 83702"
+      },
+      {
+        "id": "XhCXHEYBsWWhn7SjDck2",
+        "title": "Boise Centre East - Lobby",
+        "address": "195 S Capitol Blvd, Boise, ID 83706"
+      },
+      {
+        "id": "i2ekBNPMQ4XPPc2RDl9K",
+        "title": "Boise Centre East - Room 400 (Ballroom)",
+        "address": "195 S Capitol Blvd, Boise, ID 83706"
+      },
+      {
+        "id": "3HoTyeLepTBvAlpE7uUF",
+        "title": "Boise Centre East - Room 410A",
+        "address": "195 S Capitol Blvd, Boise, ID 83706"
+      },
+      {
+        "id": "FTNOl5Yz9zmnfj73VL2q",
+        "title": "Boise Centre East - Room 410B",
+        "address": "195 S Capitol Blvd, Boise, ID 83706"
+      },
+      {
+        "id": "bSHB4RigU6dvbSYCzZVK",
+        "title": "Boise Centre East - Room 410C",
+        "address": "195 S Capitol Blvd, Boise, ID 83706"
+      },
+      {
+        "id": "WfV8ZlMi4P5jAgkMvsRm",
+        "title": "Boise Centre East - Room 420A",
+        "address": "195 S Capitol Blvd, Boise, ID 83706"
+      },
+      {
+        "id": "NspxanjwiAaeg96iBP96",
+        "title": "Boise Contemporary Theater",
+        "address": "854 W Fulton St, Boise, ID 83702"
+      },
+      {
+        "id": "4RI8dW2qhKZmX6d0CLlq",
+        "title": "Boise State Centennial Amphitheatre",
+        "address": "1711 Theatre Ln"
+      },
+      {
+        "id": "Faph4SpoZQFTZWRMSI5o",
+        "title": "Box Office + Outpost (Merch)",
+        "address": "670 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "I3yTs752ql00CzkE4mLs",
+        "title": "Center for the Visual Arts (at Boise State)",
+        "address": "1110 South Capital Blvd, Boise, ID 83725"
+      },
+      {
+        "id": "L9vaXmXTPblDidwBWPSH",
+        "title": "Cyclops",
+        "address": "370 S 8th St, Boise, ID 83702"
+      },
+      {
+        "id": "mHOHLoeZNuNL55zmkUIP",
+        "title": "Gene Harris Bandshell - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "LSp3RGDXJKImmnkbWc2g",
+        "title": "Hap Hap Lounge",
+        "address": "722 W Broad St. Second Floor, Boise, ID 83702"
+      },
+      {
+        "id": "UcVfLXaCyYXaDFGj4Mr6",
+        "title": "Humpin' Hannah's",
+        "address": "621 W Main St, Boise, ID 83702"
+      },
+      {
+        "id": "s5MpQ13Dm26HYOLzVWfC",
+        "title": "Idaho Film Society",
+        "address": "1212 W Bannock St, Boise, ID 83702"
+      },
+      {
+        "id": "F9dVOjMPP4etovQsqKt6",
+        "title": "Idaho Shakespeare Festival School of Theater",
+        "address": "618 S. 8th Street, Boise, ID 83702"
+      },
+      {
+        "id": "N5r4j5Q6YL1SKtfOp47R",
+        "title": "Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "4IsQgHmgEQ9lqMH0IjBq",
+        "title": "JUMP",
+        "address": "1000 W Myrtle St, Boise, ID 83702"
+      },
+      {
+        "id": "WrBuFIYKUJGFLTpHRNFO",
+        "title": "JUMP 5th floor : Hackfort Interactive Space",
+        "address": "1000 W Myrtle St, Boise, ID 83702"
+      },
+      {
+        "id": "BocqdjtbZhdkHtGWmjZF",
+        "title": "JUMP 5th Floor : Hackfort Music Stage",
+        "address": "1000 W Myrtle St, Boise, ID 83702"
+      },
+      {
+        "id": "h63o9cnTDJoi0NVbaxUn",
+        "title": "JUMP 5th floor : The Loft Room",
+        "address": "1000 W Myrtle St, Boise, ID 83702"
+      },
+      {
+        "id": "hbULEYHAV0NbbGCF90zX",
+        "title": "JUMP 5th floor : The Makerspace",
+        "address": "1000 W Myrtle St, Boise, ID 83702"
+      },
+      {
+        "id": "tnK0ypXdo2vHEc7JnEib",
+        "title": "JUMP 5th floor : The Move Room",
+        "address": "1000 W Myrtle St, Boise, ID 83702"
+      },
+      {
+        "id": "DykUItdkgqWNpcxXgXop",
+        "title": "Kidfort - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "6AjeMcepWZHfloeWr1HF",
+        "title": "KIN Restaurant",
+        "address": "999 W Main St Suite P101, Boise, ID 83702"
+      },
+      {
+        "id": "PTGk4jIpICcMAiCs7uKZ",
+        "title": "Knitting Factory",
+        "address": "416 S 9th St, Boise, ID 83702"
+      },
+      {
+        "id": "JTKX5yOjSSbqywAbjrGG",
+        "title": "Lost Grove Brewing",
+        "address": "1026 S La Pointe St, Boise, ID 83706"
+      },
+      {
+        "id": "vusAETMYvcUx1EFDtUVc",
+        "title": "Main Stage - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "KcJc1U8xTSaiz0evBPYz",
+        "title": "Main Street Station",
+        "address": "777 W Main St, Boise, ID 83702"
+      },
+      {
+        "id": "6mMohBubmKF5DN2LdeqV",
+        "title": "Merch Tent - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "gvHUNtLv2kT0ioWPFR3n",
+        "title": "MING Studios",
+        "address": "420 S 6th St, Boise, ID 83702, USA"
+      },
+      {
+        "id": "AQb7jb9PwntkrLRd9SeL",
+        "title": "Morrison Center",
+        "address": "2201 W Cesar Chavez Ln, Boise, ID 83725"
+      },
+      {
+        "id": "4q9IrWN6GTOb92mskDOG",
+        "title": "Neurolux",
+        "address": "111 N 11th St, Boise, ID 83702"
+      },
+      {
+        "id": "J6LsjGsgDLMNeXhpjMo3",
+        "title": "Ochos",
+        "address": "515 W Idaho St, Boise, ID 83702"
+      },
+      {
+        "id": "x6uCIpadbYv8tfpK0tsR",
+        "title": "Payette Brewing Company",
+        "address": "733 S Pioneer St, Boise, ID 83702"
+      },
+      {
+        "id": "ogidVrN7wn754pspDPPd",
+        "title": "Pengilly Saloon",
+        "address": "513 W Main St, Boise, ID 83702"
+      },
+      {
+        "id": "RTOcxiIsrOIwfKDGoP6w",
+        "title": "Realms Arcade",
+        "address": "109 S. 23rd St. Suite A"
+      },
+      {
+        "id": "gpi6cBspUe4yHzvL3Xrd",
+        "title": "Reef",
+        "address": "105 S 6th St, Boise, ID 83702"
+      },
+      {
+        "id": "3TS7gRYhKbC1LBpokqOA",
+        "title": "Rhodes Skate Park",
+        "address": "1555 W Front St, Boise, ID 83702"
+      },
+      {
+        "id": "iUPLSBEtdCLum43EYAvB",
+        "title": "Sage",
+        "address": "242 N 8th St ste 210, Boise, ID 83702, USA"
+      },
+      {
+        "id": "ssln67R1GjJUizxmBApj",
+        "title": "Shrine Social Club - Ballroom",
+        "address": "1118 W Idaho St, Boise, ID 83702"
+      },
+      {
+        "id": "D6coWfdweXsZidJQ90iM",
+        "title": "Shrine Social Club - Basement",
+        "address": "1118 W Idaho St, Boise, ID 83702"
+      },
+      {
+        "id": "OYbEbsLwE4MWAHpxFhe7",
+        "title": "Space Banana",
+        "address": "816 W Bannock St suite 102, Boise, ID 83702"
+      },
+      {
+        "id": "Itb5CumcAM4pztNTWxZx",
+        "title": "The Balcony Club",
+        "address": "150 N 8th St Ste 226, Boise, ID 83702"
+      },
+      {
+        "id": "miJhroTwcGwjhEXwIF0R",
+        "title": "The Basque Center",
+        "address": "601 W Grove St, Boise, ID 83702"
+      },
+      {
+        "id": "GT8d79rpMQBcGzwD8i6H",
+        "title": "The District Coffee House",
+        "address": "219 N 10th St, Boise, ID 83702"
+      },
+      {
+        "id": "7ih8gYECDwIEheXRHld8",
+        "title": "The Egyptian Theatre",
+        "address": "700 W Main St, Boise, ID 83702"
+      },
+      {
+        "id": "TWBCVLcnP7V87CTvD8mI",
+        "title": "The Flicks",
+        "address": "646 W Fulton St, Boise, ID 83702"
+      },
+      {
+        "id": "1EkeR90M5LpZ77FCwG4N",
+        "title": "The Hideout - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "zInPUOViBhm8Nwat1z4n",
+        "title": "The Idaho State Museum",
+        "address": "610 Julia Davis Dr, Boise, ID 83702"
+      },
+      {
+        "id": "jTkhUEcc7cwcMaoXsGJE",
+        "title": "The Modern",
+        "address": "1314 W Grove St, Boise, ID 83702"
+      },
+      {
+        "id": "zXslnE7zwiQHaF2a26mN",
+        "title": "The Nest - Julia Davis Park",
+        "address": "700 S Capitol Blvd, Boise, ID 83702"
+      },
+      {
+        "id": "0XKveV9wjftisWE15thZ",
+        "title": "The Olympic Venue",
+        "address": "1009 W Main St, Boise, ID 83702"
+      },
+      {
+        "id": "EhVsm8iayBQWdMBU8RaQ",
+        "title": "The Shredder",
+        "address": "430 S 10th St, Boise, ID 83702"
+      },
+      {
+        "id": "5cCgCFOJEz2oMRM4h20v",
+        "title": "The Stein Luminary - Boise State University",
+        "address": "1110 S. Capitol Blvd. Boise, Idaho 83725"
+      },
+      {
+        "id": "9h3WrJDMKq2XgkszJI9Z",
+        "title": "Treefort Music Hall",
+        "address": "722 W Broad St, Boise, ID 83702"
+      },
+      {
+        "id": "pwKHOMHXA6wcIYj5n0TL",
+        "title": "Voo Doo Cellar",
+        "address": "200 N Capitol Blvd Boise, ID 83702"
+      },
+      {
+        "id": "rtx7J5igMrAf30wyJNK8",
+        "title": "Wassmuth Center",
+        "address": "777 S 8th St, Boise, ID 83702"
+      },
+      {
+        "id": "DwPb28RIMPOz03MCmA1c",
+        "title": "White Dog Brewing Co.",
+        "address": "705 W Fulton St, Boise, ID 83702"
+      },
+      {
+        "id": "Ogt5bdt21KnfpBGaLHQN",
+        "title": "Zoo Boise",
+        "address": "355 Julia Davis Dr, Boise, ID 83702"
+      }
+    ],
+    "events": [],
+    "unknownPerformerIds": 0
+  },
   "artists": [
     {
       "n": 1,
@@ -300,8 +654,7 @@
       "mbName": "Alex Amen",
       "slug": "alex-amen",
       "festival": {
-        "slug": "alex-amen",
-        "fetched": "2026-11-13",
+        "id": "UEjYD2A3NX4pwfisLgts",
         "hometown": "Houston, TX",
         "spotify": {
           "kind": "artist",
@@ -613,8 +966,7 @@
       "mbName": "All Them Witches",
       "slug": "all-them-witches",
       "festival": {
-        "slug": "all-them-witches",
-        "fetched": "2026-11-13",
+        "id": "wkfnhM008JOotqXXtcKg",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -922,8 +1274,7 @@
       "mbName": "almost a.m.",
       "slug": "almost-a-m",
       "festival": {
-        "slug": "almost-a-m",
-        "fetched": "2026-11-13",
+        "id": "mtJIjZnUa1geLLuDZQRY",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -1229,8 +1580,7 @@
       "mbName": "Amelia Day",
       "slug": "amelia-day",
       "festival": {
-        "slug": "amelia-day",
-        "fetched": "2026-11-13",
+        "id": "mGHLd8atWCz3uMXMHeS0",
         "hometown": "Sumner, WA",
         "spotify": {
           "kind": "artist",
@@ -1277,8 +1627,7 @@
       "mbName": "Bad Quitters",
       "slug": "bad-quitters",
       "festival": {
-        "slug": "bad-quitters",
-        "fetched": "2026-11-13",
+        "id": "MbUv1xXwMQDxSCHhWs39",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -1589,8 +1938,7 @@
       "mbName": "Balance and Composure",
       "slug": "balance-and-composure",
       "festival": {
-        "slug": "balance-and-composure",
-        "fetched": "2026-11-13",
+        "id": "HyPVlAVrf1y7FyfYYiGm",
         "hometown": "Doylestown, PA",
         "spotify": {
           "kind": "artist",
@@ -1874,8 +2222,7 @@
       },
       "slug": "barbara",
       "festival": {
-        "slug": "barbara",
-        "fetched": "2026-11-13",
+        "id": "O61grPJcX6YgDDeD3a9W",
         "hometown": "Denver, CO",
         "spotify": {
           "kind": "artist",
@@ -2176,8 +2523,7 @@
       },
       "slug": "bardo",
       "festival": {
-        "slug": "bardo",
-        "fetched": "2026-11-13",
+        "id": "kuK2JJbpRDlzZU6sCfW3",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -2484,8 +2830,7 @@
       "mbName": "Beach Weather",
       "slug": "beach-weather",
       "festival": {
-        "slug": "beach-weather",
-        "fetched": "2026-11-13",
+        "id": "rF42y3PlTPzKJpyGryJ5",
         "hometown": "Braintree, MA",
         "spotify": {
           "kind": "artist",
@@ -2777,8 +3122,7 @@
       },
       "slug": "beautiful-freaks",
       "festival": {
-        "slug": "beautiful-freaks",
-        "fetched": "2026-11-13",
+        "id": "KJvlKMAoeTRUKxlK7PiK",
         "hometown": "Seattle, WA",
         "spotify": {
           "kind": "artist",
@@ -3083,8 +3427,7 @@
       "mbName": "Bee Blackwell",
       "slug": "bee-blackwell",
       "festival": {
-        "slug": "bee-blackwell",
-        "fetched": "2026-11-13",
+        "id": "F3LLdyOcS26U3rqYF7sX",
         "hometown": "Austin, TX",
         "spotify": {
           "kind": "artist",
@@ -3388,8 +3731,7 @@
       "mbName": "Beefheart & McQuinn",
       "slug": "beefheart-mcquinn",
       "festival": {
-        "slug": "beefheart-mcquinn",
-        "fetched": "2026-11-13",
+        "id": "BSwM9Lmi7UVEWUZC5Syx",
         "hometown": "Melbourne, AUS",
         "spotify": {
           "kind": "artist",
@@ -3698,8 +4040,7 @@
       "mbName": "Being Dead",
       "slug": "being-dead",
       "festival": {
-        "slug": "being-dead",
-        "fetched": "2026-11-13",
+        "id": "HH998SDwYqOpLBhuAVKO",
         "hometown": "Austin, TX",
         "spotify": {
           "kind": "artist",
@@ -4005,8 +4346,7 @@
       "mbName": "Bella White",
       "slug": "bella-white",
       "festival": {
-        "slug": "bella-white",
-        "fetched": "2026-11-13",
+        "id": "IQREMgBaXOjrhwij8Nan",
         "hometown": "New Orleans, LA",
         "spotify": {
           "kind": "artist",
@@ -4316,8 +4656,7 @@
       "mbName": "Black Lips",
       "slug": "black-lips",
       "festival": {
-        "slug": "black-lips",
-        "fetched": "2026-11-13",
+        "id": "1duSjDEq7ndjk0Kf9ma2",
         "hometown": "Atlanta, GA",
         "spotify": {
           "kind": "artist",
@@ -4330,6 +4669,7 @@
           "instagram": "https://www.instagram.com/theblacklips_/",
           "soundcloud": "https://soundcloud.com/the-black-lips",
           "website": "https://www.black-lips.com/",
+          "x": "https://l.facebook.com/l.php?u=https%3A%2F%2Ftwitter.com%2FTheBlackLips%3Ffbclid%3DIwZXh0bgNhZW0CMTAAcGRvZgVicmlkETFVeXNoMjQwZXVtZVJJRUZOc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHsQKVZMe9Ti4uZboMbiyL-XsDGcejTFdzKdtcwclhir_-0_893TUEDkv9gSw_aem_4TA5fW_NvpcuZkK_Ra30eg&h=AUAG947Z54qtB96WOnZZ_SxwFtptNfQ59n9SYpOZg78siAzjaQ9r88zHr44jczdQnCAL1n5gdGXS8jEKwNYjSAJVzz4PYZvnrhOQd1sUcNYI_WqxDGLeNcpEfw916QwjAEBHMYRkbIQoR26vs00bl3w",
           "youtube": "https://www.youtube.com/@TheBlackLipsofficial"
         }
       }
@@ -4627,8 +4967,7 @@
       "mbName": "Bleary Eyed",
       "slug": "bleary-eyed",
       "festival": {
-        "slug": "bleary-eyed",
-        "fetched": "2026-11-13",
+        "id": "9qmksUaC1BL3LvdXvYFS",
         "hometown": "Philadelphia, PA",
         "spotify": {
           "kind": "artist",
@@ -4933,8 +5272,7 @@
       "mbName": "Boy Golden",
       "slug": "boy-golden",
       "festival": {
-        "slug": "boy-golden",
-        "fetched": "2026-11-13",
+        "id": "dmgIyAQRNH9kCyeVBjVh",
         "hometown": "Winnipeg, MB",
         "spotify": {
           "kind": "artist",
@@ -5244,8 +5582,7 @@
       "mbName": "Brennan Wedl",
       "slug": "brennan-wedl",
       "festival": {
-        "slug": "brennan-wedl",
-        "fetched": "2026-11-13",
+        "id": "j2tUAlSBnRldi6f8471U",
         "hometown": "Minneapolis, MN",
         "spotify": {
           "kind": "artist",
@@ -5288,8 +5625,7 @@
       },
       "slug": "brutalust",
       "festival": {
-        "slug": "brutalust",
-        "fetched": "2026-11-13",
+        "id": "r7AoiZmAP5vnOgy5WCCY",
         "hometown": "Salt Lake City, UT",
         "spotify": {
           "kind": "artist",
@@ -5600,8 +5936,7 @@
       "mbName": "Bully",
       "slug": "bully",
       "festival": {
-        "slug": "bully",
-        "fetched": "2026-11-13",
+        "id": "P0pADVhegW5aZHfjqJ9Q",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -5893,8 +6228,7 @@
       },
       "slug": "cab-ellis",
       "festival": {
-        "slug": "cab-ellis",
-        "fetched": "2026-11-13",
+        "id": "ARfroDReVi5z4cCqAqtJ",
         "hometown": "New York, NY",
         "spotify": {
           "kind": "artist",
@@ -6202,8 +6536,7 @@
       "mbName": "Cain Culto",
       "slug": "cain-culto",
       "festival": {
-        "slug": "cain-culto",
-        "fetched": "2026-11-13",
+        "id": "geBXWQkKYXwY3Ry82RUO",
         "hometown": "Lexington, KY",
         "spotify": {
           "kind": "artist",
@@ -6502,8 +6835,7 @@
       "mbName": "Caiola",
       "slug": "caiola",
       "festival": {
-        "slug": "caiola",
-        "fetched": "2026-11-13",
+        "id": "jLZJRRCBx1SnCTPh44pB",
         "hometown": "Philadelphia, PA",
         "spotify": {
           "kind": "artist",
@@ -6807,8 +7139,7 @@
       "mbName": "Camel Power Club",
       "slug": "camel-power-club",
       "festival": {
-        "slug": "camel-power-club",
-        "fetched": "2026-11-13",
+        "id": "f2DTeAd23t82DDDuunn3",
         "hometown": "France",
         "spotify": {
           "kind": "artist",
@@ -7103,8 +7434,7 @@
       },
       "slug": "car-crash-bird-funeral",
       "festival": {
-        "slug": "car-crash-bird-funeral",
-        "fetched": "2026-11-13",
+        "id": "cD9ZnZPFwWe26aCz1u99",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -7413,8 +7743,7 @@
       "mbName": "Caroline Rose",
       "slug": "caroline-rose",
       "festival": {
-        "slug": "caroline-rose",
-        "fetched": "2026-11-13",
+        "id": "gW3Ev3syeGsENqdEVaHi",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -7719,8 +8048,7 @@
       "mbName": "Chico Detour",
       "slug": "chico-detour",
       "festival": {
-        "slug": "chico-detour",
-        "fetched": "2026-11-13",
+        "id": "ZoMEoZpTokcKXr7fILLt",
         "hometown": "Seattle, WA",
         "spotify": {
           "kind": "artist",
@@ -8032,8 +8360,7 @@
       "mbName": "Colby Acuff",
       "slug": "colby-acuff",
       "festival": {
-        "slug": "colby-acuff",
-        "fetched": "2026-11-13",
+        "id": "cfTqfJ4U12eDeTvrk0Wv",
         "hometown": "Coeur d'Alene, Idaho",
         "spotify": {
           "kind": "artist",
@@ -8347,8 +8674,7 @@
       "mbName": "Courtney Barnett",
       "slug": "courtney-barnett",
       "festival": {
-        "slug": "courtney-barnett",
-        "fetched": "2026-11-13",
+        "id": "crh7mi2LpbIS3BNHmrVX",
         "hometown": "Melbourne, AUS",
         "spotify": {
           "kind": "artist",
@@ -8643,8 +8969,7 @@
       },
       "slug": "dan-spencer",
       "festival": {
-        "slug": "dan-spencer",
-        "fetched": "2026-11-13",
+        "id": "U7too82vgsC3wjmabCyB",
         "hometown": "Cookeville, TN",
         "spotify": {
           "kind": "artist",
@@ -8953,8 +9278,7 @@
       "mbName": "Dari Bay",
       "slug": "dari-bay",
       "festival": {
-        "slug": "dari-bay",
-        "fetched": "2026-11-13",
+        "id": "FbSQFOJDOE4TrtsT3Zsq",
         "hometown": "Burlington, VT",
         "spotify": {
           "kind": "artist",
@@ -9131,8 +9455,7 @@
       },
       "slug": "deep-heaven",
       "festival": {
-        "slug": "deep-heaven",
-        "fetched": "2026-11-13",
+        "id": "9L2d5Y19I6Hh89t1K5nb",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -9426,8 +9749,7 @@
       },
       "slug": "deeveaux",
       "festival": {
-        "slug": "deeveaux",
-        "fetched": "2026-11-13",
+        "id": "cDGxJARSgOUZitEOUb9b",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -9722,8 +10044,7 @@
       },
       "slug": "delicate-steve",
       "festival": {
-        "slug": "delicate-steve",
-        "fetched": "2026-11-13",
+        "id": "t99jdaUa3oJQlyEd11d9",
         "hometown": "Fredon Township, NJ",
         "spotify": {
           "kind": "artist",
@@ -10017,8 +10338,7 @@
       },
       "slug": "delivery",
       "festival": {
-        "slug": "delivery",
-        "fetched": "2026-11-13",
+        "id": "U4xBvm6HFx64Pezhc0JW",
         "hometown": "Melbourne, Victoria, Australia",
         "spotify": {
           "kind": "artist",
@@ -10323,8 +10643,7 @@
       "mbName": "Delta Sleep",
       "slug": "delta-sleep",
       "festival": {
-        "slug": "delta-sleep",
-        "fetched": "2026-11-13",
+        "id": "hpgN1I1WVmqmAMVMGWvy",
         "hometown": "Brighton, UK",
         "spotify": {
           "kind": "artist",
@@ -10629,8 +10948,7 @@
       "mbName": "DLG.",
       "slug": "dlg",
       "festival": {
-        "slug": "dlg",
-        "fetched": "2026-11-13",
+        "id": "Vaae10Eoq0RUfflZjT0N",
         "hometown": "Austin, TX",
         "spotify": {
           "kind": "artist",
@@ -10944,8 +11262,7 @@
       "mbName": "Drug Church",
       "slug": "drug-church",
       "festival": {
-        "slug": "drug-church",
-        "fetched": "2026-11-13",
+        "id": "ZAk3jbMOjXj1UjKWzaHc",
         "hometown": "Albany, NY",
         "spotify": {
           "kind": "artist",
@@ -11255,8 +11572,7 @@
       "mbName": "Eartheater",
       "slug": "eartheater",
       "festival": {
-        "slug": "eartheater",
-        "fetched": "2026-11-13",
+        "id": "gYYUUIcZ3Q3Yd2pBgSvM",
         "hometown": "New York City, NY",
         "spotify": {
           "kind": "artist",
@@ -11564,8 +11880,7 @@
       "mbName": "Eleanor Murray",
       "slug": "eleanor-murray",
       "festival": {
-        "slug": "eleanor-murray",
-        "fetched": "2026-11-13",
+        "id": "6hblRyWjW1rI5yMTOerY",
         "hometown": "Seattle, WA",
         "spotify": {
           "kind": "artist",
@@ -11868,8 +12183,7 @@
       "mbName": "Emma Ogier",
       "slug": "emma-ogier",
       "festival": {
-        "slug": "emma-ogier",
-        "fetched": "2026-11-13",
+        "id": "pSfOE0gpMewZwZhyehzQ",
         "hometown": "Houston, TX",
         "spotify": {
           "kind": "artist",
@@ -12179,8 +12493,7 @@
       "mbName": "Enter Shikari",
       "slug": "enter-shikari",
       "festival": {
-        "slug": "enter-shikari",
-        "fetched": "2026-11-13",
+        "id": "L9f8GTfXPwDcQOFNBL79",
         "hometown": "St Albans, UK",
         "spotify": {
           "kind": "artist",
@@ -12478,8 +12791,7 @@
       "mbName": "Fai Laci",
       "slug": "fai-laci",
       "festival": {
-        "slug": "fai-laci",
-        "fetched": "2026-11-13",
+        "id": "TghF2jRtA1H5cAjb72fz",
         "hometown": "Boston, MA",
         "spotify": {
           "kind": "artist",
@@ -12786,8 +13098,7 @@
       "mbName": "Fat, Evil Children",
       "slug": "fat-evil-children",
       "festival": {
-        "slug": "fat-evil-children",
-        "fetched": "2026-11-13",
+        "id": "2LOsAm0p8rvXhDUXmB8p",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -12816,8 +13127,7 @@
       },
       "slug": "fatal-femmes",
       "festival": {
-        "slug": "fatal-femmes",
-        "fetched": "2026-11-13",
+        "id": "rnLSFtv5sb0xmxgaFGY0",
         "hometown": "Seattle, WA",
         "links": {
           "bandcamp": "https://fatalfemmes.bandcamp.com/music",
@@ -13123,8 +13433,7 @@
       "mbName": "Fenne Lily",
       "slug": "fenne-lily",
       "festival": {
-        "slug": "fenne-lily",
-        "fetched": "2026-11-13",
+        "id": "u8cMtyJZnGXgBvXtkUiS",
         "hometown": "Brooklyn, NY",
         "spotify": {
           "kind": "artist",
@@ -13192,8 +13501,7 @@
       "mbName": "Fiig",
       "slug": "fiig",
       "festival": {
-        "slug": "fiig",
-        "fetched": "2026-11-13",
+        "id": "Vn0htRp9xdAg8HiOS3Q2",
         "hometown": "Salt Lake City, UT",
         "spotify": {
           "kind": "artist",
@@ -13481,8 +13789,7 @@
       },
       "slug": "finger-foods",
       "festival": {
-        "slug": "finger-foods",
-        "fetched": "2026-11-13",
+        "id": "lc8WX3KOPyy36e0lj5au",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -13789,8 +14096,7 @@
       "mbName": "Flooding",
       "slug": "flooding",
       "festival": {
-        "slug": "flooding",
-        "fetched": "2026-11-13",
+        "id": "D64A7NlAAim086oVmsBd",
         "hometown": "Kansas City, KS",
         "spotify": {
           "kind": "artist",
@@ -14101,8 +14407,7 @@
       "mbName": "Four Year Strong",
       "slug": "four-year-strong",
       "festival": {
-        "slug": "four-year-strong",
-        "fetched": "2026-11-13",
+        "id": "tjucCfZqgBpQnDIOKAg5",
         "hometown": "Worcester, MA",
         "spotify": {
           "kind": "artist",
@@ -14410,8 +14715,7 @@
       "mbName": "Gabriele Poso",
       "slug": "gabriele-poso",
       "festival": {
-        "slug": "gabriele-poso",
-        "fetched": "2026-11-13",
+        "id": "l8yvmBdoPva2PJn1a0Nf",
         "hometown": "Lecce, Italy",
         "spotify": {
           "kind": "artist",
@@ -14717,8 +15021,7 @@
       "mbName": "Gabriella Rose",
       "slug": "gabriella-rose",
       "festival": {
-        "slug": "gabriella-rose",
-        "fetched": "2026-11-13",
+        "id": "7MezXVFfxXLwhW4Jg2LO",
         "hometown": "Sandpoint, ID",
         "spotify": {
           "kind": "artist",
@@ -15009,8 +15312,7 @@
       },
       "slug": "glyders",
       "festival": {
-        "slug": "glyders",
-        "fetched": "2026-11-13",
+        "id": "Iqg77Ynj6jNSmDH9yuVg",
         "hometown": "Chicago, IL",
         "spotify": {
           "kind": "artist",
@@ -15319,8 +15621,7 @@
       "mbName": "Gotts Street Park",
       "slug": "gotts-street-park",
       "festival": {
-        "slug": "gotts-street-park",
-        "fetched": "2026-11-13",
+        "id": "k4ZPKmHOblKxSoIpKduh",
         "hometown": "Leeds, England, UK",
         "spotify": {
           "kind": "artist",
@@ -15629,8 +15930,7 @@
       "mbName": "Greg Freeman",
       "slug": "greg-freeman",
       "festival": {
-        "slug": "greg-freeman",
-        "fetched": "2026-11-13",
+        "id": "jpgVdmn54QVKBHzg1Hx8",
         "hometown": "Chicago, IL",
         "spotify": {
           "kind": "artist",
@@ -15924,8 +16224,7 @@
       },
       "slug": "grocery-bag",
       "festival": {
-        "slug": "grocery-bag",
-        "fetched": "2026-11-13",
+        "id": "6tsck9mDZJOG81XDt770",
         "hometown": "Austin, TX",
         "spotify": {
           "kind": "artist",
@@ -16235,8 +16534,7 @@
       "mbName": "Guitar Wolf",
       "slug": "guitar-wolf",
       "festival": {
-        "slug": "guitar-wolf",
-        "fetched": "2026-11-13",
+        "id": "9sBPGzmPftUdF5QVwbnf",
         "hometown": "Tokyo, Japan",
         "spotify": {
           "kind": "artist",
@@ -16547,8 +16845,7 @@
       "mbName": "Gwenifer Raymond",
       "slug": "gwenifer-raymond",
       "festival": {
-        "slug": "gwenifer-raymond",
-        "fetched": "2026-11-13",
+        "id": "BXiGS7uJFJ41ttFHGpLC",
         "hometown": "Cardiff, Wales",
         "spotify": {
           "kind": "artist",
@@ -16855,8 +17152,7 @@
       "mbName": "Heart Attack Man",
       "slug": "heart-attack-man",
       "festival": {
-        "slug": "heart-attack-man",
-        "fetched": "2026-11-13",
+        "id": "Te3nCAGTdJLRd4MA0QlE",
         "hometown": "Cleveland, OH",
         "spotify": {
           "kind": "artist",
@@ -17158,8 +17454,7 @@
       },
       "slug": "heavy-diamond-ring",
       "festival": {
-        "slug": "heavy-diamond-ring",
-        "fetched": "2026-11-13",
+        "id": "BhqfFNxQcBGHI5XbfiDE",
         "hometown": "Denver, CO",
         "spotify": {
           "kind": "artist",
@@ -17466,8 +17761,7 @@
       "mbName": "Hello Shark",
       "slug": "hello-shark",
       "festival": {
-        "slug": "hello-shark",
-        "fetched": "2026-11-13",
+        "id": "iGRzGISHMpRhr1uSBAqp",
         "hometown": "Kittery, ME",
         "spotify": {
           "kind": "artist",
@@ -17775,8 +18069,7 @@
       "mbName": "Her New Knife",
       "slug": "her-new-knife",
       "festival": {
-        "slug": "her-new-knife",
-        "fetched": "2026-11-13",
+        "id": "iwvqZijgiEnYHDeCqUzb",
         "hometown": "Philadelphia, PA",
         "spotify": {
           "kind": "artist",
@@ -17789,6 +18082,7 @@
           "instagram": "https://www.instagram.com/hernewknife",
           "soundcloud": "https://soundcloud.com/her-new-knife-band",
           "website": "https://bio.to/hernewknife",
+          "x": "https://www.youtube.com/@hernewknife",
           "youtube": "https://www.youtube.com/@hernewknife"
         }
       }
@@ -18087,8 +18381,7 @@
       "mbName": "hey, nothing",
       "slug": "hey-nothing",
       "festival": {
-        "slug": "hey-nothing",
-        "fetched": "2026-11-13",
+        "id": "sszJANoIhwe3stukGfvp",
         "hometown": "Athens, GA",
         "spotify": {
           "kind": "artist",
@@ -18397,8 +18690,7 @@
       "mbName": "horsegiirL",
       "slug": "horsegiirl",
       "festival": {
-        "slug": "horsegiirl",
-        "fetched": "2026-11-13",
+        "id": "mj4MU2VWBdTlnFtXVyYp",
         "hometown": "Berlin, Germany",
         "spotify": {
           "kind": "artist",
@@ -18708,8 +19000,7 @@
       "mbName": "Hotel Fiction",
       "slug": "hotel-fiction",
       "festival": {
-        "slug": "hotel-fiction",
-        "fetched": "2026-11-13",
+        "id": "8CPkp1vpy27Vc8rEqB6r",
         "hometown": "Athens, GA",
         "spotify": {
           "kind": "artist",
@@ -19024,8 +19315,7 @@
       "mbName": "Hudson Freeman",
       "slug": "hudson-freeman",
       "festival": {
-        "slug": "hudson-freeman",
-        "fetched": "2026-11-13",
+        "id": "2qpo1mmt46irIjlRRzJN",
         "hometown": "Brooklyn, NY",
         "spotify": {
           "kind": "artist",
@@ -19330,8 +19620,7 @@
       "mbName": "HUNNY",
       "slug": "hunny",
       "festival": {
-        "slug": "hunny",
-        "fetched": "2026-11-13",
+        "id": "5UFajWSJZJgPEWVHqRcu",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -19637,8 +19926,7 @@
       "mbName": "Iceage",
       "slug": "iceage",
       "festival": {
-        "slug": "iceage",
-        "fetched": "2026-11-13",
+        "id": "GIUXHxwndUT2kYBuXWgo",
         "hometown": "Copenhagen, Denmark",
         "spotify": {
           "kind": "artist",
@@ -19947,8 +20235,7 @@
       "mbName": "islandman",
       "slug": "islandman",
       "festival": {
-        "slug": "islandman",
-        "fetched": "2026-11-13",
+        "id": "C0F2z2Epj5qlk7aSDWEs",
         "hometown": "Istanbul, Turkey",
         "spotify": {
           "kind": "artist",
@@ -20260,8 +20547,7 @@
       "mbName": "James Ivy",
       "slug": "james-ivy",
       "festival": {
-        "slug": "james-ivy",
-        "fetched": "2026-11-13",
+        "id": "tVqMiUnDDPfvY9179DBs",
         "hometown": "New Jersey",
         "spotify": {
           "kind": "artist",
@@ -20563,8 +20849,7 @@
       "mbName": "Jeffrey Lewis",
       "slug": "jeffrey-lewis-the-voltage",
       "festival": {
-        "slug": "jeffrey-lewis-the-voltage",
-        "fetched": "2026-11-13",
+        "id": "mkhW968MXVJymOyLnlSb",
         "hometown": "New York City",
         "spotify": {
           "kind": "user",
@@ -20871,8 +21156,7 @@
       "mbName": "Jejune",
       "slug": "jejune",
       "festival": {
-        "slug": "jejune",
-        "fetched": "2026-11-13",
+        "id": "niHLTPScip7VQqm8C7Dp",
         "hometown": "San Diego, CA",
         "spotify": {
           "kind": "artist",
@@ -21178,8 +21462,7 @@
       "mbName": "Jesse Blake Rundle",
       "slug": "jesse-blake-rundle",
       "festival": {
-        "slug": "jesse-blake-rundle",
-        "fetched": "2026-11-13",
+        "id": "4sIgpHsv4T0ZpR3lj3XB",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -21490,8 +21773,7 @@
       "mbName": "Jesse Welles",
       "slug": "jesse-welles",
       "festival": {
-        "slug": "jesse-welles",
-        "fetched": "2026-11-13",
+        "id": "fyRQWZmyfcxOx3VdvlTl",
         "hometown": "Ozark, AR",
         "spotify": {
           "kind": "artist",
@@ -21795,8 +22077,7 @@
       "mbName": "Jiwon",
       "slug": "jiwon",
       "festival": {
-        "slug": "jiwon",
-        "fetched": "2026-11-13",
+        "id": "NEuoDpRsFwjqAEVvQM2e",
         "hometown": "Brooklyn, NY",
         "spotify": {
           "kind": "artist",
@@ -22103,8 +22384,7 @@
       "mbName": "Joy Oladokun",
       "slug": "joy-oladokun",
       "festival": {
-        "slug": "joy-oladokun",
-        "fetched": "2026-11-13",
+        "id": "qhbIexEK67LxVvK7bUX6",
         "hometown": "Dover, DE",
         "spotify": {
           "kind": "artist",
@@ -22140,8 +22420,7 @@
       "mbFor": "3hV7q0P8wimZFHmdykKaRN",
       "slug": "jun",
       "festival": {
-        "slug": "jun",
-        "fetched": "2026-11-13",
+        "id": "HExnEZoYFGVUcFMSbaw7",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -22449,8 +22728,7 @@
       "mbName": "Karen y Los Remedios",
       "slug": "karen-y-los-remedios",
       "festival": {
-        "slug": "karen-y-los-remedios",
-        "fetched": "2026-11-13",
+        "id": "0TS2hou6QxAVE1SpILnn",
         "hometown": "Mexico City, Mexico",
         "spotify": {
           "kind": "artist",
@@ -22755,8 +23033,7 @@
       "mbName": "Kate Stephenson",
       "slug": "kate-stephenson",
       "festival": {
-        "slug": "kate-stephenson",
-        "fetched": "2026-11-13",
+        "id": "cHHpo3llERQWfGGyMxVo",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -23062,8 +23339,7 @@
       "mbName": "Kenny Mason",
       "slug": "kenny-mason",
       "festival": {
-        "slug": "kenny-mason",
-        "fetched": "2026-11-13",
+        "id": "LHsDHza0fbC9f68piEbM",
         "hometown": "Atlanta, GA",
         "spotify": {
           "kind": "artist",
@@ -23355,8 +23631,7 @@
       },
       "slug": "kiki-kramer",
       "festival": {
-        "slug": "kiki-kramer",
-        "fetched": "2026-11-13",
+        "id": "z25N6wC2BhyOPkNNahsV",
         "hometown": "New York, New York",
         "spotify": {
           "kind": "artist",
@@ -23658,8 +23933,7 @@
       "mbName": "Koo Koo",
       "slug": "koo-koo",
       "festival": {
-        "slug": "koo-koo",
-        "fetched": "2026-11-13",
+        "id": "sPCko2OYnDILpqgFSZtp",
         "hometown": "Minneapolis, MN",
         "spotify": {
           "kind": "artist",
@@ -23970,8 +24244,7 @@
       "mbName": "La Reezy",
       "slug": "la-reezy",
       "festival": {
-        "slug": "la-reezy",
-        "fetched": "2026-11-13",
+        "id": "C08UiF37P5UVNWVbAFaX",
         "hometown": "New Orleans, LA",
         "spotify": {
           "kind": "artist",
@@ -24281,8 +24554,7 @@
       "mbName": "La Sécurité",
       "slug": "la-securite",
       "festival": {
-        "slug": "la-securite",
-        "fetched": "2026-11-13",
+        "id": "7Jw9btg1oWsm4gEibCOJ",
         "hometown": "Montréal, QC",
         "spotify": {
           "kind": "artist",
@@ -24590,8 +24862,7 @@
       "mbName": "Lady Radiator",
       "slug": "lady-radiator",
       "festival": {
-        "slug": "lady-radiator",
-        "fetched": "2026-11-13",
+        "id": "SBlBckyyGWU0HH0IP6oF",
         "hometown": "Union City, NJ",
         "spotify": {
           "kind": "artist",
@@ -24899,8 +25170,7 @@
       "mbName": "Letters to Lions",
       "slug": "letters-to-lions",
       "festival": {
-        "slug": "letters-to-lions",
-        "fetched": "2026-11-13",
+        "id": "jG3q6goaZMpULeTM3TSG",
         "hometown": "Sydney, Australia",
         "spotify": {
           "kind": "artist",
@@ -25208,8 +25478,7 @@
       "mbName": "Lily Seabird",
       "slug": "lily-seabird",
       "festival": {
-        "slug": "lily-seabird",
-        "fetched": "2026-11-13",
+        "id": "aH1dJVVTvc5jSD2oxxFU",
         "hometown": "Burlington, VT",
         "spotify": {
           "kind": "artist",
@@ -25517,8 +25786,7 @@
       "mbName": "Lime Garden",
       "slug": "lime-garden",
       "festival": {
-        "slug": "lime-garden",
-        "fetched": "2026-11-13",
+        "id": "V6FRBjYvzqZYjqtuGwuj",
         "hometown": "Brighton, UK",
         "spotify": {
           "kind": "artist",
@@ -25829,8 +26097,7 @@
       "mbName": "Lip Critic",
       "slug": "lip-critic",
       "festival": {
-        "slug": "lip-critic",
-        "fetched": "2026-11-13",
+        "id": "0gNWSkfD4DrydnSqqua5",
         "hometown": "New York City, NY",
         "spotify": {
           "kind": "artist",
@@ -26137,8 +26404,7 @@
       "mbName": "Liquid Mike",
       "slug": "liquid-mike",
       "festival": {
-        "slug": "liquid-mike",
-        "fetched": "2026-11-13",
+        "id": "x9ocW2Cc8lwG5kCwLqOy",
         "hometown": "Marquette, MI",
         "spotify": {
           "kind": "artist",
@@ -26288,8 +26554,7 @@
       },
       "slug": "lobo-lara",
       "festival": {
-        "slug": "lobo-lara",
-        "fetched": "2026-11-13",
+        "id": "1GhjcuESvBPEISav1XHZ",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -26582,8 +26847,7 @@
       },
       "slug": "los-blenders",
       "festival": {
-        "slug": "los-blenders",
-        "fetched": "2026-11-13",
+        "id": "9nJjOBNUoh8sHCUVyhGI",
         "hometown": "Mexico City, Mexico",
         "spotify": {
           "kind": "artist",
@@ -26891,8 +27155,7 @@
       "mbName": "Los Mirlos",
       "slug": "los-mirlos",
       "festival": {
-        "slug": "los-mirlos",
-        "fetched": "2026-11-13",
+        "id": "bwgpdGwodI2bnF2MVZ7n",
         "hometown": "Moyobamba, Peru",
         "spotify": {
           "kind": "artist",
@@ -27195,8 +27458,7 @@
       "mbName": "Love Letter",
       "slug": "love-letter",
       "festival": {
-        "slug": "love-letter",
-        "fetched": "2026-11-13",
+        "id": "9EM6rTpzyX58VYAVyrGz",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -27501,8 +27763,7 @@
       "mbName": "LP Giobbi",
       "slug": "lp-giobbi",
       "festival": {
-        "slug": "lp-giobbi",
-        "fetched": "2026-11-13",
+        "id": "aHyBVSm9F6xmKXi4pjPZ",
         "hometown": "Eugene, OR",
         "links": {
           "appleMusic": "https://music.apple.com/us/artist/lp-giobbi/1370207121",
@@ -27510,7 +27771,7 @@
           "facebook": "https://www.facebook.com/LPGiobbi/",
           "instagram": "https://www.instagram.com/lpgiobbi/?hl=en",
           "soundcloud": "https://soundcloud.com/lpgiobbi",
-          "website": "https://lpgiobbi.myshopify.com/",
+          "website": "https://lpgiobbi.com/",
           "youtube": "https://www.youtube.com/channel/UCEjLlx9Gsi76cfggHDSoakQ"
         }
       }
@@ -27790,8 +28051,7 @@
       },
       "slug": "lucha-luna",
       "festival": {
-        "slug": "lucha-luna",
-        "fetched": "2026-11-13",
+        "id": "5I5VDj2B42lJ1VCJuz0c",
         "hometown": "Seattle, WA",
         "spotify": {
           "kind": "artist",
@@ -28086,8 +28346,7 @@
       "mbName": "Lucibela",
       "slug": "lucibela",
       "festival": {
-        "slug": "lucibela",
-        "fetched": "2026-11-13",
+        "id": "gAXx3cEJLMb6MOug83W0",
         "hometown": "Lisbon, Portugal",
         "spotify": {
           "kind": "artist",
@@ -28385,8 +28644,7 @@
       "mbName": "Mabe Fratti",
       "slug": "mabe-fratti-bill-orcutt",
       "festival": {
-        "slug": "mabe-fratti-bill-orcutt",
-        "fetched": "2026-11-13",
+        "id": "aQRCydbR2Dy08XhPi3Xy",
         "hometown": "Mexico City / San Francisco",
         "spotify": {
           "kind": "album",
@@ -28527,8 +28785,7 @@
       "mbName": "Maci Mattravers",
       "slug": "maci-mattravers",
       "festival": {
-        "slug": "maci-mattravers",
-        "fetched": "2026-11-13",
+        "id": "o8Rb9EwpzKLrbIBgSTeX",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -28832,8 +29089,7 @@
       "mbName": "Martin Luke Brown",
       "slug": "martin-luke-brown",
       "festival": {
-        "slug": "martin-luke-brown",
-        "fetched": "2026-11-13",
+        "id": "FhWSKii5IOX7U7ptwwFE",
         "hometown": "Leicester, England, UK",
         "spotify": {
           "kind": "artist",
@@ -29144,8 +29400,7 @@
       "mbName": "mercury",
       "slug": "mercury",
       "festival": {
-        "slug": "mercury",
-        "fetched": "2026-11-13",
+        "id": "f7BFQpdWtDbikv6iYvm4",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -29452,8 +29707,7 @@
       "mbName": "Midrift",
       "slug": "midrift",
       "festival": {
-        "slug": "midrift",
-        "fetched": "2026-11-13",
+        "id": "b0U44ADAelPErRGcEFL5",
         "hometown": "San Francisco, CA",
         "spotify": {
           "kind": "artist",
@@ -29755,8 +30009,7 @@
       "mbName": "Minot",
       "slug": "minot",
       "festival": {
-        "slug": "minot",
-        "fetched": "2026-11-13",
+        "id": "szKiUnzU503ATtkjWDvL",
         "hometown": "Missoula, MT",
         "spotify": {
           "kind": "artist",
@@ -30059,8 +30312,7 @@
       "mbName": "Mo Lowda & the Humble",
       "slug": "mo-lowda-the-humble",
       "festival": {
-        "slug": "mo-lowda-the-humble",
-        "fetched": "2026-11-13",
+        "id": "Zbw7jkjAiRqdXzWPjmup",
         "hometown": "Philadelphia, PA",
         "spotify": {
           "kind": "artist",
@@ -30366,15 +30618,13 @@
       "mbName": "Modern Color",
       "slug": "modern-color",
       "festival": {
-        "slug": "modern-color",
-        "fetched": "2026-11-13",
+        "id": "kWzhVZyPUf0qpLG9Pjj2",
         "hometown": "Redondo Beach, CA",
         "spotify": {
           "kind": "artist",
           "id": "6bayHl2VHbIseMg1jby37l"
         },
         "links": {
-          "instagram": "https://www.instagram.com/moderncolorband",
           "website": "https://moderncolorband.com/"
         }
       }
@@ -30676,8 +30926,7 @@
       "mbName": "Modest Mouse",
       "slug": "modest-mouse",
       "festival": {
-        "slug": "modest-mouse",
-        "fetched": "2026-11-13",
+        "id": "e3WR15FBTUjGn7oWSEK6",
         "hometown": "Issaquah, WA",
         "spotify": {
           "kind": "artist",
@@ -30970,8 +31219,7 @@
       },
       "slug": "moldes",
       "festival": {
-        "slug": "moldes",
-        "fetched": "2026-11-13",
+        "id": "NV1u95jQEE4CiKuohVYo",
         "hometown": "Lima, Peru",
         "spotify": {
           "kind": "artist",
@@ -31276,8 +31524,7 @@
       "mbName": "Monophonics",
       "slug": "monophonics",
       "festival": {
-        "slug": "monophonics",
-        "fetched": "2026-11-13",
+        "id": "aHssstPB14AwCUArItaQ",
         "hometown": "Bay Area, CA",
         "spotify": {
           "kind": "artist",
@@ -31581,8 +31828,7 @@
       "mbName": "moondoggy",
       "slug": "moondoggy",
       "festival": {
-        "slug": "moondoggy",
-        "fetched": "2026-11-13",
+        "id": "Gvtnb2Q4VugNUiafzBs0",
         "hometown": "Toronto, Ontario, CAN",
         "spotify": {
           "kind": "artist",
@@ -31889,8 +32135,7 @@
       "mbName": "Mother Soki",
       "slug": "mother-soki",
       "festival": {
-        "slug": "mother-soki",
-        "fetched": "2026-11-13",
+        "id": "cod3s8r8A1LNkWXppd2X",
         "hometown": "Minneapolis, MN",
         "spotify": {
           "kind": "artist",
@@ -32197,8 +32442,7 @@
       "mbName": "My Wonderful Boyfriend",
       "slug": "my-wonderful-boyfriend",
       "festival": {
-        "slug": "my-wonderful-boyfriend",
-        "fetched": "2026-11-13",
+        "id": "OPWHgOfYKPMRIBnUnaS2",
         "hometown": "New York, NY",
         "spotify": {
           "kind": "artist",
@@ -32490,8 +32734,7 @@
       },
       "slug": "mylo-bybee",
       "festival": {
-        "slug": "mylo-bybee",
-        "fetched": "2026-11-13",
+        "id": "5R0ktdA8MecGj6n84hGq",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "album",
@@ -32803,8 +33046,7 @@
       "mbName": "Narrow Head",
       "slug": "narrow-head",
       "festival": {
-        "slug": "narrow-head",
-        "fetched": "2026-11-13",
+        "id": "qIfkdyraNvjFB1xeuBTV",
         "hometown": "Houston, TX",
         "spotify": {
           "kind": "artist",
@@ -33107,8 +33349,7 @@
       "mbName": "Natanya",
       "slug": "natanya",
       "festival": {
-        "slug": "natanya",
-        "fetched": "2026-11-13",
+        "id": "yuZh8V9yWrJuE3IrNylx",
         "hometown": "London, UK",
         "spotify": {
           "kind": "artist",
@@ -33417,8 +33658,7 @@
       "mbName": "Nicole Atkins",
       "slug": "nicole-atkins",
       "festival": {
-        "slug": "nicole-atkins",
-        "fetched": "2026-11-13",
+        "id": "4t1n1mOOlcG31i7gVsJL",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -33727,8 +33967,7 @@
       "mbName": "Niis",
       "slug": "niis",
       "festival": {
-        "slug": "niis",
-        "fetched": "2026-11-13",
+        "id": "V57lzAdHSORSIx5NODJ5",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -34033,8 +34272,7 @@
       "mbName": "Okonski",
       "slug": "okonski",
       "festival": {
-        "slug": "okonski",
-        "fetched": "2026-11-13",
+        "id": "Nbi5EABE3IPfe6wSDsbc",
         "hometown": "Asheville, NC",
         "spotify": {
           "kind": "artist",
@@ -34331,8 +34569,7 @@
       },
       "slug": "one-step-closer",
       "festival": {
-        "slug": "one-step-closer",
-        "fetched": "2026-11-13",
+        "id": "LaK18pQ02bcBQIOX3Vjx",
         "hometown": "Wilkes-Barre, PA",
         "spotify": {
           "kind": "artist",
@@ -34639,8 +34876,7 @@
       "mbName": "Orville Peck",
       "slug": "orville-peck",
       "festival": {
-        "slug": "orville-peck",
-        "fetched": "2026-11-13",
+        "id": "tiNmKMx4LZ3nuLhK4tsx",
         "hometown": "Johannesburg, South Africa",
         "spotify": {
           "kind": "artist",
@@ -34930,8 +35166,7 @@
       },
       "slug": "oscar-lindsey",
       "festival": {
-        "slug": "oscar-lindsey",
-        "fetched": "2026-11-13",
+        "id": "zcJgFV6BtK12q4NLKuB4",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -34966,8 +35201,7 @@
       "mbFor": "6rZf3CPChuam4RdRiT0lR9",
       "slug": "playdead",
       "festival": {
-        "slug": "playdead",
-        "fetched": "2026-11-13",
+        "id": "EAfxGn34524Z02V8md3c",
         "hometown": "Boise, ID",
         "links": {
           "facebook": "https://facebook.com/PLAYDEAD.us/",
@@ -35253,8 +35487,7 @@
       },
       "slug": "porcelain-tongue",
       "festival": {
-        "slug": "porcelain-tongue",
-        "fetched": "2026-11-13",
+        "id": "TDnr1DuOeBze3exJYuK1",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -35563,8 +35796,7 @@
       "mbName": "Post Animal",
       "slug": "post-animal",
       "festival": {
-        "slug": "post-animal",
-        "fetched": "2026-11-13",
+        "id": "PUIGRBuP8dteHvMc53Pq",
         "hometown": "Chicago, IL",
         "spotify": {
           "kind": "artist",
@@ -35859,8 +36091,7 @@
       },
       "slug": "psychic-bloom",
       "festival": {
-        "slug": "psychic-bloom",
-        "fetched": "2026-11-13",
+        "id": "BJX6DQXP2QxTngYU90Ex",
         "hometown": "New York, NY",
         "spotify": {
           "kind": "artist",
@@ -36164,8 +36395,7 @@
       "mbName": "Pure Hex",
       "slug": "pure-hex",
       "festival": {
-        "slug": "pure-hex",
-        "fetched": "2026-11-13",
+        "id": "GaFSte1mGms3kIHES4ht",
         "hometown": "San Francisco, CA",
         "spotify": {
           "kind": "artist",
@@ -36478,8 +36708,7 @@
       "mbName": "Radio Free Alice",
       "slug": "radio-free-alice",
       "festival": {
-        "slug": "radio-free-alice",
-        "fetched": "2026-11-13",
+        "id": "XhLxKEPqgNBY2AZUvaLp",
         "hometown": "Melbourne, AUS",
         "spotify": {
           "kind": "artist",
@@ -36788,8 +37017,7 @@
       "mbName": "Ratboys",
       "slug": "ratboys",
       "festival": {
-        "slug": "ratboys",
-        "fetched": "2026-11-13",
+        "id": "Fzs6wyFfOgddNrX1ZIlT",
         "hometown": "Chicago, IL",
         "spotify": {
           "kind": "artist",
@@ -36912,8 +37140,7 @@
       },
       "slug": "red-caroline",
       "festival": {
-        "slug": "red-caroline",
-        "fetched": "2026-11-13",
+        "id": "HFy9nmyDxxLG2MSDUzT8",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -37216,8 +37443,7 @@
       "mbName": "Rikas",
       "slug": "rikas",
       "festival": {
-        "slug": "rikas",
-        "fetched": "2026-11-13",
+        "id": "AAwjIRHHgW2ZO6hBkUjG",
         "hometown": "Stuttgart, Germany",
         "spotify": {
           "kind": "artist",
@@ -37524,8 +37750,7 @@
       "mbName": "Robert Lester Folsom",
       "slug": "robert-lester-folsom",
       "festival": {
-        "slug": "robert-lester-folsom",
-        "fetched": "2026-11-13",
+        "id": "TdmniEtl9rGoP0OE3RBz",
         "hometown": "Jacksonville, FL",
         "spotify": {
           "kind": "artist",
@@ -37827,8 +38052,7 @@
       "mbName": "Rockie Rode",
       "slug": "rockie-rode",
       "festival": {
-        "slug": "rockie-rode",
-        "fetched": "2026-11-13",
+        "id": "sqYcEd2lb2TQHWpqGD0m",
         "hometown": "New York CIty, NY",
         "spotify": {
           "kind": "artist",
@@ -38137,8 +38361,7 @@
       "mbName": "Sadurn",
       "slug": "sadurn",
       "festival": {
-        "slug": "sadurn",
-        "fetched": "2026-11-13",
+        "id": "5NSJjAndl5YOUyaXCI65",
         "hometown": "Philadelphia, PA",
         "spotify": {
           "kind": "artist",
@@ -38189,8 +38412,7 @@
       "mbName": "Sam and Louise Sullivan",
       "slug": "sam-louise-sullivan",
       "festival": {
-        "slug": "sam-louise-sullivan",
-        "fetched": "2026-11-13",
+        "id": "YQKjUCfQqWGurSMm8Z0f",
         "hometown": "Philadelphia, PA",
         "spotify": {
           "kind": "artist",
@@ -38494,8 +38716,7 @@
       "mbName": "Sarah Julia",
       "slug": "sarah-julia",
       "festival": {
-        "slug": "sarah-julia",
-        "fetched": "2026-11-13",
+        "id": "r5t1TMErtc9YfHi8I40A",
         "hometown": "Amsterdam, The Netherlands",
         "spotify": {
           "kind": "artist",
@@ -38526,8 +38747,7 @@
       },
       "slug": "sautrah",
       "festival": {
-        "slug": "sautrah",
-        "fetched": "2026-11-13",
+        "id": "FFIxddo32zAaTDjfi3TG",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "user",
@@ -38837,8 +39057,7 @@
       "mbName": "Saves the Day",
       "slug": "saves-the-day",
       "festival": {
-        "slug": "saves-the-day",
-        "fetched": "2026-11-13",
+        "id": "LjF3tjdRg6nua4JKILIF",
         "hometown": "Princeton, NJ",
         "spotify": {
           "kind": "artist",
@@ -39136,8 +39355,7 @@
       "mbName": "Scattrbrain",
       "slug": "scattrbrain",
       "festival": {
-        "slug": "scattrbrain",
-        "fetched": "2026-11-13",
+        "id": "M9HipBc7eUPLEMTocALb",
         "hometown": "Atlanta, GA",
         "spotify": {
           "kind": "artist",
@@ -39435,8 +39653,7 @@
       },
       "slug": "sean-solomon",
       "festival": {
-        "slug": "sean-solomon",
-        "fetched": "2026-11-13",
+        "id": "oQKVjcaiaXme1vsEJ8Bu",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -39748,8 +39965,7 @@
       "mbName": "Sleaford Mods",
       "slug": "sleaford-mods",
       "festival": {
-        "slug": "sleaford-mods",
-        "fetched": "2026-11-13",
+        "id": "yQmEuNGcDt8aFHFFAxou",
         "hometown": "Nottingham, England",
         "spotify": {
           "kind": "artist",
@@ -40061,8 +40277,7 @@
       "mbName": "Slow Pulp",
       "slug": "slow-pulp",
       "festival": {
-        "slug": "slow-pulp",
-        "fetched": "2026-11-13",
+        "id": "oi1vxTYLgOvd6A05joAc",
         "hometown": "Madison, WI",
         "spotify": {
           "kind": "artist",
@@ -40357,8 +40572,7 @@
       },
       "slug": "snorkeler",
       "festival": {
-        "slug": "snorkeler",
-        "fetched": "2026-11-13",
+        "id": "68xtpuUbIcB5zbPvAlbS",
         "hometown": "Nashville, TN",
         "spotify": {
           "kind": "artist",
@@ -40656,8 +40870,7 @@
       "mbName": "Soot",
       "slug": "soot",
       "festival": {
-        "slug": "soot",
-        "fetched": "2026-11-13",
+        "id": "l30NOUbvgRXcwugvQ3QG",
         "hometown": "Boise, ID",
         "links": {
           "soundcloud": "https://soundcloud.com/sootsounds"
@@ -40943,8 +41156,7 @@
       },
       "slug": "street-play",
       "festival": {
-        "slug": "street-play",
-        "fetched": "2026-11-13",
+        "id": "I2rDayLTmsrwnulQYNGy",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -41238,8 +41450,7 @@
       },
       "slug": "sunbathe",
       "festival": {
-        "slug": "sunbathe",
-        "fetched": "2026-11-13",
+        "id": "gfes7ARetiuz1CZ3KYIJ",
         "hometown": "Portland, OR",
         "spotify": {
           "kind": "artist",
@@ -41279,8 +41490,7 @@
       },
       "slug": "sunbloc",
       "festival": {
-        "slug": "sunbloc",
-        "fetched": "2026-11-13",
+        "id": "Ikwx400r4pXIGCHEaoMS",
         "hometown": "Albany, NY",
         "spotify": {
           "kind": "artist",
@@ -41571,8 +41781,7 @@
       },
       "slug": "sundog",
       "festival": {
-        "slug": "sundog",
-        "fetched": "2026-11-13",
+        "id": "1lDHgor9luOI2dqYnSvn",
         "hometown": "Anchorage, AK",
         "spotify": {
           "kind": "artist",
@@ -41637,8 +41846,7 @@
       },
       "slug": "surf-green-machine",
       "festival": {
-        "slug": "surf-green-machine",
-        "fetched": "2026-11-13",
+        "id": "kEGXcPc43ze58muVGIKO",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -41934,8 +42142,7 @@
       "mbName": "Surfing For Daisy",
       "slug": "surfing-for-daisy",
       "festival": {
-        "slug": "surfing-for-daisy",
-        "fetched": "2026-11-13",
+        "id": "csnZq68zhXx1gW6XULiN",
         "hometown": "Asbury Park, NJ",
         "spotify": {
           "kind": "artist",
@@ -42247,8 +42454,7 @@
       "mbName": "Surprise Chef",
       "slug": "surprise-chef",
       "festival": {
-        "slug": "surprise-chef",
-        "fetched": "2026-11-13",
+        "id": "vZ5LWVF9pvonoSoLIv3K",
         "hometown": "Melbourne, AUS",
         "spotify": {
           "kind": "artist",
@@ -42557,8 +42763,7 @@
       "mbName": "Tele Novella",
       "slug": "tele-novella",
       "festival": {
-        "slug": "tele-novella",
-        "fetched": "2026-11-13",
+        "id": "u7L1VZloOjfiiNsbs04z",
         "hometown": "Lockhart, TX",
         "spotify": {
           "kind": "artist",
@@ -42852,8 +43057,7 @@
       },
       "slug": "telehealth",
       "festival": {
-        "slug": "telehealth",
-        "fetched": "2026-11-13",
+        "id": "aqOcZfK0r3nPxM8GxqBS",
         "hometown": "Seattle, WA",
         "spotify": {
           "kind": "artist",
@@ -43158,8 +43362,7 @@
       "mbName": "Thao",
       "slug": "thao",
       "festival": {
-        "slug": "thao",
-        "fetched": "2026-11-13",
+        "id": "OHWXgB3SWxEH1q94zBn2",
         "hometown": "San Francisco, CA",
         "spotify": {
           "kind": "artist",
@@ -43464,8 +43667,7 @@
       "mbName": "The Altons",
       "slug": "the-altons",
       "festival": {
-        "slug": "the-altons",
-        "fetched": "2026-11-13",
+        "id": "k0J3nbh8f9nsyUlmJTea",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -43765,8 +43967,7 @@
       "mbName": "The Animeros",
       "slug": "the-animeros",
       "festival": {
-        "slug": "the-animeros",
-        "fetched": "2026-11-13",
+        "id": "5mJbXbnwp5FVtGdYgJ9u",
         "hometown": "Austin, TX",
         "spotify": {
           "kind": "artist",
@@ -44070,8 +44271,7 @@
       "mbName": "The Black Tones",
       "slug": "the-black-tones",
       "festival": {
-        "slug": "the-black-tones",
-        "fetched": "2026-11-13",
+        "id": "mDHckTOwOjv1COVOi8pW",
         "hometown": "Seattle, WA",
         "spotify": {
           "kind": "artist",
@@ -44140,8 +44340,7 @@
       },
       "slug": "the-bomb-pulse",
       "festival": {
-        "slug": "the-bomb-pulse",
-        "fetched": "2026-11-13",
+        "id": "znFFf0oTaNCq6IDUMi1k",
         "hometown": "New Orleans, LA",
         "spotify": {
           "kind": "artist",
@@ -44152,6 +44351,7 @@
           "bandcamp": "https://thebombpulse.bandcamp.com/",
           "facebook": "https://www.facebook.com/people/The-BOMB-Pulse/61586311725671/",
           "instagram": "https://www.instagram.com/thebombpulse/",
+          "website": "https://www.instagram.com/thebombpulse/",
           "youtube": "https://www.youtube.com/channel/UCPe5ygfmUyMvAOauy-sPQpA"
         }
       }
@@ -44431,8 +44631,7 @@
       },
       "slug": "the-braymores",
       "festival": {
-        "slug": "the-braymores",
-        "fetched": "2026-11-13",
+        "id": "H6QqCTz9B5rGAYFujT0S",
         "hometown": "Chicago, IL",
         "spotify": {
           "kind": "artist",
@@ -44730,8 +44929,7 @@
       "mbName": "The Crooked Rugs",
       "slug": "the-crooked-rugs",
       "festival": {
-        "slug": "the-crooked-rugs",
-        "fetched": "2026-11-13",
+        "id": "CoCb5rJuwsJcH6hnjFuf",
         "hometown": "Fort Collins, CO",
         "spotify": {
           "kind": "artist",
@@ -45025,8 +45223,7 @@
       },
       "slug": "the-fourth-wall",
       "festival": {
-        "slug": "the-fourth-wall",
-        "fetched": "2026-11-13",
+        "id": "RWdWa2zEfW6NAL1KnAaH",
         "hometown": "Portland, OR",
         "spotify": {
           "kind": "artist",
@@ -45318,8 +45515,7 @@
       },
       "slug": "the-french-tips",
       "festival": {
-        "slug": "the-french-tips",
-        "fetched": "2026-11-13",
+        "id": "5DGF5OpR3vdxF8GZFkHP",
         "hometown": "Boise, ID",
         "spotify": {
           "kind": "artist",
@@ -45611,8 +45807,7 @@
       },
       "slug": "the-heligoats",
       "festival": {
-        "slug": "the-heligoats",
-        "fetched": "2026-11-13",
+        "id": "tNUfQ4mBRRdDDWWiJkSL",
         "hometown": "Fermilab, IL",
         "spotify": {
           "kind": "artist",
@@ -45908,8 +46103,7 @@
       },
       "slug": "the-last-revel",
       "festival": {
-        "slug": "the-last-revel",
-        "fetched": "2026-11-13",
+        "id": "3ND3bwiKSDh0IBEu2h1a",
         "hometown": "Livingston, MT / Minneapolis, MN",
         "spotify": {
           "kind": "artist",
@@ -46216,8 +46410,7 @@
       "mbName": "The Man The Myth The Meatslab",
       "slug": "the-man-the-myth-the-meatslab",
       "festival": {
-        "slug": "the-man-the-myth-the-meatslab",
-        "fetched": "2026-11-13",
+        "id": "eITZM8a7PzYoCQU3Kebh",
         "hometown": "Derby, England, UK",
         "spotify": {
           "kind": "artist",
@@ -46528,8 +46721,7 @@
       "mbName": "The Notwist",
       "slug": "the-notwist",
       "festival": {
-        "slug": "the-notwist",
-        "fetched": "2026-11-13",
+        "id": "hKZpxCkbFtjP32FoouoW",
         "hometown": "Munich, Germany",
         "spotify": {
           "kind": "artist",
@@ -46583,8 +46775,7 @@
       },
       "slug": "the-river-ramblers",
       "festival": {
-        "slug": "the-river-ramblers",
-        "fetched": "2026-11-13",
+        "id": "KPr1tK1GWAja6ASH80X4",
         "hometown": "Missoula, MT",
         "spotify": {
           "kind": "artist",
@@ -46888,8 +47079,7 @@
       "mbName": "Thee Sacred Souls",
       "slug": "thee-sacred-souls",
       "festival": {
-        "slug": "thee-sacred-souls",
-        "fetched": "2026-11-13",
+        "id": "r0IupP35j7Zi51i70UqO",
         "hometown": "San Diego, CA",
         "spotify": {
           "kind": "artist",
@@ -47194,8 +47384,7 @@
       "mbName": "Thee Sinseers",
       "slug": "thee-sinseers",
       "festival": {
-        "slug": "thee-sinseers",
-        "fetched": "2026-11-13",
+        "id": "8m3Z7NOh6apWM2aM0u7g",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -47503,8 +47692,7 @@
       "mbName": "Thomas Dollbaum",
       "slug": "thomas-dollbaum",
       "festival": {
-        "slug": "thomas-dollbaum",
-        "fetched": "2026-11-13",
+        "id": "EK9xByjZM4AZtKjnP7wu",
         "hometown": "New Orleans, LA",
         "links": {
           "bandcamp": "https://thomasdollbaum.bandcamp.com/",
@@ -47810,8 +47998,7 @@
       "mbName": "Tim Atlas",
       "slug": "tim-atlas",
       "festival": {
-        "slug": "tim-atlas",
-        "fetched": "2026-11-13",
+        "id": "gi4SbU8WIK6sqkAvX5ML",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -47931,8 +48118,7 @@
       },
       "slug": "timeworm",
       "festival": {
-        "slug": "timeworm",
-        "fetched": "2026-11-13",
+        "id": "cBQoXPUISJVpAGyaBxn3",
         "hometown": "Spokane, WA",
         "spotify": {
           "kind": "artist",
@@ -48224,8 +48410,7 @@
       },
       "slug": "tounds",
       "festival": {
-        "slug": "tounds",
-        "fetched": "2026-11-13",
+        "id": "ZtzhsT4ScPBvY8pbfYPf",
         "hometown": "Charleston, SC",
         "spotify": {
           "kind": "artist",
@@ -48515,8 +48700,7 @@
       },
       "slug": "trinity-ace",
       "festival": {
-        "slug": "trinity-ace",
-        "fetched": "2026-11-13",
+        "id": "gvdLjE7beC1lK93AQmyq",
         "hometown": "San Francisco, CA",
         "spotify": {
           "kind": "artist",
@@ -48823,8 +49007,7 @@
       "mbName": "truck violence",
       "slug": "truck-violence",
       "festival": {
-        "slug": "truck-violence",
-        "fetched": "2026-11-13",
+        "id": "wbNFme4SryckcKleikOs",
         "hometown": "Montréal, QC",
         "spotify": {
           "kind": "artist",
@@ -49132,8 +49315,7 @@
       "mbName": "Truman Sinclair",
       "slug": "truman-sinclair",
       "festival": {
-        "slug": "truman-sinclair",
-        "fetched": "2026-11-13",
+        "id": "OFbddfnPZSBCBChQQfw3",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -49427,8 +49609,7 @@
       },
       "slug": "truth-club",
       "festival": {
-        "slug": "truth-club",
-        "fetched": "2026-11-13",
+        "id": "ewUKUKuEZMrecT3xECVQ",
         "hometown": "Raleigh, NC",
         "spotify": {
           "kind": "artist",
@@ -49737,8 +49918,7 @@
       "mbName": "TWEN",
       "slug": "twen",
       "festival": {
-        "slug": "twen",
-        "fetched": "2026-11-13",
+        "id": "0ZVplVJlMaq81cKB1mEb",
         "hometown": "St. Louis, MO",
         "spotify": {
           "kind": "artist",
@@ -50033,8 +50213,7 @@
       },
       "slug": "valgur",
       "festival": {
-        "slug": "valgur",
-        "fetched": "2026-11-13",
+        "id": "AZMta4TnX7NcOXiQp3cV",
         "hometown": "Mexico City, Mexico",
         "spotify": {
           "kind": "artist",
@@ -50337,8 +50516,7 @@
       "mbName": "Victoryland",
       "slug": "victoryland",
       "festival": {
-        "slug": "victoryland",
-        "fetched": "2026-11-13",
+        "id": "Sv2JDmf1z0iu41IrT14y",
         "hometown": "New York, NY",
         "spotify": {
           "kind": "artist",
@@ -50645,8 +50823,7 @@
       "mbName": "Violet Grohl",
       "slug": "violet-grohl",
       "festival": {
-        "slug": "violet-grohl",
-        "fetched": "2026-11-13",
+        "id": "JRsSl3PGdxeJhZL99TcU",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -50949,8 +51126,7 @@
       "mbName": "Waylon Wyatt",
       "slug": "waylon-wyatt",
       "festival": {
-        "slug": "waylon-wyatt",
-        "fetched": "2026-11-13",
+        "id": "DaJv42mZOgkyF1RQuBS1",
         "hometown": "Hackett, AR",
         "spotify": {
           "kind": "artist",
@@ -51256,8 +51432,7 @@
       "mbName": "Wild Pink",
       "slug": "wild-pink",
       "festival": {
-        "slug": "wild-pink",
-        "fetched": "2026-11-13",
+        "id": "Iykebdnf8ZXcFV61G9u7",
         "hometown": "New York, NY",
         "spotify": {
           "kind": "artist",
@@ -51569,8 +51744,7 @@
       "mbName": "Winter McQuinn",
       "slug": "winter-mcquinn",
       "festival": {
-        "slug": "winter-mcquinn",
-        "fetched": "2026-11-13",
+        "id": "Rjqu4qAtUFNjbhFC6uzm",
         "hometown": "Melbourne, Australia",
         "spotify": {
           "kind": "artist",
@@ -51879,8 +52053,7 @@
       "mbName": "Wishy",
       "slug": "wishy",
       "festival": {
-        "slug": "wishy",
-        "fetched": "2026-11-13",
+        "id": "LwOFzk5deIApAKIykr9G",
         "hometown": "Indianapolis, IN",
         "spotify": {
           "kind": "artist",
@@ -52187,8 +52360,7 @@
       "mbName": "World News",
       "slug": "world-news",
       "festival": {
-        "slug": "world-news",
-        "fetched": "2026-11-13",
+        "id": "IeQZncBtsV2CKEo4HgB4",
         "hometown": "Brighton",
         "spotify": {
           "kind": "artist",
@@ -52499,8 +52671,7 @@
       "mbName": "Worldpeace DMT",
       "slug": "worldpeace-dmt",
       "festival": {
-        "slug": "worldpeace-dmt",
-        "fetched": "2026-11-13",
+        "id": "EE7KyT6nOC7j0CYu8lvr",
         "hometown": "London, UK",
         "spotify": {
           "kind": "artist",
@@ -52802,8 +52973,7 @@
       "mbName": "Yana",
       "slug": "yana",
       "festival": {
-        "slug": "yana",
-        "fetched": "2026-11-13",
+        "id": "xRLF6ru32qX1xYmmfyyX",
         "hometown": "Los Angeles, CA",
         "spotify": {
           "kind": "artist",
@@ -53043,8 +53213,7 @@
       },
       "slug": "zap-pack",
       "festival": {
-        "slug": "zap-pack",
-        "fetched": "2026-11-13",
+        "id": "868lk2kKwg0Ffkcc07Tt",
         "hometown": "Idaho Falls, ID",
         "spotify": {
           "kind": "artist",
@@ -53352,8 +53521,7 @@
       "mbName": "Zea Mays",
       "slug": "zea-mays",
       "festival": {
-        "slug": "zea-mays",
-        "fetched": "2026-11-13",
+        "id": "OAzxzRWoqOfz8oXXg5wW",
         "hometown": "Bilbao, Spain (Basque Country)",
         "spotify": {
           "kind": "artist",

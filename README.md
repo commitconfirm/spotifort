@@ -102,13 +102,13 @@ Every change lands through a pull request. CI runs the tests, build, `npm audit`
 The festival year and dates live in one place, `festival.config.js`. The lineup is built in stages; each is incremental and safe to rerun.
 
 ```bash
-# Everything, in order: scrape, festival feed, Spotify, MusicBrainz, Last.fm, build.
-# A rerun with nothing new only fetches the Treefort page.
+# Everything, in order: lineup source, Spotify, MusicBrainz, Last.fm, build.
+# A rerun with nothing new makes four requests to the festival app vendor's API and changes no file.
 npm run lineup
 
 # Or one stage at a time
-npm run lineup:scrape       # artist names and festival slugs from the Treefort page
-npm run lineup:festival     # the festival's own performer feed: Spotify link and other links (--refresh re-fetches everyone)
+npm run lineup:source       # the lineup: the vendor's documented API (festival id in festival.config.js); falls back to the Treefort page + performer feed
+npm run lineup:festival     # fallback only: the festival's own performer feed for links (--refresh re-fetches everyone)
 npm run lineup:spotify      # Spotify ids: festival link first, search as the fallback (SPOTIFY_CLIENT_ID + SPOTIFY_CLIENT_SECRET in .env.local, see .env.local.example)
 npm run lineup:musicbrainz  # links to other platforms (1 request per second; a first run takes about 7 minutes)
 npm run lineup:lastfm       # similar artists and tags (LASTFM_API_KEY in .env.local)
