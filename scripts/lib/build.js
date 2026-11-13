@@ -5,7 +5,8 @@
 import { normalizeName } from '../../src/core/normalize.js';
 import { PLATFORMS, cleanPlatformUrl } from '../../src/core/links.js';
 import { indexOverrides, overrideFor, unusedOverrides } from './overrides.js';
-import { effectiveSpotify, lastfmQueryName } from './state.js';
+import { effectiveSpotify, lastfmQueryName, spotifySource } from './state.js';
+import { festivalLinksFor } from './festival.js';
 import { computeLineupSimilarity, fitReverseIndex, roundTo } from './similarity.js';
 import { TAGS_IN_OUTPUT } from './constants.js';
 import { formatReview, formatSanity } from './report.js';
@@ -46,7 +47,9 @@ export function resolveRecord(record, override) {
   const similar = usable ? lf.similar : [];
   const tags = Array.isArray(override.tags) ? override.tags.map((t) => [t.toLowerCase(), 100]) : usable ? lf.tags : [];
 
-  const rawLinks = { ...(record.links ?? {}) };
+  // Festival links fill platforms MusicBrainz did not supply; MusicBrainz wins where both exist.
+  const fest = festivalLinksFor(record);
+  const rawLinks = { ...fest.links, ...(record.links ?? {}) };
   if (sp.ids[0]) rawLinks.spotify = `https://open.spotify.com/artist/${sp.ids[0]}`;
   if (!rawLinks.lastfm && usable && lf.url) rawLinks.lastfm = lf.url;
   Object.assign(rawLinks, override.links ?? {});
@@ -57,15 +60,17 @@ export function resolveRecord(record, override) {
   }
 
   const ids = {};
-  for (const [p, v] of Object.entries({ ...(record.ids ?? {}), ...(override.ids ?? {}) })) {
+  for (const [p, v] of Object.entries({ ...fest.ids, ...(record.ids ?? {}), ...(override.ids ?? {}) })) {
     if (v != null) ids[p] = v;
   }
   const idOrder = ['tidal', 'appleMusic', 'deezer'];
   const orderedIds = Object.fromEntries(idOrder.filter((p) => ids[p]).map((p) => [p, ids[p]]));
 
   const mbConfirmed = mbConfirms(record, override, sp.ids[0]);
-  const doubtful = sp.confidence === 'inexact' || sp.confidence === 'ambiguous' || override.unverified === true;
-  const unverified = doubtful && !mbConfirmed;
+  // MusicBrainz knowing a same-named artist under this Spotify id supports a search result, but it cannot
+  // prove that artist is the festival's act. So an owner-accepted guess (override.unverified) stays flagged.
+  const doubtfulSearch = sp.confidence === 'inexact' || sp.confidence === 'ambiguous';
+  const unverified = override.unverified === true || (doubtfulSearch && !mbConfirmed);
 
   return {
     n: record.n,
@@ -75,8 +80,12 @@ export function resolveRecord(record, override) {
     confidence: sp.confidence,
     matchedName: sp.matchedName,
     spotifyResolved: sp.resolved,
+    spotifySource: spotifySource(record, override),
+    supersedes: !Array.isArray(override.spotifyIds) && record.spotify?.confidence === 'festival' ? (record.spotify.supersedes ?? null) : null,
+    festival: record.festival ?? null,
+    hasSlug: Boolean(record.slug),
     mbConfirmed,
-    confirmedByMb: doubtful && mbConfirmed,
+    confirmedByMb: doubtfulSearch && mbConfirmed,
     unverified,
     mbid: 'mbid' in override ? override.mbid : (record.mbid ?? null),
     links,
@@ -173,10 +182,13 @@ export function buildOutputs({ state, overrides }) {
     active: artists.length,
     removed: state.artists.length - artists.length,
     confidence: Object.fromEntries(
-      ['exact', 'inexact', 'ambiguous', 'manual', 'none', 'unresolved'].map((c) => [
+      ['festival', 'exact', 'inexact', 'ambiguous', 'manual', 'none', 'unresolved'].map((c) => [
         c,
         artists.filter((a) => (a.confidence ?? 'unresolved') === c).length,
       ])
+    ),
+    spotifySources: Object.fromEntries(
+      ['override', 'festival', 'festival-album', 'search', 'none', 'unresolved'].map((k) => [k, artists.filter((a) => a.spotifySource === k).length])
     ),
     mbids: artists.filter((a) => a.mbid).length,
     linksPerPlatform: Object.fromEntries(PLATFORMS.map((p) => [p, artists.filter((a) => a.links[p]).length])),

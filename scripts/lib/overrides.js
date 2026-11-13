@@ -8,7 +8,7 @@
  *   links        {platform: url|null}  per-platform replacement; null clears that platform
  *   ids          {tidal|appleMusic|deezer: string|null}
  *   tags         string[]            replaces the Last.fm tags
- *   unverified   true                flag the match `unverified` in lineup.json (cleared when MusicBrainz confirms it)
+ *   unverified   true                flag the match `unverified` in lineup.json (always wins; only removing the field clears it)
  *   note         string              why (free text, never used by the pipeline)
  */
 import { normalizeName } from '../../src/core/normalize.js';

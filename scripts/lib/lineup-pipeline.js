@@ -25,26 +25,41 @@ export function decodeEntities(text) {
 }
 
 /**
+ * Extract artist cards from the lineup page HTML.
+ * Each artist card contains <h3 class="lineup-artist-name">Name</h3> and sits in an element carrying data-slug="...".
+ * A card with no slug of its own gets none (the slug is taken only from between the previous name and this one).
+ * @param {string} html
+ * @returns {{name: string, slug: string|null}[]} Unique names (case-insensitive) in page order
+ */
+export function parseLineupCards(html) {
+  const tokens = /<h3\b[^>]*\bclass="[^"]*\blineup-artist-name\b[^"]*"[^>]*>([\s\S]*?)<\/h3>|\bdata-slug="([^"]*)"/gi;
+  const seen = new Set();
+  const cards = [];
+  let slug = null;
+  let match;
+  while ((match = tokens.exec(html)) !== null) {
+    if (match[2] !== undefined) {
+      slug = decodeEntities(match[2]).trim() || null;
+      continue;
+    }
+    const name = decodeEntities(match[1].replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim();
+    const key = name.toLowerCase();
+    const cardSlug = slug;
+    slug = null;
+    if (name && !seen.has(key)) {
+      seen.add(key);
+      cards.push({ name, slug: cardSlug });
+    }
+  }
+  return cards;
+}
+
+/**
  * Extract artist names from the lineup page HTML.
- * Each artist card contains <h3 class="lineup-artist-name">Name</h3>.
  * @param {string} html
  * @returns {string[]} Unique names (case-insensitive) in page order
  */
-export function parseLineupHtml(html) {
-  const re = /<h3\b[^>]*\bclass="[^"]*\blineup-artist-name\b[^"]*"[^>]*>([\s\S]*?)<\/h3>/gi;
-  const seen = new Set();
-  const names = [];
-  let match;
-  while ((match = re.exec(html)) !== null) {
-    const name = decodeEntities(match[1].replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim();
-    const key = name.toLowerCase();
-    if (name && !seen.has(key)) {
-      seen.add(key);
-      names.push(name);
-    }
-  }
-  return names;
-}
+export const parseLineupHtml = (html) => parseLineupCards(html).map((c) => c.name);
 
 /**
  * Parse a Retry-After header value (seconds or HTTP date) into seconds

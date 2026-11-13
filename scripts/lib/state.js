@@ -3,11 +3,15 @@
  *
  * Record lifecycle per source (a missing field always means "not looked up yet", never "not found"):
  *   spotify     absent -> not searched or search failed (retried);  {confidence:'none'} -> searched, no result
+ *               {confidence:'festival', via:'artist'|'album', albumId?} -> the festival's own link (see needsSpotify);
+ *               `supersedes` holds the earlier search result when the festival link replaced a different one
+ *   festival    absent -> performer feed not fetched yet (or the fetch failed; retried)
  *   mbid        undefined -> not looked up;  null -> looked up, MusicBrainz does not know the Spotify id
  *   lastfm      absent -> not fetched;  {notFound:true} -> Last.fm error 6;  {skipped:true} -> override said use none
  */
 import { normalizeName } from '../../src/core/normalize.js';
 import { MAX_REMOVED_FRACTION, MIN_SCRAPED_NAMES } from './constants.js';
+import { festivalSpotifyTarget } from './festival.js';
 
 export function emptyState(year) {
   return { year, lastUpdated: null, lastScrape: null, artists: [] };
@@ -41,6 +45,12 @@ export function uniqueId(name, n, taken) {
   return id;
 }
 
+/** The festival's own id for the artist (from the card's data-slug); a card with none leaves the record with none. */
+function setSlug(record, slug) {
+  if (slug) record.slug = slug;
+  else delete record.slug;
+}
+
 /**
  * Merge the festival site's names into the state.
  * New names get the next n (never reused, removed records keep theirs). Names that vanished are marked
@@ -48,18 +58,21 @@ export function uniqueId(name, n, taken) {
  * Matching is exact first, then by normalised name, so a cosmetic site edit keeps the artist's n
  * (the record then takes the site's current spelling).
  * @param {object} state
- * @param {string[]} names scraped names, page order
+ * @param {(string|{name: string, slug?: string|null})[]} names scraped names (or cards with their festival slug), page order
  * @param {string} date YYYY-MM-DD
  * @returns {{state: object, added: string[], removed: string[], restored: string[], renamed: string[]}}
  */
-export function mergeScrape(state, names, date) {
+export function mergeScrape(state, scraped, date) {
   const unique = [];
+  const slugs = new Map(); // normalised name -> slug (null when the card had none)
   const seenKeys = new Set();
-  for (const name of names) {
+  for (const entry of scraped) {
+    const name = typeof entry === 'string' ? entry : entry?.name;
     const key = normalizeName(name);
     if (!key || seenKeys.has(key)) continue;
     seenKeys.add(key);
     unique.push(name);
+    slugs.set(key, (typeof entry === 'object' && entry?.slug) || null);
   }
 
   const active = state.artists.filter((a) => !a.removed);
@@ -91,6 +104,7 @@ export function mergeScrape(state, names, date) {
     const rec = index.get(key);
     if (rec) {
       touched.add(rec);
+      setSlug(rec, slugs.get(key));
       if (rec.name !== name) {
         renamed.push(`${rec.name} -> ${name}`);
         rec.name = name;
@@ -102,6 +116,7 @@ export function mergeScrape(state, names, date) {
     } else {
       const n = nextN++;
       const fresh = { n, id: uniqueId(name, n, taken), name, firstSeen: date };
+      setSlug(fresh, slugs.get(key));
       artists.push(fresh);
       touched.add(fresh);
       added.push(name);
@@ -160,7 +175,51 @@ export function effectiveSpotify(record, override) {
 
 export const primarySpotifyId = (record, override) => effectiveSpotify(record, override).ids[0] ?? null;
 
-export const needsSpotify = (record, override) => !record.removed && !effectiveSpotify(record, override).resolved;
+/**
+ * Spotify resolution order: override, then the festival's artist link, then its album link (resolved through the
+ * Spotify API to the album's artists), then search. The Spotify stage needs to act when:
+ *  - there is no override, and the festival gave an artist/album link whose result is not stored yet (this
+ *    includes replacing an earlier search result: the festival wins), or
+ *  - a stored `festival` result no longer matches the festival's link (the link went away or changed), or
+ *  - nothing is resolved (search).
+ */
+export function needsSpotify(record, override) {
+  if (record.removed || Array.isArray(override.spotifyIds)) return false;
+  const target = festivalSpotifyTarget(record);
+  const sp = record.spotify;
+  if (target) {
+    if (!sp || sp.confidence !== 'festival') return true;
+    return target.kind === 'artist' ? sp.ids?.[0] !== target.id || sp.via !== 'artist' : sp.via !== 'album' || sp.albumId !== target.id;
+  }
+  if (sp?.confidence === 'festival') return true; // its source link is gone: search again
+  return !sp;
+}
+
+/**
+ * Store the festival's Spotify result on a record. The festival wins over an earlier search result; when the
+ * ids differ the earlier result is kept in `supersedes` so the review report can show the change.
+ * @param {object} record
+ * @param {{ids: string[], matchedName: string|null, via: 'artist'|'album', albumId?: string}} result
+ */
+export function applyFestivalSpotify(record, { ids, matchedName, via, albumId }) {
+  const prev = record.spotify;
+  const next = { ids, matchedName, confidence: 'festival', via };
+  if (albumId) next.albumId = albumId;
+  const earlier = prev && prev.confidence !== 'festival' ? prev : prev?.supersedes;
+  if (earlier && (earlier.ids ?? []).length > 0 && earlier.ids.join() !== ids.join()) {
+    next.supersedes = { ids: earlier.ids, matchedName: earlier.matchedName ?? null, confidence: earlier.confidence };
+  }
+  record.spotify = next;
+}
+
+/** Where the record's Spotify id came from, for the report: override | festival | festival-album | search | none | unresolved. */
+export function spotifySource(record, override) {
+  if (Array.isArray(override.spotifyIds)) return 'override';
+  const sp = record.spotify;
+  if (!sp) return 'unresolved';
+  if (sp.confidence === 'festival') return sp.via === 'album' ? 'festival-album' : 'festival';
+  return (sp.ids ?? []).length ? 'search' : 'none';
+}
 
 /** MusicBrainz id lookup is needed when there is a Spotify id and no answer for that id yet. */
 export function needsMbid(record, override) {

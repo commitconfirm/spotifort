@@ -7,15 +7,14 @@
  * Usage: node scripts/lineup-scrape.js [--print]   (--print: list the names, write nothing)
  */
 import { FESTIVAL, loadState, saveState, today } from './lib/store.js';
-import { parseLineupHtml, parseRetryAfter } from './lib/lineup-pipeline.js';
+import { parseLineupCards, parseRetryAfter } from './lib/lineup-pipeline.js';
 import { mergeScrape } from './lib/state.js';
-import { MIN_SCRAPED_NAMES } from './lib/constants.js';
-
-const CLIENT_NAME = 'Spotifort lineup script (https://spotifort.com)';
+import { cleanSlug } from './lib/festival.js';
+import { FESTIVAL_CLIENT_NAME, MIN_SCRAPED_NAMES } from './lib/constants.js';
 
 async function fetchPage(url) {
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const res = await fetch(url, { headers: { 'User-Agent': CLIENT_NAME } });
+    const res = await fetch(url, { headers: { 'User-Agent': FESTIVAL_CLIENT_NAME } });
     if (res.status === 429 || res.status === 503) {
       const wait = Math.min(60, parseRetryAfter(res.headers.get('retry-after')) ?? 2 ** attempt);
       console.log(`  HTTP ${res.status}; waiting ${wait}s`);
@@ -30,7 +29,8 @@ async function fetchPage(url) {
 
 async function main() {
   console.log(`${FESTIVAL.name} ${FESTIVAL.year}: scraping ${FESTIVAL.lineupUrl}`);
-  const names = parseLineupHtml(await fetchPage(FESTIVAL.lineupUrl));
+  const cards = parseLineupCards(await fetchPage(FESTIVAL.lineupUrl)).map((c) => ({ name: c.name, slug: cleanSlug(c.slug) }));
+  const names = cards.map((c) => c.name);
   if (names.length < MIN_SCRAPED_NAMES) {
     throw new Error(
       `Only found ${names.length} artist names (expected at least ${MIN_SCRAPED_NAMES}). ` +
@@ -41,9 +41,10 @@ async function main() {
     names.forEach((n) => console.log(n));
     return;
   }
-  const { state, added, removed, restored, renamed } = mergeScrape(loadState(), names, today());
+  const { state, added, removed, restored, renamed } = mergeScrape(loadState(), cards, today());
   saveState(state);
   console.log(`  names on the site: ${names.length}; records: ${state.artists.length}`);
+  console.log(`  cards with a festival slug: ${cards.filter((c) => c.slug).length} of ${cards.length}`);
   console.log(`  added ${added.length}, removed ${removed.length}, restored ${restored.length}, renamed ${renamed.length}`);
   for (const n of added) console.log(`    + ${n}`);
   for (const n of removed) console.log(`    - ${n} (marked removed; excluded from outputs)`);

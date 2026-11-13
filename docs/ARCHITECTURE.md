@@ -45,7 +45,12 @@ Outputs are committed so the Cloudflare build needs no network and no secrets. `
   "id": "mabe-fratti-bill-orcutt",
   "name": "Mabe Fratti & Bill Orcutt",   // exactly as the festival writes it
   "firstSeen": "2026-11-13",
-  "spotify": { "ids": ["49EC…", "7yHf…"], "matchedName": "Bill Orcutt", "confidence": "exact|inexact|ambiguous|manual|none" },
+  "slug": "mabe-fratti-bill-orcutt",      // the festival's own id for the artist (card data-slug); absent when the card has none
+  "festival": { "slug": "…", "fetched": "2026-11-13", "hometown": "Mexico City / San Francisco",
+                "spotify": { "kind": "artist|album", "id": "…" } | { "kind": "user|playlist|track|…", "url": "…" },
+                "links": { "appleMusic": "…", "bandcamp": "…", "instagram": "…" },   // one https URL per type
+                "showtimes": [ … ] },                                                  // only if a short list of flat objects
+  "spotify": { "ids": ["7yHf…", "49EC…"], "matchedName": "Mabe Fratti & Bill Orcutt", "confidence": "festival|exact|inexact|ambiguous|manual|none" },
   "mbid": "…" | null,                    // null = MusicBrainz was asked and does not know the Spotify id
   "links": { "spotify": "https://…", "appleMusic": "…", "tidal": "…", "deezer": "…", "bandcamp": "…", "youtube": "…", "soundcloud": "…", "lastfm": "…" },
   "lastfm": { "queriedName": "Ratboys", "resolvedName": "Ratboy", "nameChanged": "cosmetic|different|no", "listeners": 2813,
@@ -62,7 +67,8 @@ Fields the spec above leaves implicit, as built:
 - `mbFor` (the Spotify id `mbid` was resolved from) and `mbFetched` (the MBID the links were read for) let the MusicBrainz stage resume and re-resolve when an id changes.
 - `mbName` is the MusicBrainz artist's name, read with the links (`mbFetched` says which MBID it belongs to). The build uses it to confirm Spotify matches (see the `unverified` rule under Public outputs).
 - Top level: `lastUpdated` (date any stage last changed data; also the date shown on the site) and `lastScrape` (`{date, added, removed}` for the review report). Removed artists keep their record with `removed: "<date>"`.
-- `spotify.confidence` is `exact` when the Spotify name equals the festival name after normalisation (so "&" vs "and" is exact), `inexact` when the top hit was used with no equal name, `ambiguous` when several share the name. `manual` is never stored in state: it is what an override produces in the build.
+- `festival` is the performer feed's answer for the artist, stored when the fetch and parse succeeded; absent means "not fetched" (never "the festival has nothing"). `bio` and image URLs are deliberately not kept (the text and pictures are the festival's) and neither is `music` (one Apple Music album link). `showtimes` is empty for every performer today; it is stored only when it is a list of at most 40 flat objects, and is the intended source for the schedule feature once the festival publishes times. `festival.links` keeps every https link by type; only Apple Music, Tidal, Deezer, Bandcamp, YouTube and SoundCloud reach the public files, passing the same host allow-list and artist-page shape checks as MusicBrainz links (so SoundCloud search pages and YouTube pages that are not a channel or handle are dropped). There is no generic website link type.
+- `spotify.confidence` is `festival` when the id came from the festival's own link (`spotify.via` says `artist`, or `album` with the album id in `spotify.albumId`; an album's artists, in the album's order, become `ids`, so a duo billing gets both members). A festival result replaces an earlier search result; when the ids differ the earlier result is kept in `spotify.supersedes` so the review report can show the change. `festival` counts as confirmed (never `unverified`). A festival link to a Spotify user, playlist or track is recorded (`festival.spotify.kind`) but not used. `spotify.confidence` is `exact` when the Spotify name equals the festival name after normalisation (so "&" vs "and" is exact), `inexact` when the top hit was used with no equal name, `ambiguous` when several share the name. `manual` is never stored in state: it is what an override produces in the build. Resolution order: override, festival artist link, festival album link, search.
 
 ### Overrides
 
@@ -76,6 +82,8 @@ Keyed by the festival's name for the artist. Any field present replaces the reso
 Fields: `spotifyIds`, `mbid`, `lastfmName`, `links` (per platform), `ids`, `tags`, `unverified`, `note`. `unverified: true` (the only valid value) makes the build flag the artist `unverified` in `lineup.json` even though an override fixed the Spotify id, for matches the owner accepted without proof; MusicBrainz confirmation (rule below) clears it. The file is validated on every load (unknown fields, bad ids and URLs off the allow-list are errors). `lastfmName` is the name to ask Last.fm for, so confirming an autocorrect the pipeline flagged as `different` means setting `lastfmName` to the name Last.fm returned.
 
 Owner decisions 2026-11-13 on the five Phase 1 hand-corrected "not on Spotify" artists: **JÜN** (`3hV7…`), **PLAYDEAD** (`6rZf…`) and **SOOT** (`0U98…`) take the exact-name Spotify artist, accepted but unconfirmed (could be a different act with the same name), so they carry `unverified: true`; **Fatal Femmes** and **Sautrah** stay `spotifyIds: []`, kept as not on Spotify.
+
+Update 2026-11-13 (festival feed): the festival's own links now supply **Barbara**, **JÜN** and **Mabe Fratti & Bill Orcutt** (its album link resolves to both members), so those overrides were removed; JÜN is no longer `unverified`. The Mabe Fratti override listed Bill Orcutt first; the album lists Mabe Fratti first, so the primary id (and the legacy `spotifyId`) changed to Mabe Fratti's. **PLAYDEAD** and **SOOT** have no festival Spotify link and keep their overrides; **Fatal Femmes** (no link) and **Sautrah** (a Spotify user profile) stay as not on Spotify. The override examples above are illustrative.
 
 The seven Phase 1 `manual: true` records migrated into this file, together with three Last.fm corrections found by the spike:
 
@@ -95,7 +103,7 @@ The seven Phase 1 `manual: true` records migrated into this file, together with 
                  "unverified": true } ] }                // see the rule below
 ```
 
-`unverified` is set when the Spotify match is `inexact` or `ambiguous`, or an override says `unverified: true`, **unless MusicBrainz confirms it**. Confirmed means: the chosen Spotify id resolved to a MusicBrainz artist (the `mbid` was obtained from that Spotify URL, not set by an override) and that artist's name equals the festival name after normalisation. Of 2027's 21 ambiguous matches, 16 are confirmed this way and 5 still need a human look (listed in `review.md`).
+`unverified` is set when an override says `unverified: true` (an owner-accepted guess always stays flagged), or when the Spotify match came from search and is `inexact` or `ambiguous` **and MusicBrainz does not confirm it**. Confirmed means: the chosen Spotify id resolved to a MusicBrainz artist (the `mbid` was obtained from that Spotify URL, not set by an override) and that artist's name equals the festival name after normalisation. Of 2027's 21 ambiguous matches, 16 are confirmed this way and 5 still need a human look (listed in `review.md`).
 
 `similarity.json` — lazy-loaded when the visitor starts typing or connects a library; keep under **250 KB gzip** (`BUDGET_SIMILARITY_GZIP`, shared by build and `check-dist`).
 
@@ -117,8 +125,9 @@ One command per stage, each incremental and safe to rerun. `npm run lineup` runs
 
 | Stage | Reads | Does | Network |
 |---|---|---|---|
-| `scrape` | Treefort lineup page | New names get a record and the next `n`; names gone from the page are reported and marked `removed`, never deleted. Fails under 50 names, or if it would remove more than half the lineup | Treefort |
-| `spotify` | state, overrides | Spotify search for records with no Spotify result and no override; sets `confidence`. Needs no credential when there is nothing to look up | Spotify |
+| `scrape` | Treefort lineup page | Also stores each card's `data-slug` on the record (a card with none leaves the record with none). New names get a record and the next `n`; names gone from the page are reported and marked `removed`, never deleted. Fails under 50 names, or if it would remove more than half the lineup | Treefort |
+| `festival` | state | The performer feed `GET <restBase><slug>` (REST base read from the lineup page's `tmfLineup` config, falling back to a constant; only an https URL on the festival's host is accepted). Fetches records with a slug and no stored answer (or a changed slug; `--refresh` re-fetches all) at most one request per 400 ms, 3 attempts, cached. Stores the Spotify link, other links and hometown. A failure leaves the record unfetched and is retried; over half failing (after 10 requests) stops the stage with a warning and exit 0 | Treefort |
+| `spotify` | state, overrides | Resolves in order: override, festival artist link (no call), festival album link (`GET /albums/{id}`, artists in order), search. Sets `confidence`. A failed album call is retried next run and never falls through to search. Needs no credential when there is nothing to look up (artist links need none) | Spotify |
 | `musicbrainz` | state, overrides | Spotify URL → MBID → platform links and ids, 1 request/second. Only https URLs on the per-platform host allow-list are stored | MusicBrainz |
 | `lastfm` | state, overrides | `getInfo`, `getSimilar` (250), `getTopTags` by name with autocorrect; classifies name changes; at most 4 requests/second | Last.fm |
 | `build` | state + overrides | Applies overrides, computes lineup-to-lineup similarity, writes the two public files, the legacy Phase 1 file, `review.md` and `sanity.md` | None |
@@ -127,7 +136,7 @@ Rules that came out of Phase 1 and the spike:
 
 - An API failure never becomes a negative fact. A record is `unresolved` until a successful call says otherwise.
 - Hand corrections live only in overrides, so a full rebuild from scratch reproduces them.
-- The review report (printed, and written to `data/<year>/review.md` for the scheduled pull request) lists: inexact and ambiguous Spotify matches (ambiguous ones split into confirmed by MusicBrainz and needing a human look), owner-accepted unconfirmed matches, the reverse-index cutoff used, Last.fm names that changed to a different artist, artists with no similar data, artists added and removed.
+- The review report (printed, and written to `data/<year>/review.md` for the scheduled pull request) lists: Spotify ids by source (override, festival artist link, festival album link, search, none), every case where the festival link differs from an earlier search result, performers whose festival Spotify link is not an artist or album page, performers with no festival link resolved by search (the weakest matches, with their confidence), festival feed failures and artists without a slug, inexact and ambiguous Spotify matches (ambiguous ones split into confirmed by MusicBrainz and needing a human look), owner-accepted unconfirmed matches, the reverse-index cutoff used, Last.fm names that changed to a different artist, artists with no similar data, artists added and removed.
 - Retry transient non-JSON 200s from Last.fm and never cache them. Treat Last.fm `error: 6` as "not found".
 - `scripts/lib/` holds pure, tested logic; the stage scripts hold only I/O. Every stage is incremental and resumable (state is saved as it goes), stops after three consecutive API failures, and never prints or caches an API key.
 - Raw API answers are cached in `~/.cache/spotifort/` (override with `SPOTIFORT_CACHE_DIR`), outside the repository so a synced folder never carries it, keyed by the request without credentials, so reruns and rebuilds on one machine are free. CI starts with an empty cache and relies on state alone.
@@ -217,6 +226,8 @@ The design interview chose "precomputed plus live". The spike shows the live par
 
 ## Known gaps
 
-- Exact-name Spotify matches for small acts have no second source to confirm them when MusicBrainz does not know the artist (47 of 183). They ship flagged `unverified` only when the name match was inexact or ambiguous (and MusicBrainz does not confirm it) or an override says so; the rest rely on the owner's review of the report.
+- The exact-name problem is now limited to performers without a festival Spotify link (2027: 7 of 188 have no festival artist or album link; overrides settle four of them, leaving LP Giobbi, Thomas Dollbaum and Jeffrey Lewis & The Voltage to search). For those, search by name has no second source when MusicBrainz does not know the artist; they ship flagged `unverified` only when the name match was inexact or ambiguous (and MusicBrainz does not confirm it) or an override says so, and the rest rely on the owner's review of the report. Festival links also cover search's blind spot for very common names.
+- The performer feed is undocumented: it is the endpoint the festival's own lineup page script calls (`robots.txt` disallows only `/wp-admin/`). It can change or disappear without notice. The stage is built for that: bad answers are failures for one performer (retried), a mostly failing feed stops the stage with a warning, and the pipeline carries on with search, so a feed outage degrades matching quality but never breaks a run. `npm run lineup:festival -- --refresh` re-reads everyone when the festival may have corrected links.
+- A festival link is trusted as the festival's own statement, but it can be wrong (a Spotify user, album or the wrong act). Non-artist links are reported, an album resolves to its credited artists, and an override still beats the festival.
 - Seven lineup artists have no Last.fm similarity and few or no tags. They can be matched but will rarely be recommended.
 - Collaboration billings resolve to one member in MusicBrainz; their platform links may point at that member.
