@@ -68,26 +68,42 @@ export function checkHeaders(content) {
     : ['_headers: no Content-Security-Policy line'];
 }
 
-export function checkLineup(year, raw) {
-  const name = `lineups/${year}.json`;
-  if (raw === null) return [`${name}: missing from dist/`];
-  let data;
-  try {
-    data = JSON.parse(raw);
-  } catch (e) {
-    return [`${name}: does not parse (${e.message})`];
-  }
-  if (!Array.isArray(data?.artists) || data.artists.length === 0) {
-    return [`${name}: "artists" is missing or empty`];
-  }
+/**
+ * The app page must also be served for /callback (Cloudflare Pages maps /callback to callback.html), and the
+ * build generates it from index.html; the Phase 1 lineup file must be gone.
+ * @param {string|null} indexHtml
+ * @param {string|null} callbackHtml
+ * @param {boolean} legacyLineupsExists whether dist/lineups/ exists
+ */
+export function checkAppPages(indexHtml, callbackHtml, legacyLineupsExists) {
   const out = [];
-  data.artists.forEach((a, i) => {
-    const url = a?.spotifyUrl;
-    if (url && !String(url).startsWith('https://open.spotify.com/')) {
-      out.push(`${name}: artist "${a.name ?? i}" has spotifyUrl outside https://open.spotify.com/ (${url})`);
-    }
-  });
+  if (indexHtml === null) out.push('index.html: missing from dist/');
+  if (callbackHtml === null) out.push('callback.html: missing from dist/ (the build should copy it from index.html)');
+  else if (indexHtml !== null && callbackHtml !== indexHtml) out.push('callback.html: differs from index.html (it must be the same app page)');
+  if (legacyLineupsExists) out.push('lineups/: the Phase 1 lineup files should no longer ship');
   return out;
+}
+
+/**
+ * Every example artist chip must exist in the similarity index or on the lineup (by normalised name), otherwise
+ * the app silently drops it.
+ * @param {string[]} examples festival.config.js exampleArtists
+ * @param {string|null} lineupRaw
+ * @param {string|null} similarityRaw
+ */
+export function checkExamples(examples, lineupRaw, similarityRaw) {
+  if (!Array.isArray(examples) || !examples.length) return [];
+  let keys;
+  try {
+    const lineup = JSON.parse(lineupRaw ?? 'null');
+    const sim = JSON.parse(similarityRaw ?? 'null');
+    keys = new Set([...(lineup?.artists ?? []).map((a) => normalizeName(a?.name)), ...(sim?.names ?? []).map(normalizeName)]);
+  } catch {
+    return []; // unparseable data is reported by checkData
+  }
+  return examples
+    .filter((name) => !keys.has(normalizeName(name)))
+    .map((name) => `festival.config.js: example artist "${name}" is neither on the lineup nor in the similarity index`);
 }
 
 const SIGNALS = new Set(['direct', 'neighbours', 'tags']);
@@ -235,8 +251,13 @@ function walk(dir) {
 
 const readOrNull = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
 
-/** Run every check against a dist directory. Returns violation strings. */
-export function checkDist(distDir, year) {
+/**
+ * Run every check against a dist directory. Returns violation strings.
+ * @param {string} distDir
+ * @param {number} year
+ * @param {{ exampleArtists?: string[] }} [festival]
+ */
+export function checkDist(distDir, year, festival = {}) {
   if (!existsSync(distDir)) return [`${distDir}: not found (run npm run build first)`];
   const out = [];
   const files = walk(distDir);
@@ -246,7 +267,10 @@ export function checkDist(distDir, year) {
     if (TEXT_EXT.has(extname(f))) out.push(...checkSecrets(rel, readFileSync(f, 'utf8')));
   }
   out.push(...checkHeaders(readOrNull(join(distDir, '_headers'))));
-  out.push(...checkLineup(year, readOrNull(join(distDir, 'lineups', `${year}.json`))));
-  out.push(...checkData(year, readOrNull(join(distDir, 'data', String(year), 'lineup.json')), readOrNull(join(distDir, 'data', String(year), 'similarity.json'))));
+  out.push(...checkAppPages(readOrNull(join(distDir, 'index.html')), readOrNull(join(distDir, 'callback.html')), existsSync(join(distDir, 'lineups'))));
+  const lineupRaw = readOrNull(join(distDir, 'data', String(year), 'lineup.json'));
+  const similarityRaw = readOrNull(join(distDir, 'data', String(year), 'similarity.json'));
+  out.push(...checkData(year, lineupRaw, similarityRaw));
+  out.push(...checkExamples(festival.exampleArtists, lineupRaw, similarityRaw));
   return out;
 }

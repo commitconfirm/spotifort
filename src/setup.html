@@ -12,7 +12,7 @@
       <header>
         <img src="/spotifort_transparent.png" alt="Spotifort logo" class="site-logo" />
         <h1>Spotifort Setup Guide</h1>
-        <p class="tagline">Create your Spotify Developer app in 5 minutes</p>
+        <p class="tagline">Optional: connect your Spotify library in about 5 minutes</p>
       </header>
 
       <main>
@@ -22,11 +22,16 @@
           </div>
 
           <div class="guide-intro">
-            <h2>Why is this needed?</h2>
+            <h2>Do I need this?</h2>
+            <p>
+              No. Spotifort works without any account: type a few artists you like on the
+              <a href="/">home page</a> and you get your Treefort picks. Connecting Spotify is an
+              optional extra that adds your whole library (Liked Songs, top artists and followed artists) at once.
+            </p>
             <p>
               Spotify limits "Development Mode" apps to 5 users each. To work around this,
-              each Spotifort user creates their own Spotify Developer app. You become the
-              sole user of your own app, which means no limits.
+              each person who wants to connect creates their own Spotify Developer app. You become the
+              sole user of your own app, which means no limits. <a href="/why">Read more about why</a>.
             </p>
           </div>
 
@@ -44,7 +49,10 @@
               </li>
               <li>
                 <strong>Client ID is not sensitive:</strong> Your Client ID is a public identifier,
-                not a password. Spotifort never stores it permanently.
+                not a password. If you leave "Remember my Client ID on this device" ticked, Spotifort keeps it in
+                this browser's local storage so you can refresh your library later; untick it and it is forgotten
+                when you close the tab. Your Spotify login itself (the access token) is never stored.
+                "Forget my data" on the home page clears everything Spotifort remembers.
               </li>
             </ul>
           </div>
@@ -115,8 +123,8 @@
                 a 32-character string of letters and numbers. Copy it (you want the Client ID, not the Client Secret).
               </p>
               <p>
-                Then go to <a href="/">spotifort.com</a>, paste your Client ID into the input field,
-                and click <strong>Save & Continue</strong>.
+                Then go to <a href="/">spotifort.com</a>, choose <strong>or connect your Spotify library</strong>,
+                paste your Client ID into the field, and click <strong>Connect Spotify</strong>.
               </p>
               <div class="guide-media">
                 <img src="/setup/step5-copy-paste-client-id.gif" alt="Copying Client ID and pasting into Spotifort" />
@@ -127,9 +135,10 @@
             <div class="guide-step">
               <h3>Step 6: Authorize with Spotify</h3>
               <p>
-                Click <strong>Connect Spotify</strong> and approve the permissions.
-                Spotifort only requests access to read your Liked Songs — nothing else.
-                We cannot modify your library, playlists, or account.
+                Spotify asks you to approve the permissions. Spotifort only asks to <em>read</em> your Liked Songs,
+                your top artists and the artists you follow. It cannot change your library, playlists, or account.
+                Your library is read in your browser and turned into a list of artists under <strong>My artists</strong>;
+                nothing is sent anywhere else.
               </p>
               <div class="guide-media">
                 <img src="/setup/step6-authorize.gif" alt="Authorizing Spotifort with Spotify" />

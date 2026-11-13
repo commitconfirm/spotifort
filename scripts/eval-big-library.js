@@ -1,6 +1,6 @@
 // Evaluation aid (docs/evaluation-2.4.md, scenario 9): a synthetic "big library" of 300 outside artists sampled
 // deterministically from the similarity index with liked-song weights, then the top results compared with the ten
-// lineup artists that have the most reverse-index edges ("hubs").   node scripts/eval-big-library.js [seed] [size]
+// lineup artists that have the most reverse-index edges ("hubs").   node scripts/eval-big-library.js [seed] [size] [decay]
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
@@ -18,6 +18,7 @@ const similarity = prepareSimilarity(simJson);
 
 let seed = Number(process.argv[2]) || 20270331;
 const size = Number(process.argv[3]) || 300;
+const decay = process.argv[4] === undefined ? undefined : Number(process.argv[4]);
 const rand = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32); // small seeded LCG
 
 const picked = new Set();
@@ -30,7 +31,7 @@ const degree = new Map();
 for (const flat of simJson.edges) for (let j = 0; j < flat.length; j += 2) degree.set(flat[j], (degree.get(flat[j]) ?? 0) + 1);
 const hubs = [...degree].sort((a, b) => b[1] - a[1] || a[0] - b[0]).slice(0, 10).map(([n]) => n);
 
-const { recommendations } = recommend(pool, lineup, similarity);
+const { recommendations } = recommend(pool, lineup, similarity, { decay });
 console.log(`Pool: ${pool.entries.length} outside artists (seed ${process.argv[2] || 20270331}); ${recommendations.length} recommendations`);
 console.log(`Ten highest-degree lineup artists: ${hubs.map((n) => `${lineup.byN(n).name} (${degree.get(n)})`).join(', ')}`);
 console.log('\nTop 10');

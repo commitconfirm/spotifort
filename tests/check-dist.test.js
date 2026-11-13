@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { checkHtml, checkHeaders, checkLineup, checkSecrets, checkData, dataSizes } from '../scripts/lib/check-dist.js';
+import { checkHtml, checkHeaders, checkAppPages, checkExamples, checkSecrets, checkData, dataSizes } from '../scripts/lib/check-dist.js';
 import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP } from '../scripts/lib/constants.js';
 
 const page = (body = '', head = '') =>
@@ -71,14 +71,30 @@ describe('_headers CSP', () => {
   });
 });
 
-describe('checkLineup', () => {
-  const ok = JSON.stringify({ artists: [{ name: 'A', spotifyUrl: 'https://open.spotify.com/artist/1' }, { name: 'B', spotifyUrl: null }] });
-  it('passes valid data', () => expect(checkLineup(2027, ok)).toEqual([]));
-  it('flags missing, bad JSON, empty, and foreign URLs', () => {
-    expect(checkLineup(2027, null)).toHaveLength(1);
-    expect(checkLineup(2027, '{')).toHaveLength(1);
-    expect(checkLineup(2027, '{"artists":[]}')).toHaveLength(1);
-    expect(checkLineup(2027, JSON.stringify({ artists: [{ name: 'A', spotifyUrl: 'https://evil.example/x' }] }))).toHaveLength(1);
+describe('checkAppPages', () => {
+  it('passes when callback.html is the app page and no Phase 1 files ship', () => {
+    expect(checkAppPages('<html>app</html>', '<html>app</html>', false)).toEqual([]);
+  });
+  it('flags a missing or different callback page, and leftover lineups/', () => {
+    expect(checkAppPages('<html>app</html>', null, false)).toHaveLength(1);
+    expect(checkAppPages('<html>app</html>', '<html>old copy</html>', false)).toHaveLength(1);
+    expect(checkAppPages(null, null, false)).toHaveLength(2);
+    expect(checkAppPages('a', 'a', true)).toHaveLength(1);
+  });
+});
+
+describe('checkExamples', () => {
+  const lineup = JSON.stringify({ artists: [{ n: 1, name: 'Bully' }] });
+  const sim = JSON.stringify({ names: ['Phoebe Bridgers'], edges: [[1, 50]] });
+  it('accepts examples on the lineup or in the index, by normalised name', () => {
+    expect(checkExamples(['bully', 'Phoebe  Bridgers'], lineup, sim)).toEqual([]);
+  });
+  it('flags a stale example', () => {
+    expect(checkExamples(['Bully', 'Nobody Here'], lineup, sim)).toEqual([expect.stringMatching(/Nobody Here/)]);
+  });
+  it('tolerates no examples and unparseable data', () => {
+    expect(checkExamples(undefined, lineup, sim)).toEqual([]);
+    expect(checkExamples(['X'], '{', sim)).toEqual([]);
   });
 });
 

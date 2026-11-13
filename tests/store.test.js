@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createStore, isValidClientId, POOL_KEY, CLIENT_ID_KEY } from '../src/store.js';
+import { createStore, isValidClientId, isValidService, POOL_KEY, CLIENT_ID_KEY, SERVICE_KEY } from '../src/store.js';
 import { emptyPool, addTyped } from '../src/core/pool.js';
 import * as storeModule from '../src/store.js';
 
@@ -79,9 +79,36 @@ describe('pool', () => {
   });
 });
 
+describe('service', () => {
+  it('accepts only the four known services', () => {
+    for (const ok of ['spotify', 'appleMusic', 'tidal', 'bandcamp']) expect(isValidService(ok)).toBe(true);
+    for (const bad of ['deezer', 'Spotify', '', null, 5, 'lastfm', '__proto__']) expect(isValidService(bad)).toBe(false);
+  });
+  it('defaults to spotify, remembers a valid choice in localStorage, refuses junk', () => {
+    const local = memStorage();
+    const s = createStore({ local, session: memStorage() });
+    expect(s.loadService()).toBe('spotify');
+    expect(s.saveService('tidal')).toBe(true);
+    expect(local.data[SERVICE_KEY]).toBe('tidal');
+    expect(s.loadService()).toBe('tidal');
+    expect(s.saveService('<img>')).toBe(false);
+    expect(s.loadService()).toBe('tidal');
+  });
+  it('discards an invalid stored value', () => {
+    const local = memStorage({ [SERVICE_KEY]: 'javascript:alert(1)' });
+    expect(createStore({ local, session: memStorage() }).loadService()).toBe('spotify');
+    expect(local.data[SERVICE_KEY]).toBeUndefined();
+  });
+  it('keeps the choice in memory when storage throws', () => {
+    const s = createStore({ local: throwing(), session: throwing() });
+    s.saveService('bandcamp');
+    expect(s.loadService()).toBe('bandcamp');
+  });
+});
+
 describe('forgetAll', () => {
-  it('clears both keys from both storages', () => {
-    const local = memStorage({ [POOL_KEY]: 'x', [CLIENT_ID_KEY]: ID, other: 'keep' });
+  it('clears every key from both storages', () => {
+    const local = memStorage({ [POOL_KEY]: 'x', [CLIENT_ID_KEY]: ID, [SERVICE_KEY]: 'tidal', other: 'keep' });
     const session = memStorage({ [POOL_KEY]: 'x', [CLIENT_ID_KEY]: ID });
     createStore({ local, session }).forgetAll();
     expect(local.data).toEqual({ other: 'keep' });
@@ -94,9 +121,9 @@ describe('forgetAll', () => {
 
 describe('surface', () => {
   it('has no generic setter and nowhere to put a token', () => {
-    expect(Object.keys(storeModule).sort()).toEqual(['CLIENT_ID_KEY', 'POOL_KEY', 'createStore', 'isValidClientId']);
+    expect(Object.keys(storeModule).sort()).toEqual(['CLIENT_ID_KEY', 'DEFAULT_SERVICE', 'POOL_KEY', 'SERVICES', 'SERVICE_KEY', 'createStore', 'isValidClientId', 'isValidService']);
     const s = createStore({ local: memStorage(), session: memStorage() });
-    expect(Object.keys(s).sort()).toEqual(['forgetAll', 'loadClientId', 'loadPool', 'saveClientId', 'savePool']);
+    expect(Object.keys(s).sort()).toEqual(['forgetAll', 'loadClientId', 'loadPool', 'loadService', 'saveClientId', 'savePool', 'saveService']);
   });
   it('falls back safely with no injected storages and no browser globals', () => {
     const s = createStore();

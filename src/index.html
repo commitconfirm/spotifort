@@ -3,91 +3,123 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spotifort — Find Your Treefort Artists</title>
+    <title>Spotifort — Who should you see at Treefort %FESTIVAL_YEAR%?</title>
+    <meta name="description" content="Type a few artists you like and see who to catch at %FESTIVAL_NAME% %FESTIVAL_YEAR%. No account needed." />
     <link rel="stylesheet" href="./style.css" />
     <link rel="icon" type="image/png" href="/spotifort_transparent.png" />
   </head>
   <body>
+    <a class="skip-link" href="#finder-input">Skip to the artist search</a>
     <div id="app">
-      <header>
-        <img src="/spotifort_transparent.png" alt="Spotifort logo" class="site-logo" />
+      <header class="site-header">
+        <img src="/spotifort_transparent.png" alt="" class="site-logo" width="140" height="140" />
         <h1>Spotifort</h1>
-        <p class="tagline">Find which artists you love are playing Treefort %FESTIVAL_YEAR%</p>
-        <p class="header-intro">Connect your Spotify account to see which artists from your Liked Songs are playing Treefort Music Fest (%FESTIVAL_DATES%, Boise, Idaho).</p>
+        <p class="tagline">Who should you see at Treefort %FESTIVAL_YEAR%?</p>
       </header>
 
-      <main>
-        <div class="landing-grid">
-          <section id="preview-section">
-            <h2>Here's what you'll see</h2>
-            <div class="preview-box">
-              <div class="list-box preview-list-box">
-                <h3>Your Treefort Matches</h3>
-                <ul class="artist-list">
-                  <li class="artist-item">
-                    <div class="artist-row">
-                      <span class="artist-toggle">
-                        <span class="artist-marker">[+]</span>
-                      </span>
-                      <a href="https://open.spotify.com/artist/1yAwtBaoHLEDWAnWR87hBT" target="_blank" rel="noopener noreferrer" class="artist-name-link">Modest Mouse</a>
-                    </div>
-                  </li>
-                  <li class="artist-item">
-                    <div class="artist-row">
-                      <span class="artist-toggle">
-                        <span class="artist-marker">[+]</span>
-                      </span>
-                      <a href="https://open.spotify.com/artist/46auOkH1pk28rWrSoUNhLo" target="_blank" rel="noopener noreferrer" class="artist-name-link">Orville Peck</a>
-                    </div>
-                  </li>
-                  <li class="artist-item preview-expanded">
-                    <div class="artist-row">
-                      <span class="artist-toggle">
-                        <span class="artist-marker">[-]</span>
-                      </span>
-                      <a href="https://open.spotify.com/artist/34LdbFt5sVXKTJOzf1iExQ" target="_blank" rel="noopener noreferrer" class="artist-name-link">Bully</a>
-                    </div>
-                    <div class="artist-related">
-                      <p class="related-header">Other artists at Treefort you might like:</p>
-                      <p class="related-info">Based on shared genres (indie rock). This is not Spotify's "Related Artists" — it's genre matching from our lineup data.</p>
-                      <ul class="related-list">
-                        <li><a href="https://open.spotify.com/artist/1SoBNpuC0N4nvaQFENS0qf" target="_blank" rel="noopener noreferrer" class="related-artist-link">Ratboys</a></li>
-                        <li><a href="https://open.spotify.com/artist/2BS3fywRW33o5GygfzZaOZ" target="_blank" rel="noopener noreferrer" class="related-artist-link">Wild Pink</a></li>
-                        <li><a href="https://open.spotify.com/artist/1yAwtBaoHLEDWAnWR87hBT" target="_blank" rel="noopener noreferrer" class="related-artist-link">Modest Mouse</a></li>
-                      </ul>
-                    </div>
-                  </li>
-                  <li class="artist-item">
-                    <div class="artist-row">
-                      <span class="artist-toggle">
-                        <span class="artist-marker">[+]</span>
-                      </span>
-                      <a href="https://open.spotify.com/artist/1SoBNpuC0N4nvaQFENS0qf" target="_blank" rel="noopener noreferrer" class="artist-name-link">Ratboys</a>
-                    </div>
-                  </li>
-                  <li class="artist-item">
-                    <div class="artist-row">
-                      <span class="artist-toggle">
-                        <span class="artist-marker">[+]</span>
-                      </span>
-                      <a href="https://open.spotify.com/artist/4OOlG5eBXSkSAAEeKjJb5Y" target="_blank" rel="noopener noreferrer" class="artist-name-link">Courtney Barnett</a>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <p class="preview-label">Example results — connect Spotify to see your actual matches</p>
+      <main id="main">
+        <!-- Shared picks (read-only), shown instead of the finder when the URL carries #s=... -->
+        <section id="shared-view" class="zine-box shared-view" aria-labelledby="shared-heading" hidden>
+          <h2 id="shared-heading" tabindex="-1">Shared picks</h2>
+          <p class="muted">Someone shared their Treefort %FESTIVAL_YEAR% picks with you.</p>
+          <ul id="shared-list" class="artist-list"></ul>
+          <p class="shared-actions"><button type="button" id="find-own" class="btn btn-primary">Find your own</button></p>
+        </section>
+
+        <div id="finder-view">
+          <section id="finder" class="zine-box finder" aria-labelledby="finder-heading">
+            <h2 id="finder-heading" class="visually-hidden">Add an artist you like</h2>
+            <div class="combobox" id="combobox">
+              <label for="finder-input" class="visually-hidden">Artist name</label>
+              <input
+                id="finder-input"
+                class="combobox-input"
+                type="text"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="finder-listbox"
+                aria-describedby="finder-help"
+                autocomplete="off"
+                autocapitalize="words"
+                spellcheck="false"
+                enterkeyhint="go"
+                placeholder="Type an artist you like…"
+              />
+              <ul id="finder-listbox" class="combobox-listbox" role="listbox" aria-label="Matching artists" hidden></ul>
+            </div>
+            <p id="finder-help" class="visually-hidden">Suggestions appear as you type. Use the up and down arrows to choose, Enter to add, Escape to close.</p>
+            <p id="finder-count" class="visually-hidden" role="status" aria-live="polite"></p>
+            <p id="finder-loading" class="finder-loading muted" hidden>Loading more artists…</p>
+            <div id="finder-message" class="finder-message" role="status" aria-live="polite"></div>
+
+            <div id="examples" class="examples" hidden>
+              <span class="examples-label" id="examples-label">Try:</span>
+              <ul class="chip-list" aria-labelledby="examples-label"></ul>
+            </div>
+
+            <p class="finder-alternatives">
+              <button type="button" class="link-button" id="spotify-toggle" aria-expanded="false" aria-controls="spotify-panel">or connect your Spotify library ›</button>
+              <button type="button" class="link-button" id="genre-toggle" aria-expanded="false" aria-controls="genre-panel">or browse by genre ›</button>
+            </p>
+
+            <section id="spotify-panel" class="sub-panel" aria-labelledby="spotify-heading" hidden>
+              <h3 id="spotify-heading">Connect your Spotify library</h3>
+              <p>
+                Spotifort can read your Liked Songs, top artists and followed artists and add them to <strong>My artists</strong>.
+                Because of Spotify's rules this needs <strong>Spotify Premium</strong> and a one-time setup: you create your own free
+                Spotify developer app and paste its Client ID here. It takes about five minutes on a computer.
+              </p>
+              <p><a href="/setup">Setup guide</a> · <a href="/why">Why is this needed?</a></p>
+              <form id="spotify-form" class="spotify-form" novalidate>
+                <label for="client-id">Your Spotify Client ID</label>
+                <input id="client-id" name="client-id" type="text" inputmode="text" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="client-id-help client-id-error" />
+                <p id="client-id-help" class="field-help">32 letters and numbers, from your app's settings on the Spotify developer dashboard.</p>
+                <p id="client-id-error" class="field-error" role="alert"></p>
+                <label class="checkbox"><input type="checkbox" id="remember-client-id" checked /> Remember my Client ID on this device</label>
+                <button type="submit" class="btn btn-primary" id="connect-btn">Connect Spotify</button>
+              </form>
+              <p id="spotify-status" class="spotify-status" role="alert"></p>
+              <p class="field-help">Only your Client ID can be remembered, never your Spotify login. The access token stays in this tab's memory and is gone when you close it.</p>
+              <p class="browser-note">For best results, open this site in Safari or Chrome, not an in-app browser.</p>
+            </section>
+
+            <section id="genre-panel" class="sub-panel" aria-labelledby="genre-heading" hidden>
+              <h3 id="genre-heading">Browse by genre</h3>
+              <p class="muted">Pick one or more genres. These are loose matches based on Last.fm tags.</p>
+              <ul id="genre-tags" class="chip-list" aria-label="Genres"></ul>
+              <div id="genre-results" aria-live="polite"></div>
+            </section>
+          </section>
+
+          <section id="pool" class="zine-box pool" aria-labelledby="pool-heading" hidden>
+            <div class="pool-head">
+              <h2 id="pool-heading">My artists</h2>
+              <button type="button" class="link-button" id="pool-add">+ add</button>
+            </div>
+            <ul id="pool-chips" class="chip-list" aria-label="Artists you added"></ul>
+            <div id="import-status" class="import-status" role="status" aria-live="polite" hidden></div>
+            <p class="pool-actions">
+              <button type="button" class="btn" id="share-btn">Share my picks</button>
+              <button type="button" class="link-button forget-button" id="forget-btn">Forget my data</button>
+            </p>
+            <div id="share-output" class="share-output" hidden>
+              <label for="share-url">Share link</label>
+              <input id="share-url" type="text" readonly />
+              <p id="share-confirm" class="share-confirm" role="status" aria-live="polite"></p>
             </div>
           </section>
 
-          <section id="auth-section">
-            <button id="connect-btn" type="button">Connect Spotify</button>
-            <p class="browser-note">For best results, open this site in Safari or Chrome, not an in-app browser.</p>
+          <section id="results" class="results" aria-label="Your Treefort results">
+            <fieldset class="service-picker" id="service-picker">
+              <legend>I listen on:</legend>
+              <span class="service-options"></span>
+            </fieldset>
+            <div id="results-body"></div>
           </section>
         </div>
 
-        <section id="results-section" class="hidden">
-          <!-- Results will be rendered here -->
-        </section>
+        <p id="announcer" class="visually-hidden" aria-live="polite"></p>
       </main>
 
       <footer>
@@ -96,14 +128,15 @@
           <a href="https://developer.spotify.com/documentation/web-api" target="_blank" rel="noopener noreferrer" class="partner-link">Powered by Spotify Web API</a>
         </div>
         <p class="disclaimer">Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.</p>
-        <p class="disclaimer">Use at your own risk — no guarantees of accuracy.</p>
+        <p class="disclaimer">Use at your own risk — no guarantees of accuracy. <span id="lineup-date"></span></p>
+        <p class="disclaimer">Similar-artist data from <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>.</p>
         <p class="disclaimer">Privacy: your Spotify data stays in your browser. Page visits are counted with <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener noreferrer">Cloudflare Web Analytics</a>, which uses no cookies and does not identify you.</p>
+        <p class="disclaimer">Your artists, your listening service and (if you choose) your Spotify Client ID are remembered on this device only. <button type="button" class="link-button" id="forget-footer">Forget my data</button></p>
         <p class="footer-links">
-          <a href="/lineup.html">View full lineup data</a>
-          <a href="/why.html">Why do I need a Client ID?</a>
+          <a href="/lineup">View full lineup data</a>
+          <a href="/why">Why do I need a Client ID?</a>
           <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
           <a href="https://claude.ai/code">Built with Claude Code</a>
-          <a href="#" id="change-client-id">Change Client ID</a>
         </p>
         <p class="footer-attribution">
           Made by <a href="https://commitconfirm.com">commitconfirm.com</a> while mass caffeinated at <a href="https://www.alchemistcoffee.com/">Alchemist Coffee</a>

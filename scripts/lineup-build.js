@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * Stage 5: state + overrides -> public/data/<year>/{lineup,similarity}.json, the Phase 1 file
- * public/lineups/<year>.json (until the new experience ships), data/<year>/review.md and sanity.md.
+ * Stage 5: state + overrides -> public/data/<year>/{lineup,similarity}.json, data/<year>/review.md and sanity.md.
  * No network. Same inputs give byte-identical outputs.
  */
 import { existsSync, readFileSync } from 'node:fs';
@@ -27,7 +26,6 @@ function main() {
   const files = [
     [paths.lineupOut, formatCompactLines(out.lineup), BUDGET_LINEUP_GZIP],
     [paths.similarityOut, formatCompactLines(out.similarity), BUDGET_SIMILARITY_GZIP],
-    [paths.legacyOut, JSON.stringify(out.legacy, null, 2) + '\n', null], // same layout as the Phase 1 file
     [paths.review, out.review, null],
     [paths.sanity, out.sanity, null],
   ];

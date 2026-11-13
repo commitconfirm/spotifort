@@ -177,6 +177,33 @@ export function removeEntry(pool, key) {
 }
 
 /**
+ * Remove some sources from one entry; the entry disappears if no source is left, otherwise it is re-weighted.
+ * Used when the visitor removes an artist they added by hand that a library source also holds: the library keeps it.
+ * @param {{ entries: object[] }} pool
+ * @param {string} key
+ * @param {string[]} sourceIds
+ * @returns {{ entries: object[] }}
+ */
+export function removeSources(pool, key, sourceIds) {
+  const drop = new Set(sourceIds);
+  const entries = [];
+  for (const e of pool.entries) {
+    if (e.key !== key) {
+      entries.push(e);
+      continue;
+    }
+    const sourceWeights = {};
+    for (const [id, w] of Object.entries(e.sourceWeights)) if (!drop.has(id)) sourceWeights[id] = w;
+    const sources = Object.keys(sourceWeights);
+    if (!sources.length) continue;
+    const kept = { ...e, sources, sourceWeights, weight: Math.max(...Object.values(sourceWeights)) };
+    if (drop.has(SOURCE_PICKED)) delete kept.n;
+    entries.push(kept);
+  }
+  return { entries };
+}
+
+/**
  * Remove one source from every entry; entries left with no source disappear, the rest are re-weighted.
  * @param {{ entries: object[] }} pool
  * @param {string} sourceId

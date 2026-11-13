@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { escapeHtml, safeSpotifyUrl, statesMatch, formatDate } from '../src/utils.js';
+import { escapeHtml, statesMatch, formatDate } from '../src/utils.js';
 
 describe('escapeHtml', () => {
   it('escapes & < > " and \'', () => {
@@ -11,27 +11,6 @@ describe('escapeHtml', () => {
   it('handles null and numbers', () => {
     expect(escapeHtml(null)).toBe('');
     expect(escapeHtml(5)).toBe('5');
-  });
-});
-
-describe('safeSpotifyUrl', () => {
-  it('accepts open.spotify.com over https', () => {
-    const u = 'https://open.spotify.com/artist/abc123';
-    expect(safeSpotifyUrl(u)).toBe(u);
-  });
-  it.each([
-    'javascript:alert(1)',
-    'http://open.spotify.com/artist/abc',
-    'https://evil.example/artist/abc',
-    'https://open.spotify.com.evil.example/artist/abc',
-    'https://open.spotify.com/artist/a"b',
-    "https://open.spotify.com/artist/a'b",
-    '',
-    null,
-    undefined,
-    42,
-  ])('rejects %s', (u) => {
-    expect(safeSpotifyUrl(u)).toBeNull();
   });
 });
 

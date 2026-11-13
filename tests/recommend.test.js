@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { prepareLineup } from '../src/core/lineup-index.js';
 import { prepareSimilarity } from '../src/core/similarity-index.js';
 import { emptyPool, addTyped, addPicked, addBatch } from '../src/core/pool.js';
-import { recommend, recommendByTags, listTags, bandFor, MAX_RECOMMENDATIONS, MIN_SCORE } from '../src/core/recommend.js';
+import { recommend, recommendByTags, listTags, bandFor, MAX_RECOMMENDATIONS, MIN_SCORE, DECAY } from '../src/core/recommend.js';
 import { realLineup, realSimilarity } from './helpers/real-data.js';
 
 const lineup = prepareLineup({
@@ -28,16 +28,41 @@ describe('bandFor', () => {
 });
 
 describe('recommend', () => {
-  it('applies score = 1 - product(1 - weight * m) across outside artists', () => {
+  it('applies score = 1 - product(1 - c_i * DECAY^i) over contributions sorted strongest first', () => {
     const pool = addTyped(addTyped(emptyPool(), 'Outsider One'), 'Outsider Two');
     const { recommendations } = recommend(pool, lineup, sim);
     const alpha = recommendations.find((r) => r.name === 'Alpha');
-    expect(alpha.score).toBeCloseTo(1 - (1 - 0.5) * (1 - 0.5));
+    expect(alpha.score).toBeCloseTo(1 - (1 - 0.5) * (1 - 0.5 * DECAY));
     expect(alpha.band).toBe('strong');
     expect(alpha.reasons.map((r) => [r.name, r.kind])).toEqual([['Outsider One', 'outside'], ['Outsider Two', 'outside']]);
     expect(recommendations.find((r) => r.name === 'Beta').score).toBeCloseTo(0.2);
     // Delta: 0.1 is at the cutoff
     expect(recommendations.find((r) => r.name === 'Delta').score).toBeCloseTo(0.1);
+  });
+  it('decay 1 is the undamped PR 2.4 product; a smaller decay lowers many-link scores but never a single link', () => {
+    const pool = addTyped(addTyped(emptyPool(), 'Outsider One'), 'Outsider Two');
+    const at = (decay) => recommend(pool, lineup, sim, { decay }).recommendations.find((r) => r.name === 'Alpha').score;
+    expect(at(1)).toBeCloseTo(0.75);
+    expect(at(0.5)).toBeCloseTo(1 - 0.5 * 0.75);
+    expect(at(0.5)).toBeLessThan(at(1));
+    const single = addTyped(emptyPool(), 'Outsider One');
+    expect(recommend(single, lineup, sim, { decay: 0.3 }).recommendations[0].score).toBeCloseTo(0.5);
+    // invalid decay falls back to the default
+    expect(at(0)).toBeCloseTo(at(DECAY));
+    expect(at(2)).toBeCloseTo(at(DECAY));
+  });
+  it('the decay applies to contributions in strength order, whatever the pool order', () => {
+    const s = prepareSimilarity({ names: ['Weak', 'Strong'], edges: [[1, 20], [1, 80]] });
+    const a = recommend(addTyped(addTyped(emptyPool(), 'Weak'), 'Strong'), lineup, s, { decay: 0.5 }).recommendations[0].score;
+    const b = recommend(addTyped(addTyped(emptyPool(), 'Strong'), 'Weak'), lineup, s, { decay: 0.5 }).recommendations[0].score;
+    expect(a).toBeCloseTo(1 - 0.2 * 0.9);
+    expect(b).toBeCloseTo(a);
+  });
+  it('reports diagnostics: contributing pool artists and all scores above the cutoff', () => {
+    const pool = addTyped(addTyped(addTyped(emptyPool(), 'Outsider One'), 'Outsider Two'), 'Nobody Close');
+    const { stats, recommendations } = recommend(pool, lineup, sim);
+    expect(stats.contributors).toBe(2);
+    expect(stats.scores).toEqual(recommendations.map((r) => r.score));
   });
   it('scales a link by the pool weight', () => {
     const pool = addBatch(emptyPool(), 'spotify:liked', [{ name: 'Outsider One', weight: 0.6 }]);

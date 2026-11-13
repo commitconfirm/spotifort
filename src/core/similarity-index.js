@@ -38,7 +38,17 @@ export function prepareSimilarity(json) {
     keys[i] = normalizeName(names[i]);
     if (!indexByKey.has(keys[i])) indexByKey.set(keys[i], i); // build guarantees unique keys; first wins if not
   }
-  const searcher = createSearcher(keys, normalizeName);
+  // Autocomplete rank, computed once: an artist linked to more lineup acts (then with a higher best score) is the
+  // one people most likely mean, so it goes first within a match tier.
+  const targets = new Uint32Array(names.length);
+  const best = new Float64Array(names.length);
+  for (let i = 0; i < names.length; i++) {
+    const flat = edges[i];
+    if (!Array.isArray(flat)) continue;
+    targets[i] = Math.floor(flat.length / 2);
+    for (let j = 1; j < flat.length; j += 2) if (flat[j] > best[i]) best[i] = flat[j];
+  }
+  const searcher = createSearcher(keys, normalizeName, { compare: (a, b) => targets[b] - targets[a] || best[b] - best[a] });
 
   return {
     minMatch: typeof json.minMatch === 'number' ? json.minMatch : 0,

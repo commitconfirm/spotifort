@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  removeSources,
   emptyPool, addTyped, addPicked, addBatch, removeEntry, clearSource, serialise, deserialise,
   topArtistWeight, likedSongsWeight, followedWeight, MAX_POOL_ENTRIES,
 } from '../src/core/pool.js';
@@ -138,5 +139,24 @@ describe('serialise / deserialise', () => {
   it('caps entries on load', () => {
     const entries = Array.from({ length: MAX_POOL_ENTRIES + 100 }, (_, i) => ({ name: `A${i}`, sw: { typed: 1 } }));
     expect(deserialise(JSON.stringify({ v: 1, entries })).entries).toHaveLength(MAX_POOL_ENTRIES);
+  });
+});
+
+describe('removeSources', () => {
+  it('drops the hand-added sources of one entry and keeps a library source', () => {
+    let pool = addPicked(emptyPool(), { n: 7, name: 'Bully' });
+    pool = addBatch(pool, 'spotify', [{ name: 'Bully', ids: { spotify: 'abc' }, weight: 0.5 }, { name: 'Other', weight: 0.6 }]);
+    const after = removeSources(pool, 'bully', ['typed', 'picked']);
+    const bully = after.entries.find((e) => e.key === 'bully');
+    expect(bully.sources).toEqual(['spotify']);
+    expect(bully.weight).toBe(0.5);
+    expect(bully.n).toBeUndefined();
+    expect(after.entries).toHaveLength(2);
+  });
+  it('removes the entry when nothing is left, and leaves other entries alone', () => {
+    const pool = addTyped(addTyped(emptyPool(), 'Alpha'), 'Beta');
+    const after = removeSources(pool, 'alpha', ['typed', 'picked']);
+    expect(after.entries.map((e) => e.name)).toEqual(['Beta']);
+    expect(removeSources(pool, 'missing', ['typed']).entries).toHaveLength(2);
   });
 });

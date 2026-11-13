@@ -53,7 +53,11 @@
               their own app. No limits, no waitlist.
             </p>
             <p>
-              The process takes about 2 minutes. The <a href="/setup.html">setup guide</a> walks through it step by step.
+              The process takes about 5 minutes on a computer. The <a href="/setup">setup guide</a> walks through it step by step.
+            </p>
+            <p>
+              <strong>You don't need Spotify at all to use Spotifort.</strong> Type artists you like on the
+              <a href="/">home page</a> and you get the same recommendations. Connecting Spotify only saves you the typing.
             </p>
           </div>
 
@@ -75,26 +79,36 @@
           </div>
 
           <div class="why-section">
-            <h2>How Similar Artists Works</h2>
+            <h2>How Recommendations Work</h2>
             <p>
               Spotify's Related Artists endpoint — which powers "Fans Also Like" recommendations — is
               blocked for Development Mode apps. Without it, Spotifort can't access Spotify's
               algorithmic recommendations.
             </p>
             <p>
-              Instead, Spotifort uses genre tags from <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>
-              and <a href="https://musicbrainz.org/" target="_blank" rel="noopener noreferrer">MusicBrainz</a> —
-              two public music databases — to find other Treefort artists that share genres with artists
-              you like.
+              Instead, Spotifort uses similar-artist data from <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>,
+              collected ahead of time for every artist on the lineup. When you add an artist you like, Spotifort looks up
+              which Treefort acts Last.fm's listeners connect with them, and ranks the lineup from that.
+              Genre tags from Last.fm are used as a looser fallback (the "browse by genre" option).
+              Artist links come from <a href="https://musicbrainz.org/" target="_blank" rel="noopener noreferrer">MusicBrainz</a> and the festival.
             </p>
             <p>
-              This is genre overlap, not algorithmic recommendation. It's broader and less precise than
-              Spotify's "Related Artists," but still useful for discovering new artists at the festival.
-              If you like an indie rock band, you'll see other indie rock acts playing Treefort.
+              Results may be limited for smaller or local artists who aren't well catalogued, and for very big
+              names that nobody on the lineup sounds like. Spotifort says so rather than guessing.
+            </p>
+          </div>
+
+          <div class="why-section">
+            <h2>What Spotifort Stores</h2>
+            <p>
+              Only on your device, in your browser's local storage: the artists you added (so your results are
+              there when you come back), which service your listen links open, and — only if you leave
+              "Remember my Client ID on this device" ticked — your Spotify Client ID. Your Spotify access token
+              is held in memory and is gone when you close the tab. Nothing is sent to a Spotifort server, because
+              there isn't one.
             </p>
             <p>
-              Results may be limited for smaller or local artists who aren't well-cataloged in these
-              public databases.
+              "Forget my data" on the home page clears all of it at once.
             </p>
           </div>
 
@@ -134,7 +148,7 @@
         <p class="disclaimer">Privacy: your Spotify data stays in your browser. Page visits are counted with <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener noreferrer">Cloudflare Web Analytics</a>, which uses no cookies and does not identify you.</p>
         <p class="footer-links">
           <a href="/">Spotifort Home</a>
-          <a href="/setup.html">Setup Guide</a>
+          <a href="/setup">Setup Guide</a>
           <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
         </p>
         <p class="footer-attribution">

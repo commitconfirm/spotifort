@@ -1,121 +1,62 @@
-// Spotify PKCE Auth Flow
-// Access token lives in memory only — never persisted to storage
-// Code verifier, OAuth state and Client ID are kept in sessionStorage (per tab) so they survive the redirect to Spotify
+// Spotify Authorization Code with PKCE (no client secret).
+// The access token lives in this module's memory only and is never written to any storage. The PKCE code verifier
+// and the OAuth `state` are kept in sessionStorage (this tab only) so they survive the redirect to Spotify and back.
+// The Client ID is not stored here: src/store.js is the one place that persists it, and callers pass it in.
 
-import { log } from './main.js';
+import { log } from './log.js';
 import { statesMatch } from './utils.js';
 
-// Environment variable Client ID (for dev builds)
-const ENV_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-
-const REDIRECT_URI = import.meta.env.DEV
-  ? 'http://127.0.0.1:9090/callback'
-  : 'https://spotifort.com/callback';
-const SCOPES = 'user-library-read';
+export const SCOPES = 'user-library-read user-top-read user-follow-read';
+const REDIRECT_URI = import.meta.env.DEV ? 'http://127.0.0.1:9090/callback' : 'https://spotifort.com/callback';
 const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const VERIFIER_KEY = 'spotifort_pkce_verifier';
 const STATE_KEY = 'spotifort_oauth_state';
-const CLIENT_ID_KEY = 'spotifort_client_id';
 
-// In-memory storage (never persisted beyond session)
 let accessToken = null;
-let userClientId = null;
 
-/**
- * Check if a Client ID is available (either from env or user-provided)
- * @returns {boolean}
- */
-export function hasClientId() {
-  return !!(ENV_CLIENT_ID || userClientId || sessionStorage.getItem(CLIENT_ID_KEY));
-}
-
-/**
- * Get the current Client ID (env takes priority, then user-provided)
- * @returns {string|null}
- */
-export function getClientId() {
-  // Env variable takes priority (for dev builds)
-  if (ENV_CLIENT_ID) {
-    return ENV_CLIENT_ID;
+/** Thrown when the browser cannot do the PKCE hashing (some in-app browsers). */
+export class CryptoNotSupportedError extends Error {
+  constructor() {
+    super('Please open this site directly in Safari or Chrome. In-app browsers (iMessage, Instagram, etc.) are not supported.');
+    this.name = 'CryptoNotSupportedError';
   }
-  // Then check in-memory user-provided value
-  if (userClientId) {
-    return userClientId;
+}
+
+/** @returns {boolean} true when this browser can run the PKCE flow */
+export function cryptoAvailable() {
+  try {
+    return Boolean(globalThis.crypto?.getRandomValues && globalThis.crypto?.subtle?.digest);
+  } catch {
+    return false;
   }
-  // Finally check sessionStorage (survives redirect during auth flow)
-  return sessionStorage.getItem(CLIENT_ID_KEY);
 }
 
 /**
- * Set the user-provided Client ID
- * @param {string} clientId - Spotify Client ID
- */
-export function setClientId(clientId) {
-  userClientId = clientId;
-  // Also store in sessionStorage to survive the auth redirect
-  sessionStorage.setItem(CLIENT_ID_KEY, clientId);
-  log.info('Client ID set');
-}
-
-/**
- * Clear the user-provided Client ID
- */
-export function clearClientId() {
-  userClientId = null;
-  sessionStorage.removeItem(CLIENT_ID_KEY);
-  log.info('Client ID cleared');
-}
-
-/**
- * Check if using env Client ID vs user-provided
- * @returns {boolean} - True if using env variable
- */
-export function isUsingEnvClientId() {
-  return !!ENV_CLIENT_ID;
-}
-
-/**
- * Generate a cryptographically random string for PKCE code verifier
- * Uses only URL-safe characters as per RFC 7636
- * @param {number} length - Length of the string (43-128 per spec)
- * @returns {string} - Random string
+ * Cryptographically random string of URL-safe characters (RFC 7636).
+ * @param {number} length
+ * @returns {string}
  */
 function generateRandomString(length = 64) {
-  // URL-safe characters for PKCE (RFC 7636)
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
   const randomValues = new Uint8Array(length);
   crypto.getRandomValues(randomValues);
-
-  // Build string character by character (Safari-compatible)
   let result = '';
-  for (let i = 0; i < length; i++) {
-    result += possible.charAt(randomValues[i] % possible.length);
-  }
+  for (let i = 0; i < length; i++) result += possible.charAt(randomValues[i] % possible.length);
   return result;
 }
 
 /**
- * Generate SHA-256 hash of the code verifier
- * @param {string} plain - The code verifier string
- * @returns {Promise<ArrayBuffer>} - SHA-256 hash
+ * SHA-256 of an ASCII string. Bytes are built by hand and the buffer passed explicitly for older Safari.
+ * @param {string} plain
+ * @returns {Promise<ArrayBuffer>}
  */
 async function sha256(plain) {
-  // Check if crypto.subtle is available (not available in some in-app browsers)
-  if (!crypto || !crypto.subtle || !crypto.subtle.digest) {
-    throw new CryptoNotSupportedError();
-  }
-
+  if (!cryptoAvailable()) throw new CryptoNotSupportedError();
   try {
-    // Convert string to Uint8Array manually for Safari compatibility
     const bytes = new Uint8Array(plain.length);
-    for (let i = 0; i < plain.length; i++) {
-      bytes[i] = plain.charCodeAt(i) & 0xff;
-    }
-
-    // Safari may need explicit ArrayBuffer, so we pass bytes.buffer
-    const result = await crypto.subtle.digest('SHA-256', bytes.buffer);
-    return result;
+    for (let i = 0; i < plain.length; i++) bytes[i] = plain.charCodeAt(i) & 0xff;
+    return await crypto.subtle.digest('SHA-256', bytes.buffer);
   } catch (err) {
     log.error('SHA-256 failed:', err.message);
     throw new CryptoNotSupportedError();
@@ -123,94 +64,38 @@ async function sha256(plain) {
 }
 
 /**
- * Custom error for unsupported crypto operations
- */
-class CryptoNotSupportedError extends Error {
-  constructor() {
-    super('Please open this site directly in Safari or Chrome. In-app browsers (iMessage, Instagram, etc.) are not supported.');
-    this.name = 'CryptoNotSupportedError';
-  }
-}
-
-/**
- * Base64url encode an ArrayBuffer (no padding, URL-safe)
- * Manual implementation for Safari compatibility (avoids btoa edge cases)
- * @param {ArrayBuffer} buffer - The buffer to encode
- * @returns {string} - Base64url encoded string
+ * Base64url without padding (RFC 4648 section 5); manual for Safari compatibility.
+ * @param {ArrayBuffer} buffer
+ * @returns {string}
  */
 function base64urlEncode(buffer) {
   const bytes = new Uint8Array(buffer);
-  const len = bytes.length;
-
-  // Base64url alphabet (RFC 4648 Section 5)
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-
   let result = '';
-
-  // Process 3 bytes at a time, producing 4 base64 characters
-  for (let i = 0; i < len; i += 3) {
+  for (let i = 0; i < bytes.length; i += 3) {
     const b0 = bytes[i];
-    const b1 = i + 1 < len ? bytes[i + 1] : 0;
-    const b2 = i + 2 < len ? bytes[i + 2] : 0;
-
-    // First character: bits 7-2 of b0
-    result += alphabet.charAt(b0 >> 2);
-
-    // Second character: bits 1-0 of b0 + bits 7-4 of b1
-    result += alphabet.charAt(((b0 & 0x03) << 4) | (b1 >> 4));
-
-    // Third character: bits 3-0 of b1 + bits 7-6 of b2 (only if we have b1)
-    if (i + 1 < len) {
-      result += alphabet.charAt(((b1 & 0x0f) << 2) | (b2 >> 6));
-    }
-
-    // Fourth character: bits 5-0 of b2 (only if we have b2)
-    if (i + 2 < len) {
-      result += alphabet.charAt(b2 & 0x3f);
-    }
+    const b1 = i + 1 < bytes.length ? bytes[i + 1] : 0;
+    const b2 = i + 2 < bytes.length ? bytes[i + 2] : 0;
+    result += alphabet.charAt(b0 >> 2) + alphabet.charAt(((b0 & 0x03) << 4) | (b1 >> 4));
+    if (i + 1 < bytes.length) result += alphabet.charAt(((b1 & 0x0f) << 2) | (b2 >> 6));
+    if (i + 2 < bytes.length) result += alphabet.charAt(b2 & 0x3f);
   }
-
-  // No padding for base64url (RFC 4648)
   return result;
 }
 
 /**
- * Generate PKCE code challenge from verifier
- * @param {string} verifier - The code verifier
- * @returns {Promise<string>} - Base64url encoded SHA-256 hash
+ * Start the login: store verifier and state for this tab, then send the browser to Spotify.
+ * @param {string} clientId a valid Client ID (the caller validates and stores it first)
  */
-async function generateCodeChallenge(verifier) {
-  const hash = await sha256(verifier);
-  return base64urlEncode(hash);
-}
-
-/**
- * Initiate Spotify OAuth flow with PKCE
- * Redirects the user to Spotify's authorization page
- */
-export async function initiateAuth() {
-  const clientId = getClientId();
-
-  if (!clientId) {
-    log.error('No Spotify Client ID available');
-    throw new Error('Missing Spotify Client ID');
-  }
-
-  log.info('Initiating Spotify auth flow');
-
-  // Generate code verifier and store temporarily in sessionStorage
-  // (needed to survive the redirect back from Spotify)
+export async function startAuth(clientId) {
+  if (!clientId) throw new Error('Missing Spotify Client ID');
+  log.info('Starting Spotify login');
   const codeVerifier = generateRandomString(64);
-  sessionStorage.setItem(VERIFIER_KEY, codeVerifier);
-
-  // Random OAuth state, checked on the callback to reject forged or replayed redirects
   const state = generateRandomString(32);
+  const codeChallenge = base64urlEncode(await sha256(codeVerifier)); // throws before anything is stored on bad browsers
+  sessionStorage.setItem(VERIFIER_KEY, codeVerifier);
   sessionStorage.setItem(STATE_KEY, state);
 
-  // Generate code challenge
-  const codeChallenge = await generateCodeChallenge(codeVerifier);
-
-  // Build authorization URL
   const params = new URLSearchParams({
     client_id: clientId,
     response_type: 'code',
@@ -220,138 +105,91 @@ export async function initiateAuth() {
     code_challenge: codeChallenge,
     state,
   });
-
-  const authUrl = `${AUTH_URL}?${params.toString()}`;
-
-  // Redirect to Spotify using anchor click (most reliable across browsers)
+  // An anchor click is the most reliable cross-browser redirect.
   const link = document.createElement('a');
-  link.href = authUrl;
-  link.style.display = 'none';
+  link.href = `${AUTH_URL}?${params}`;
+  link.hidden = true;
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  link.remove();
 }
 
 /**
- * Handle the OAuth callback and exchange code for access token
- * @returns {Promise<string|null>} - Access token or null if not on callback page
+ * Finish the login on /callback: verify `state`, exchange the code for a token (kept in memory), and clean the URL.
+ * @param {string|null} clientId the Client ID the login was started with
+ * @returns {Promise<string|null>} the access token, or null when this is not a callback (or the login was interrupted)
+ * @throws {Error} with a plain-language message
  */
-export async function handleCallback() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
-  const error = urlParams.get('error');
+export async function completeAuth(clientId) {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const error = params.get('error');
+  const cleanUrl = () => window.history.replaceState(null, document.title, '/');
+  if (!code && !error) return null;
 
-  // Not on callback page
-  if (!code && !error) {
-    return null;
-  }
-
-  // Handle error from Spotify
   if (error) {
     log.error('Spotify auth error:', error);
     sessionStorage.removeItem(STATE_KEY);
-    window.history.replaceState({}, document.title, '/');
-    throw new Error(`Spotify authorization failed: ${error}`);
+    cleanUrl();
+    throw new Error(error === 'access_denied' ? 'Spotify access was not allowed, so nothing was imported.' : 'Spotify could not complete the login. Please try again.');
   }
 
-  // Verify OAuth state before touching the stored PKCE verifier. On mismatch the verifier and
-  // state are left in place so a forged callback cannot break a login that is in progress.
-  const storedState = sessionStorage.getItem(STATE_KEY);
-  if (!statesMatch(storedState, urlParams.get('state'))) {
+  // Verify state before touching the verifier: on a mismatch both stay, so a forged callback cannot break a login in progress.
+  if (!statesMatch(sessionStorage.getItem(STATE_KEY), params.get('state'))) {
     log.error('OAuth state missing or mismatched — rejecting callback');
-    window.history.replaceState({}, document.title, '/');
-    throw new Error('Login could not be verified (state mismatch). Please start the login again from the home page.');
+    cleanUrl();
+    throw new Error('The login could not be verified. Please connect again from this page.');
   }
   sessionStorage.removeItem(STATE_KEY);
 
-  log.info('Received auth code, exchanging for token');
-
-  // Get Client ID (from sessionStorage, survives the redirect)
-  const clientId = getClientId();
   if (!clientId) {
-    log.error('Client ID not found after redirect');
-    window.history.replaceState({}, document.title, '/');
-    throw new Error('Client ID lost during auth flow');
+    cleanUrl();
+    throw new Error('Your Client ID was lost during the login. Please enter it and connect again.');
   }
-
-  // Retrieve code verifier from sessionStorage
   const codeVerifier = sessionStorage.getItem(VERIFIER_KEY);
-  sessionStorage.removeItem(VERIFIER_KEY); // Clean up immediately
-
+  sessionStorage.removeItem(VERIFIER_KEY);
   if (!codeVerifier) {
-    log.warn('Code verifier not found — auth flow interrupted');
-    window.history.replaceState({}, document.title, '/');
+    log.warn('Code verifier not found — login interrupted');
+    cleanUrl();
     return null;
   }
 
   try {
-    // Exchange code for access token
     const response = await fetch(TOKEN_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        client_id: clientId,
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: REDIRECT_URI,
-        code_verifier: codeVerifier,
-      }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ client_id: clientId, grant_type: 'authorization_code', code, redirect_uri: REDIRECT_URI, code_verifier: codeVerifier }),
     });
-
     if (!response.ok) {
-      const errorData = await response.json();
-      log.error('Token exchange failed:', errorData);
-      throw new Error(`Token exchange failed: ${errorData.error_description || errorData.error}`);
+      const data = await response.json().catch(() => ({}));
+      log.error('Token exchange failed:', data.error, data.error_description);
+      throw new Error('Spotify did not accept the login. Check that your Client ID and redirect URI match the setup guide, then try again.');
     }
-
     const data = await response.json();
-    accessToken = data.access_token;
-
-    // Restore Client ID to memory from sessionStorage
-    const storedClientId = sessionStorage.getItem(CLIENT_ID_KEY);
-    if (storedClientId && !ENV_CLIENT_ID) {
-      userClientId = storedClientId;
-    }
-
-    log.info('Successfully obtained access token');
-    log.info('Token type:', data.token_type);
-    log.info('Expires in:', data.expires_in, 'seconds');
-
-    // Clean up URL (remove code from URL bar)
-    window.history.replaceState({}, document.title, '/');
-
+    accessToken = typeof data.access_token === 'string' ? data.access_token : null;
+    if (!accessToken) throw new Error('Spotify did not return an access token. Please try again.');
+    log.info('Access token obtained; expires in', data.expires_in, 'seconds; scopes:', data.scope);
     return accessToken;
   } catch (err) {
-    log.error('Failed to exchange code for token:', err);
-    window.history.replaceState({}, document.title, '/');
+    if (err instanceof TypeError) throw new Error('Could not reach Spotify. Check your connection and try again.', { cause: err });
     throw err;
+  } finally {
+    cleanUrl();
   }
 }
 
-/**
- * Get the current access token
- * @returns {string|null} - Access token or null if not authenticated
- */
+/** @returns {string|null} the in-memory access token */
 export function getAccessToken() {
   return accessToken;
 }
 
-/**
- * Check if the user is authenticated
- * @returns {boolean} - True if access token exists
- */
-export function isAuthenticated() {
-  return accessToken !== null;
-}
-
-/**
- * Clear the access token (logout)
- */
+/** Forget the token and any half-finished login in this tab. */
 export function clearAuth() {
   accessToken = null;
-  sessionStorage.removeItem(VERIFIER_KEY);
-  sessionStorage.removeItem(STATE_KEY);
-  log.info('Auth cleared');
+  try {
+    sessionStorage.removeItem(VERIFIER_KEY);
+    sessionStorage.removeItem(STATE_KEY);
+  } catch {
+    // storage blocked: nothing to clear
+  }
 }

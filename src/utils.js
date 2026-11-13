@@ -15,20 +15,6 @@ export function escapeHtml(text) {
 }
 
 /**
- * Return the URL only if it is an https://open.spotify.com/ link, else null.
- * Lineup data is static but untrusted input for the DOM; never render other schemes or hosts.
- * @param {unknown} url
- * @returns {string|null}
- */
-export function safeSpotifyUrl(url) {
-  if (typeof url !== 'string') return null;
-  if (!url.startsWith('https://open.spotify.com/')) return null;
-  // Reject characters that could break out of an attribute or the URL itself
-  if (/["'<>\s\\]/.test(url)) return null;
-  return url;
-}
-
-/**
  * Compare the OAuth `state` stored before the redirect with the one returned in the callback.
  * Both must be non-empty strings and equal.
  * @param {string|null|undefined} stored

@@ -35,7 +35,7 @@ Written 2026-11-13 from the measurements in "What the data looks like" below. `d
 | **Raw API cache** | `~/.cache/spotifort/` (or `$SPOTIFORT_CACHE_DIR`), outside the repository | Pipeline only | No |
 | **Public outputs** — what the site loads | `public/data/<year>/lineup.json`, `similarity.json` | Generated from state + overrides | Yes |
 
-Outputs are committed so the Cloudflare build needs no network and no secrets. `public/lineups/<year>.json` (the Phase 1 format) stays until the new experience ships, then is removed.
+Outputs are committed so the Cloudflare build needs no network and no secrets. The Phase 1 file `public/lineups/<year>.json` was removed in PR 2.5, when nothing read it any more; `check-dist` fails if a `lineups/` directory ships.
 
 ### Artist record (state)
 
@@ -130,7 +130,7 @@ One command per stage, each incremental and safe to rerun. `npm run lineup` runs
 | `spotify` | state, overrides | Resolves in order: override, festival artist link (no call), festival album link (`GET /albums/{id}`, artists in order), search. Sets `confidence`. A failed album call is retried next run and never falls through to search. Needs no credential when there is nothing to look up (artist links need none) | Spotify |
 | `musicbrainz` | state, overrides | Spotify URL → MBID → platform links and ids, 1 request/second. Only https URLs on the per-platform host allow-list are stored | MusicBrainz |
 | `lastfm` | state, overrides | `getInfo`, `getSimilar` (250), `getTopTags` by name with autocorrect; classifies name changes; at most 4 requests/second | Last.fm |
-| `build` | state + overrides | Applies overrides, computes lineup-to-lineup similarity, writes the two public files, the legacy Phase 1 file, `review.md` and `sanity.md` | None |
+| `build` | state + overrides | Applies overrides, computes lineup-to-lineup similarity, writes the two public files, `review.md` and `sanity.md` | None |
 
 Rules that came out of Phase 1 and the spike:
 
@@ -165,11 +165,11 @@ Combined: `s = 1 − (1 − d)(1 − 0.7·g)(1 − 0.3·t)`. Keep the top 12 per
 
 The pool is a list of `{ key, name, weight, sources }`. For each lineup artist L that the visitor does not already have:
 
-`score(L) = 1 − Π over pool artists U of (1 − weight(U) · m(U, L))`
+`score(L) = 1 − Π over i of (1 − c_i · DECAY^i)`, where `c_i = weight(U) · m(U, L)` sorted descending
 
-where `m(U, L)` is the reverse-index score if U is an outside artist, or the lineup-to-lineup score if U is itself on the lineup. The product form means many weak links add up but cannot exceed 1, so a 1,300-artist library does not drown out strong single links. The reasons shown for L are the three pool artists with the largest `weight · m`.
+and `m(U, L)` is the reverse-index score if U is an outside artist, or the lineup-to-lineup score if U is itself on the lineup. The product form means many weak links add up but cannot exceed 1. The contribution decay (added in PR 2.5, `DECAY = 0.7` in `src/core/recommend.js`) makes the strongest few links decide the score, so a long tail of weak links from a 1,300-artist library cannot push every result to 1.00; `DECAY = 1` is the original formula. A single link is never affected. See `docs/evaluation-2.5.md`. The reasons shown for L are the three pool artists with the largest `weight · m`.
 
-- Show at most 30 recommendations with `score ≥ 0.1`, in three bands rather than as numbers: strong (≥ 0.5), good (≥ 0.25), worth a listen.
+- Show at most 30 recommendations with `score ≥ 0.1`, in three bands rather than as numbers: strong (≥ 0.5), good (≥ 0.25), worth a listen. For a pool of 100 or more artists with more than 10 strong results (a big library saturates the absolute bands even with the decay), the UI assigns bands by rank instead: the first 10 strong, the next 10 good, the rest worth a listen (`useRelativeBands` in `src/app/state.js`), and says so above the list.
 - Weights: typed artist 1.0; Spotify top artist 1.0 falling linearly to 0.6 by rank; liked songs `min(1, 0.4 + 0.2·log2(1 + count))`; followed 0.7. An artist from several sources takes the highest.
 - A typed artist that is neither on the lineup nor in the index gets an honest message ("nothing at Treefort this year is close to Metallica") and the tag picker.
 
@@ -192,9 +192,11 @@ src/core/      pure logic, no DOM, no fetch — all unit tested
   links.js            URL allow-list (shared with scripts/), verified link or generated search link per platform
 src/data/load.js lazy, memoised loaders for the two JSON files
 src/sources/   one module per library source, same interface
-  spotify.js     { id, label, isAvailable(), connect(), fetchArtists(onProgress) → [{ name, ids, weight }] }
+  spotify.js     { id, label, isAvailable(), connect(clientId), isConnected(), fetchArtists(onProgress) → { items: [{ name, ids, weight }], songs, missing } }
+src/app/state.js  pure view-model logic (no DOM): results, reasons, bands, suggestions, examples, share, diagnostics
 src/ui/        rendering and events only
-src/store.js   localStorage wrapper: versioned keys, pool and Client ID only, never tokens
+src/store.js   localStorage wrapper: versioned keys; pool, listen service and Client ID only, never tokens
+src/auth.js    PKCE login; the access token in memory only
 ```
 
 Built in PR 2.4 (everything above except `src/sources/` and `src/ui/`), with these precisions:
@@ -207,8 +209,19 @@ Built in PR 2.4 (everything above except `src/sources/` and `src/ui/`), with the
 
 - **Share link.** `#s=<year>.<base64url of a bitset over n>`; picks only. Because `n` is stable, links survive lineup updates.
 - **Listen links.** A verified link when `links` has one; otherwise a search URL on that platform built from the name and marked as a search. Every rendered URL passes a host allow-list.
-- **Persistence.** `localStorage`, never cookies (a cookie would be sent to the server on every request and the site promises none). The Spotify setup form has a "Remember my Client ID on this device" checkbox, ticked by default; unticked, the ID lives in `sessionStorage` for the tab only. The artist pool is remembered automatically. One visible "Forget my data" control clears the pool and the Client ID together. Keys are `spotifort:v1:pool` and `spotifort:v1:clientId`. A stored Client ID is re-validated against the 32-hex-character pattern on every read. Access and refresh tokens are never stored.
+- **Persistence.** `localStorage`, never cookies (a cookie would be sent to the server on every request and the site promises none). The Spotify setup form has a "Remember my Client ID on this device" checkbox, ticked by default; unticked, the ID lives in `sessionStorage` for the tab only. The artist pool is remembered automatically, and so is the listen service. One visible "Forget my data" control clears the pool, the Client ID and the service together. Keys are `spotifort:v1:pool`, `spotifort:v1:clientId` and `spotifort:v1:service`. A stored Client ID is re-validated against the 32-hex-character pattern on every read, and a stored service against the four known values. Access and refresh tokens are never stored.
 - **One HTML entry point for the app.** `/callback` is served by the same page instead of a hand-copied duplicate; the landing preview is generated from lineup data or removed.
+
+### As built in PR 2.5 (the new experience)
+
+- **Pages.** `src/index.html` is the only app page. A small Vite plugin (`callbackPage` in `vite.config.js`) copies the built `dist/index.html` to `dist/callback.html`, which Cloudflare Pages serves for `/callback`; the dev server serves `index.html` for `/callback` through its HTML fallback. `check-dist` verifies the two files are identical. The hard-coded "Here's what you'll see" preview is gone.
+- **States.** `main.js` routes between the normal view, a read-only shared view (when `location.hash` decodes to at least one known artist; anything else is ignored) and the callback (completes the PKCE login, then imports). Data: `lineup.json` loads at once; `similarity.json` loads on the first focus, pointer-down or input in the search box, when an example chip is tapped before it has loaded, or at start-up when a saved pool exists. Until it arrives, lineup matches show and recommendations say they are loading.
+- **Pool and sources.** Hand-added artists use the `typed` (outside) and `picked` (lineup, carries `n`) sources. Removing a hand-added chip removes only those sources (`removeSources` in `pool.js`), so an artist the Spotify library also holds stays in the pool. The Spotify import is one pool source, `spotify`, weighted per artist by the highest of liked-songs, top-artist and followed weights; it is shown as one summary chip with Refresh and Remove. Refresh reuses the in-memory token if there is one, otherwise logs in again with the stored Client ID.
+- **Spotify import.** Liked Songs: the first page gives `total`, the rest are read 50 at a time with at most 4 requests in flight. Top artists: `medium_term` and `long_term`, 50 each. Followed: cursor paging. 401 stops the import ("login expired"); 429 waits for `Retry-After` (clamped to 1–30 s, up to 5 attempts); 5xx and network errors back off and retry; a failure of top or followed artists (e.g. 403 when a scope was not granted) is reported and the import continues. The bearer token is only sent to `https://api.spotify.com/`.
+- **Autocomplete.** WAI-ARIA combobox with a listbox popup: lineup hits first (up to 4, labelled "Playing Treefort"), then outside artists, 8 in all. No debounce (one linear pass per keystroke); the result count is announced after typing pauses. Enter with no highlighted option adds an exact match; otherwise it asks the visitor to pick a suggestion, or, when nothing matches, says "We don't have data for …" and offers the genre picker. Unknown names are never added.
+- **"No data" messages** are shown only for hand-added artists that the index has nothing for (in practice, ones restored from an older saved pool), never for library imports.
+- **Examples.** `exampleArtists` in `festival.config.js` (injected at build time as `__EXAMPLE_ARTISTS__`). Before the similarity index loads they are checked against the lineup only, then re-checked; any that resolve to nothing are dropped. `tests/examples.test.js` and `check-dist` fail on a stale example.
+- **Diagnostics.** In development builds every recompute logs its time, pool size, the number of pool artists that contributed, and the score distribution (min, median, max, count per band, whether rank bands are in use).
 
 ## Live lookup — reduced role
 

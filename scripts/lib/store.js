@@ -23,7 +23,6 @@ export const paths = {
   sanity: join(ROOT, 'data', String(YEAR), 'sanity.md'),
   lineupOut: join(ROOT, 'public', 'data', String(YEAR), 'lineup.json'),
   similarityOut: join(ROOT, 'public', 'data', String(YEAR), 'similarity.json'),
-  legacyOut: join(ROOT, 'public', 'lineups', `${YEAR}.json`),
   cache: (name) => join(cacheRoot(), name),
 };
 

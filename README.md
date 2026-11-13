@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <strong>Find which artists you love are playing Treefort 2027</strong>
+  <strong>Who should you see at Treefort 2027?</strong>
 </p>
 
 <p align="center">
@@ -18,18 +18,28 @@
 
 ## What Is This?
 
-Spotifort matches your Spotify Liked Songs against the [Treefort Music Fest](https://treefortmusicfest.com/) 2027 lineup (March 31 – April 4, Boise, Idaho). Connect your Spotify account and instantly see which artists you already like that are playing the festival.
+Spotifort helps you find your acts at [Treefort Music Fest](https://treefortmusicfest.com/) 2027 (March 31 – April 4, Boise, Idaho). Type a few artists you like, no account needed, and it lists who you already like that is playing and recommends other acts on the lineup that sound like them, with a reason for each and a link to listen on Spotify, Apple Music, Tidal or Bandcamp. If you want, connect your Spotify library to add all your artists at once.
 
 ## Privacy First
 
-All processing happens **client-side in your browser**. Spotifort has no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts are collected with Cloudflare Web Analytics. Your Spotify data never leaves your device. The access token is held in memory only. Your Client ID (and, during login, the PKCE verifier and OAuth state) is kept in this tab's session storage until you close the tab. When you close the tab, everything is gone.
+All processing happens **client-side in your browser**. Spotifort has no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts are collected with Cloudflare Web Analytics. Your Spotify data never leaves your device, and the Spotify access token is held in memory only.
+
+What is remembered, on your device only (`localStorage`): the artists you added, which listening service you chose, and your Spotify Client ID if you leave "Remember my Client ID on this device" ticked. "Forget my data" clears all of it.
 
 ## How It Works
 
+1. Type an artist you like (or tap one of the examples)
+2. Add a few more; results update as you go
+3. Pick where you listen; every row has a listen link and `[+]` for similar acts on the lineup
+4. Share your picks with a link, if you like
+
+Recommendations come from [Last.fm](https://www.last.fm/) similar-artist data collected ahead of time for every lineup artist, so the site needs no server.
+
+### Optional: connect Spotify
+
 1. Create a free Spotify Developer app ([setup guide](https://spotifort.com/setup))
-2. Paste your Client ID into Spotifort
-3. Authorize with Spotify (read-only access to your Liked Songs)
-4. See your matches
+2. Paste your Client ID into Spotifort ("or connect your Spotify library")
+3. Authorize with Spotify (read-only access to your Liked Songs, top artists and followed artists)
 
 ### Why Do I Need a Client ID?
 
@@ -37,16 +47,16 @@ Spotify's [February 2026 API changes](https://developer.spotify.com/blog/2026-02
 
 For the full story on what changed and what Spotifort could be without these restrictions, see [Why Does Spotifort Need a Client ID?](https://spotifort.com/why)
 
-**Requirements:**
+**Requirements (Spotify only):**
 - Spotify Premium account (required by Spotify for Developer Mode)
 - A desktop/laptop computer to create the Developer app (Spotify's dashboard doesn't work on mobile)
 - Once set up, Spotifort works on any device
 
 ## Lineup Data
 
-The Treefort lineup is maintained as a static JSON file sourced from the [official Treefort website](https://treefortmusicfest.com/lineup/) and cross-referenced with Spotify's catalog. It is updated manually and may not reflect last-minute changes.
+The Treefort lineup is built ahead of time into static JSON from the [official Treefort website](https://treefortmusicfest.com/lineup/), Spotify, [MusicBrainz](https://musicbrainz.org/) and [Last.fm](https://www.last.fm/) (see Updating Lineup Data below). It may not reflect last-minute changes.
 
-You can view the full lineup data, including which artists are and aren't on Spotify, at [spotifort.com/lineup](https://spotifort.com/lineup).
+You can view the full lineup data, with listen links, tags and which matches are unverified, at [spotifort.com/lineup](https://spotifort.com/lineup).
 
 ## Tech Stack
 
@@ -65,11 +75,15 @@ cd spotifort
 # Install dependencies
 npm install
 
-# Create your env file with your Spotify Client ID
-echo "VITE_SPOTIFY_CLIENT_ID=your_client_id_here" > .env.local
+# Optional, for testing the Spotify import locally: a Client ID whose app has the
+# redirect URI http://127.0.0.1:9090/callback (dev builds only; never used in production)
+echo "VITE_SPOTIFY_CLIENT_ID=your_client_id_here" >> .env.local
 
 # Start dev server (runs on port 9090)
 npm run dev
+
+# Try the recommendation engine from the command line
+npm run try -- "Phoebe Bridgers" "Turnstile"
 
 # Build for production
 npm run build
@@ -108,8 +122,7 @@ What it writes:
 | `data/<year>/state.json` | everything resolved so far | the pipeline |
 | `data/<year>/overrides.json` | hand corrections the pipeline always respects | you |
 | `data/<year>/review.md` | matches to check, new and removed artists | the build |
-| `public/data/<year>/lineup.json`, `similarity.json` | static data for the new experience | the build |
-| `public/lineups/<year>.json` | the current site's format | the build |
+| `public/data/<year>/lineup.json`, `similarity.json` | static data the site loads | the build |
 
 To fix a wrong match, add the artist to `overrides.json` (see `docs/ARCHITECTURE.md`) and run `npm run lineup:build`. Raw API answers are cached in `~/.cache/spotifort/`, outside the repository; set `SPOTIFORT_CACHE_DIR` to put them elsewhere.
 
@@ -119,7 +132,7 @@ Similar artists, tags and listener counts come from [Last.fm](https://www.last.f
 
 **This project is not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.** This is an independent, open-source community tool built by an enthusiast.
 
-Use at your own risk. No guarantees of accuracy or availability. Lineup data is manually maintained and may not reflect the most current information.
+Use at your own risk. No guarantees of accuracy or availability. Lineup data may not reflect the most current information.
 
 ## Contributing
 
