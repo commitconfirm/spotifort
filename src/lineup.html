@@ -9,29 +9,38 @@
   </head>
   <body>
     <div id="app">
-      <header>
+      <header class="site-header">
         <h1>Treefort %FESTIVAL_YEAR% Lineup</h1>
-        <p class="tagline">Full lineup data used for matching</p>
+        <p class="tagline">The lineup data Spotifort uses</p>
       </header>
 
       <main>
-        <section id="lineup-info">
+        <section id="lineup-info" class="lineup-intro">
           <p class="back-link"><a href="/">← Back to Spotifort</a></p>
           <p id="last-updated" class="lineup-meta"></p>
+          <h2 class="lineup-subheading">Where this comes from</h2>
           <p class="lineup-note">
-            Artist names are read from the official Treefort Music Fest lineup page. Each name is
-            looked up with Spotify's search, and some matches are corrected by hand. Artists with no
-            confirmed Spotify match are listed separately and cannot be matched against your library.
-            Genres come from MusicBrainz and Last.fm.
+            Artist names are read from the official <a href="https://treefortmusicfest.com/lineup/" target="_blank" rel="noopener noreferrer">Treefort lineup page</a>.
+            Spotify links come from the festival's own performer pages where they have one, otherwise from a Spotify search by name.
+            Apple Music, Tidal and Bandcamp links come from MusicBrainz and the festival; where we have none, the link is a search on that service.
+            Similar artists and genre tags come from Last.fm. Some matches are corrected by hand.
+          </p>
+          <p class="lineup-note">
+            Artists marked <span class="badge">unverified</span> have a Spotify match we could not confirm (a near or shared name),
+            so their Spotify link may point to a different act.
           </p>
           <p class="lineup-note lineup-credit">
-            Genre data from <a href="https://musicbrainz.org/" target="_blank" rel="noopener noreferrer">MusicBrainz</a>
-            and <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>.
+            Artist links from <a href="https://musicbrainz.org/" target="_blank" rel="noopener noreferrer">MusicBrainz</a> (CC0).
+            Similar-artist data and tags from <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>.
           </p>
+          <fieldset class="service-picker" id="service-picker">
+            <legend>I listen on:</legend>
+            <span class="service-options"></span>
+          </fieldset>
         </section>
 
-        <section id="lineup-content">
-          <div class="lineup-loading">Loading lineup data...</div>
+        <section id="lineup-content" class="zine-box lineup-box" aria-live="polite">
+          <p class="muted">Loading lineup data…</p>
         </section>
       </main>
 
@@ -39,6 +48,7 @@
         <p class="disclaimer">Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.</p>
         <p class="disclaimer">Privacy: your Spotify data stays in your browser. Page visits are counted with <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener noreferrer">Cloudflare Web Analytics</a>, which uses no cookies and does not identify you.</p>
         <p class="footer-links">
+          <a href="/">Spotifort Home</a>
           <a href="https://github.com/commitconfirm/spotifort">FOSS — MIT License</a>
           <a href="https://claude.ai/code">Built with Claude Code</a>
         </p>

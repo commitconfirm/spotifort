@@ -1,6 +1,7 @@
 // Try the app core from the command line, with no UI:
 //   npm run try -- "Phoebe Bridgers" "Zach Bryan"
 //   npm run try -- "Wilco" --top 10 --spotify-file export.json     ([{ name, ids: { spotify }, weight }, ...])
+//   npm run try -- "Wilco" --decay 1                               (contribution decay; default DECAY in recommend.js)
 // Builds the pool the way the UI will: lineup artists become picked entries, every other name becomes a typed
 // entry (and is reported when the index has nothing for it).
 import { readFileSync } from 'node:fs';
@@ -64,9 +65,11 @@ function main(argv) {
   const names = [];
   let spotifyFile = null;
   let top = 30;
+  let decay;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--spotify-file') spotifyFile = argv[++i];
     else if (argv[i] === '--top') top = Number(argv[++i]) || 30;
+    else if (argv[i] === '--decay') decay = Number(argv[++i]);
     else names.push(argv[i]);
   }
   if (!names.length && !spotifyFile) {
@@ -78,7 +81,7 @@ function main(argv) {
   let { pool, unknown } = buildPool(names, lineup, similarity);
   if (spotifyFile) pool = addBatch(pool, 'spotify:file', readJson(resolve(spotifyFile)));
   const matches = matchPool(pool, lineup);
-  const result = recommend(pool, lineup, similarity);
+  const result = recommend(pool, lineup, similarity, { decay });
   console.log(formatReport({ pool, unknown, matches, result, limit: top }));
 }
 

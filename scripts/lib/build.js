@@ -105,7 +105,7 @@ export function resolveRecord(record, override) {
  * @param {object} args
  * @param {object} args.state
  * @param {Record<string, object>} args.overrides
- * @returns {{lineup: object, similarity: object, legacy: object, review: string, sanity: string, stats: object, warnings: string[]}}
+ * @returns {{lineup: object, similarity: object, review: string, sanity: string, stats: object, warnings: string[]}}
  */
 export function buildOutputs({ state, overrides }) {
   const index = indexOverrides(overrides);
@@ -148,26 +148,6 @@ export function buildOutputs({ state, overrides }) {
 
   const similarity = fit.similarity;
 
-  const notOnSpotify = (a) => a.spotifyResolved && a.spotifyIds.length === 0;
-  const legacyArtists = artists
-    .map((a) => {
-      const out = {
-        name: a.name,
-        spotifyId: a.spotifyIds[0] ?? null,
-        spotifyUrl: a.spotifyIds[0] ? `https://open.spotify.com/artist/${a.spotifyIds[0]}` : null,
-        notOnSpotify: notOnSpotify(a),
-        genres: a.tags.slice(0, TAGS_IN_OUTPUT).map(([t]) => t),
-      };
-      if (a.spotifyIds.length > 1) out.additionalSpotifyIds = a.spotifyIds.slice(1);
-      return out;
-    })
-    .sort((x, y) => x.name.localeCompare(y.name));
-  const legacy = {
-    lastUpdated: state.lastUpdated,
-    enriched: artists.length > 0 && artists.every((a) => a.spotifyResolved),
-    artists: legacyArtists,
-  };
-
   const counts = { zero: 0, oneTwo: 0, threeSeven: 0, eightPlus: 0 };
   const signals = { direct: 0, neighbours: 0, tags: 0 };
   for (const list of neighbours.values()) {
@@ -208,5 +188,5 @@ export function buildOutputs({ state, overrides }) {
 
   const review = formatReview({ state, artists, warnings, stats });
   const sanity = formatSanity({ artists, neighbours, similarity, stats });
-  return { lineup, similarity, legacy, review, sanity, stats, warnings };
+  return { lineup, similarity, review, sanity, stats, warnings };
 }

@@ -11,10 +11,13 @@ export const DEFAULT_SEARCH_LIMIT = 8;
  * shorter names first, then alphabetical by key. Empty or one-character (normalised) queries return nothing.
  * @param {string[]} keys normalised names (the caller normalises once, up front)
  * @param {(query: string) => string} normalize the same normaliser used for the keys
+ * @param {{ compare?: (a: number, b: number) => number }} [options] optional tie-break over indices, applied within a
+ *   tier before the default (shorter name, then alphabetical); negative means `a` ranks first. Precompute anything
+ *   expensive; it runs inside a sort.
  * @returns {(query: unknown, options?: { limit?: number }) => number[]} indices into `keys`, best first
  */
-export function createSearcher(keys, normalize) {
-  const byLengthThenKey = (a, b) => keys[a].length - keys[b].length || (keys[a] < keys[b] ? -1 : keys[a] > keys[b] ? 1 : 0);
+export function createSearcher(keys, normalize, { compare } = {}) {
+  const byLengthThenKey = (a, b) => (compare ? compare(a, b) : 0) || keys[a].length - keys[b].length || (keys[a] < keys[b] ? -1 : keys[a] > keys[b] ? 1 : 0);
 
   return function search(query, { limit = DEFAULT_SEARCH_LIMIT } = {}) {
     const q = normalize(query);

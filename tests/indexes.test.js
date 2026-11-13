@@ -47,6 +47,20 @@ describe('prepareSimilarity', () => {
     expect(performance.now() - t).toBeLessThan(200);
     expect(realSimilarity.search('phoebe b')[0].name).toBe('Phoebe Bridgers');
   });
+  it('ranks by lineup connections within a tier: targets, then best score, then length, then alphabet', () => {
+    const s = prepareSimilarity({
+      names: ['Zed Few', 'Zed', 'Zed Best', 'Zed Many', 'Zed Tie B', 'Zed Tie A', 'Xx Zed Many', 'Aa Zedx'],
+      edges: [[1, 90], [], [1, 99], [1, 10, 2, 10, 3, 10], [1, 50], [1, 50], [1, 10, 2, 10, 3, 10, 4, 10], []],
+    });
+    // tiers still win over rank: the heavily connected word-prefix hit stays behind every whole-name prefix hit
+    expect(s.search('zed').map((h) => h.name)).toEqual(['Zed Many', 'Zed Best', 'Zed Few', 'Zed Tie A', 'Zed Tie B', 'Zed', 'Xx Zed Many', 'Aa Zedx']);
+  });
+  it('real data: the well-known artist comes first', () => {
+    const first = (q) => realSimilarity.search(q, { limit: 8 })[0].name;
+    expect(first('wax')).toBe('Waxahatchee');
+    expect(first('big')).toBe('Big Thief');
+    expect(first('phoebe')).toBe('Phoebe Bridgers');
+  });
   it('stays fast for ~25,000 names', () => {
     const names = Array.from({ length: 25000 }, (_, i) => `Artist ${i.toString(36)} Band`);
     const big = prepareSimilarity({ names, edges: names.map(() => []) });

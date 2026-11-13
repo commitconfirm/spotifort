@@ -9,6 +9,13 @@ export const BAND_STRONG = 0.5;
 export const BAND_GOOD = 0.25;
 export const MAX_REASONS = 3;
 export const MAX_TAG_RESULTS = 30;
+/**
+ * Contribution decay (PR 2.5, docs/evaluation-2.5.md). Each lineup artist's contributions are sorted strongest
+ * first and the i-th (0-based) is multiplied by DECAY ** i before the noisy-or product, so a few strong links decide
+ * the score and a long tail of weak links from a big library cannot push everything to 1.00. DECAY = 1 is the
+ * PR 2.4 formula.
+ */
+export const DECAY = 0.7;
 const EPSILON = 1e-9;
 
 /**
@@ -22,31 +29,41 @@ export function bandFor(score) {
 const byKeyOrder = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 /**
- * Rank lineup artists for a pool: score(L) = 1 - product over pool artists U of (1 - weight(U) * m(U, L)),
+ * Rank lineup artists for a pool: with c_i = weight(U) * m(U, L) sorted descending,
+ * score(L) = 1 - product over i of (1 - c_i * DECAY^i),
  * where m is the reverse-index score for an outside artist, or the lineup-to-lineup score for a pool artist that
  * is itself on the lineup. Lineup artists the visitor already matched are excluded.
  * @param {{ entries: object[] }} pool
  * @param {ReturnType<import('./lineup-index.js').prepareLineup>} lineup
  * @param {ReturnType<import('./similarity-index.js').prepareSimilarity>} similarity
+ * @param {{ decay?: number }} [options] decay in (0, 1]; defaults to DECAY (evaluation scripts pass others)
  * @returns {{
  *   recommendations: { n: number, name: string, score: number, band: string,
  *     reasons: { name: string, contribution: number, kind: 'outside'|'lineup', signal?: string }[] }[],
  *   noData: { key: string, name: string }[],
- * }} noData: pool artists not on the lineup that the index has nothing for
+ *   stats: { contributors: number, scores: number[] },
+ * }} noData: pool artists not on the lineup that the index has nothing for. stats (for diagnostics):
+ *   contributors = pool entries with at least one link to an unmatched lineup artist; scores = every score at or
+ *   above MIN_SCORE before the list is capped, descending.
  */
-export function recommend(pool, lineup, similarity) {
+export function recommend(pool, lineup, similarity, { decay = DECAY } = {}) {
+  const d = decay > 0 && decay <= 1 ? decay : DECAY;
   const matchedN = new Set();
-  /** @type {Map<number, { remain: number, parts: object[] }>} */
+  /** @type {Map<number, object[]>} lineup n -> contributions */
   const acc = new Map();
   const noData = [];
+  /** @type {Map<string, Set<number>>} pool key -> lineup artists it reaches (for the contributor count) */
+  const reach = new Map();
 
   const contribute = (n, entry, m, kind, signal) => {
-    const c = entry.weight * m;
+    const c = Math.min(entry.weight * m, 1);
     if (!(c > 0)) return;
-    let slot = acc.get(n);
-    if (!slot) acc.set(n, (slot = { remain: 1, parts: [] }));
-    slot.remain *= 1 - Math.min(c, 1);
-    slot.parts.push(kind === 'lineup' ? { name: entry.name, contribution: c, kind, signal } : { name: entry.name, contribution: c, kind });
+    let parts = acc.get(n);
+    if (!parts) acc.set(n, (parts = []));
+    parts.push(kind === 'lineup' ? { name: entry.name, contribution: c, kind, signal } : { name: entry.name, contribution: c, kind });
+    let r = reach.get(entry.key);
+    if (!r) reach.set(entry.key, (r = new Set()));
+    r.add(n);
   };
 
   for (const entry of pool.entries) {
@@ -62,17 +79,38 @@ export function recommend(pool, lineup, similarity) {
   }
 
   const recommendations = [];
-  for (const [n, slot] of acc) {
+  for (const [n, parts] of acc) {
     if (matchedN.has(n)) continue;
     const artist = lineup.byN(n);
     if (!artist) continue;
-    const score = 1 - slot.remain;
+    parts.sort((a, b) => b.contribution - a.contribution || byKeyOrder(a.name, b.name));
+    let remain = 1;
+    let factor = 1;
+    for (const p of parts) {
+      remain *= 1 - p.contribution * factor;
+      factor *= d;
+      if (factor < EPSILON) break;
+    }
+    const score = 1 - remain;
     if (score < MIN_SCORE - EPSILON) continue; // scores are in hundredths; keep 0.10 despite float error
-    const reasons = slot.parts.sort((a, b) => b.contribution - a.contribution || byKeyOrder(a.name, b.name)).slice(0, MAX_REASONS);
-    recommendations.push({ n, name: artist.name, score, band: bandFor(score), reasons });
+    recommendations.push({ n, name: artist.name, score, band: bandFor(score), reasons: parts.slice(0, MAX_REASONS) });
   }
   recommendations.sort((a, b) => b.score - a.score || byKeyOrder(a.name, b.name) || a.n - b.n);
-  return { recommendations: recommendations.slice(0, MAX_RECOMMENDATIONS), noData };
+
+  let contributors = 0;
+  for (const set of reach.values()) {
+    for (const n of set) {
+      if (!matchedN.has(n)) {
+        contributors++;
+        break;
+      }
+    }
+  }
+  return {
+    recommendations: recommendations.slice(0, MAX_RECOMMENDATIONS),
+    noData,
+    stats: { contributors, scores: recommendations.map((r) => r.score) },
+  };
 }
 
 // --- tags ---------------------------------------------------------------------------------------

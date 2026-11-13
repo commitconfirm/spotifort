@@ -1,4 +1,4 @@
-// Persistence: the artist pool and the Spotify Client ID, nothing else. There is deliberately no generic
+// Persistence: the artist pool, the Spotify Client ID and the listen-service preference, nothing else. There is deliberately no generic
 // set(key, value): access and refresh tokens must never reach storage. Storage objects are injected so this runs
 // (and is tested) without a browser. Every storage call is wrapped: a missing or throwing storage (private mode,
 // blocked site data, quota) degrades to in-memory behaviour for this page load instead of breaking.
@@ -8,7 +8,20 @@ import { deserialise, emptyPool, serialise } from './core/pool.js';
 
 export const POOL_KEY = 'spotifort:v1:pool';
 export const CLIENT_ID_KEY = 'spotifort:v1:clientId';
+export const SERVICE_KEY = 'spotifort:v1:service';
 const CLIENT_ID_PATTERN = /^[a-f0-9]{32}$/i;
+
+/** Listen services a visitor can choose; the first is the default. Same ids as LISTEN_PLATFORMS in core/links.js. */
+export const SERVICES = ['spotify', 'appleMusic', 'tidal', 'bandcamp'];
+export const DEFAULT_SERVICE = 'spotify';
+
+/**
+ * @param {unknown} value
+ * @returns {boolean} true for one of the four known listen services
+ */
+export function isValidService(value) {
+  return typeof value === 'string' && SERVICES.includes(value);
+}
 
 /**
  * @param {unknown} id
@@ -47,6 +60,7 @@ export function createStore(storages = {}) {
   // In-memory copies, used only for a value that could not be written to storage.
   let memClientId = null;
   let memPool = null;
+  let memService = null;
 
   const read = (storage, key) => attempt(storage, (s) => s.getItem(key));
   const write = (storage, key, value) => attempt(storage, (s) => (s.setItem(key, value), true)).ok;
@@ -94,14 +108,37 @@ export function createStore(storages = {}) {
       return memPool ? deserialise(memPool) : emptyPool();
     },
 
-    /** Clear the pool and the Client ID from both storages and memory. */
+    /**
+     * Remember which service the visitor listens on (localStorage). Unknown values are refused.
+     * @param {string} service one of SERVICES
+     * @returns {boolean} false if the value is not a known service (nothing is stored)
+     */
+    saveService(service) {
+      if (!isValidService(service)) return false;
+      memService = write(local, SERVICE_KEY, service) ? null : service;
+      return true;
+    },
+
+    /** @returns {string} the stored service, or DEFAULT_SERVICE; an invalid stored value is discarded */
+    loadService() {
+      const { ok, value } = read(local, SERVICE_KEY);
+      if (ok && value !== null) {
+        if (isValidService(value)) return value;
+        remove(local, SERVICE_KEY);
+      }
+      return memService ?? DEFAULT_SERVICE;
+    },
+
+    /** Clear the pool, the Client ID and the service preference from both storages and memory. */
     forgetAll() {
       for (const storage of [local, session]) {
         remove(storage, POOL_KEY);
         remove(storage, CLIENT_ID_KEY);
+        remove(storage, SERVICE_KEY);
       }
       memClientId = null;
       memPool = null;
+      memService = null;
     },
   };
 }

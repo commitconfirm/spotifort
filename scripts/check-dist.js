@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { checkDist, dataSizes } from './lib/check-dist.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const violations = checkDist(resolve(root, 'dist'), festival.year);
+const violations = checkDist(resolve(root, 'dist'), festival.year, festival);
 
 if (violations.length) {
   console.error(`check-dist: ${violations.length} violation(s)\n`);

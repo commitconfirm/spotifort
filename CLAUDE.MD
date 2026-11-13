@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Spotifort** is a client-side web application that matches a user's Spotify Liked Songs against the Treefort Music Fest 2027 lineup (March 31 – April 4, 2027, Boise, Idaho; year and dates live only in `festival.config.js`). It identifies which artists the user already likes that are playing the festival and suggests other Treefort artists by genre overlap.
+**Spotifort** is a client-side web application that tells a visitor who to see at Treefort Music Fest 2027 (March 31 – April 4, 2027, Boise, Idaho; year and dates live only in `festival.config.js`). With no account, the visitor types artists they like; optionally they connect their Spotify library. The app lists the lineup artists they already like ("Playing Treefort") and recommends other lineup artists from Last.fm similar-artist data ("Recommended for you"), with reasons and listen links.
 
 - **Live site:** https://spotifort.com
 - **Repo:** https://github.com/commitconfirm/spotifort
@@ -12,16 +12,15 @@
 
 ### Client-Side Only — No Backend
 
-This is a **privacy-first** application. All processing happens in the browser. There is no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts come from Cloudflare Web Analytics (injected at the edge by Cloudflare Pages, not in the repo or `dist/`). Spotify data never leaves the browser. The Spotify access token lives in a JS variable in memory and is never written to any storage API. The user's Client ID, the PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify) and disappear when the tab closes. Nothing is ever put in localStorage.
+This is a **privacy-first** application. All processing happens in the browser. There is no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts come from Cloudflare Web Analytics (injected at the edge by Cloudflare Pages, not in the repo or `dist/`). Spotify data never leaves the browser. The Spotify access token lives in a JS variable in memory (`src/auth.js`) and is never written to any storage API. The PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify). `src/store.js` is the only module that persists anything, in localStorage under versioned keys: the artist pool (`spotifort:v1:pool`), the listen service (`spotifort:v1:service`), and the Client ID (`spotifort:v1:clientId`, localStorage only when "Remember my Client ID on this device" is ticked, otherwise sessionStorage). "Forget my data" clears all of it.
 
 ### Spotify API — PKCE Auth Flow
 
 - **Auth method:** Authorization Code with PKCE (no client secret)
-- **Scopes required:** `user-library-read` (for Liked Songs)
-- **Future scope:** `user-top-read` (for top artists feature in List B — not in MVP)
+- **Scopes requested:** `user-library-read user-top-read user-follow-read` (Liked Songs, top artists, followed artists). If top or followed fails (e.g. a 403), the import continues without it and says so.
 - **Dev redirect URI:** `http://127.0.0.1:9090/callback`
 - **Prod redirect URI:** `https://spotifort.com/callback`
-- **Client ID:** Stored in `.env.local` as `VITE_SPOTIFY_CLIENT_ID` (not committed to repo)
+- **Client ID:** each visitor brings their own (BYOCID). For local development only, `.env.local` may set `VITE_SPOTIFY_CLIENT_ID` (not committed; never used in a production build)
 
 ### Spotify API Restrictions (February 2026 Dev Mode Changes)
 
@@ -32,8 +31,8 @@ This app was created after February 11, 2026 and is subject to the new Dev Mode 
 | Endpoint | Purpose | Notes |
 |----------|---------|-------|
 | `GET /me/tracks` | Fetch user's Liked Songs | Paginated, 50/request. Core matching feature. |
-| `GET /me/top/{type}` | User's top artists | Needs `user-top-read` scope. For future List B. |
-| `GET /me/following` | User's followed artists | Could expand matching beyond Liked Songs. |
+| `GET /me/top/{type}` | User's top artists | `user-top-read`; medium_term and long_term, 50 each. Part of the library import. |
+| `GET /me/following` | User's followed artists | `user-follow-read`; `type=artist`, cursor paging (`artists.cursors.after`), 50/page. Part of the library import. |
 | `GET /artists/{id}` | Individual artist metadata + genres | Works one at a time. Batch endpoint is blocked. |
 | `GET /artists/{id}/albums` | Artist's albums | Available but not currently used. |
 | `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. |
@@ -78,11 +77,10 @@ Files:
 - `data/<year>/state.json`: everything the pipeline resolved (committed, pipeline-only)
 - `data/<year>/overrides.json`: hand corrections, always respected (Spotify ids, Last.fm name, links, tags)
 - `data/<year>/review.md`, `sanity.md`: reports from the build
-- `public/data/<year>/lineup.json`, `similarity.json`: what the new experience will load (committed; size budgets 60 KB / 200 KB gzip, enforced by `check:dist`)
-- `public/lineups/<year>.json`: the Phase 1 format the live site still reads, regenerated by the build from the same state; removed when the new experience ships
+- `public/data/<year>/lineup.json`, `similarity.json`: what the site loads (committed; size budgets 60 KB / 250 KB gzip, enforced by `check:dist`). `lineup.json` loads on every visit; `similarity.json` only on the first interaction with the search box, or when a saved pool exists
 - `.cache/`: raw API responses (gitignored)
 
-Matching is done on `spotifyId`, NOT string comparison of names. The `[+]` expansion still uses `genres` in `public/lineups/<year>.json` (now the top 5 Last.fm tags, non-genre tags filtered).
+Matching is by platform ID (Spotify ID for a library import), by lineup number for an artist picked from autocomplete, and only otherwise by normalised name (shown as "unconfirmed"). The `[+]` expansion uses each artist's `similar` list in `lineup.json`.
 
 **To update the lineup:**
 ```bash
@@ -108,23 +106,32 @@ Each stage is incremental and resumable. An API failure never becomes a negative
 ```
 spotifort/
 ├── public/
-│   ├── data/<year>/             # Pipeline v2 outputs: lineup.json, similarity.json (generated)
-│   └── lineups/<year>.json      # Phase 1 format, still read by the live site (generated)
+│   ├── data/<year>/             # lineup.json, similarity.json (generated by the pipeline)
+│   └── _headers                 # Security headers and CSP for Cloudflare Pages
 ├── data/<year>/                 # state.json, overrides.json, review.md, sanity.md
-├── festival.config.js           # Single source of festival year, dates, lineup URL
+├── festival.config.js           # Festival year, dates, lineup URL, example artists for the "Try:" chips
 ├── scripts/
 │   ├── lineup-{scrape,spotify,musicbrainz,lastfm,build}.js   # Pipeline stages (I/O only)
-│   └── lib/                     # Pure, tested pipeline logic
+│   ├── try-recommend.js, eval-*.js                          # Engine from the command line, evaluations
+│   └── lib/                     # Pure, tested pipeline logic and check-dist
 ├── src/
-│   ├── index.html               # Entry point
-│   ├── main.js                  # App initialization, orchestration
-│   ├── auth.js                  # Spotify PKCE auth flow
-│   ├── spotify.js               # Spotify API calls (liked songs, artist data)
-│   ├── matcher.js               # Matching logic (liked songs vs lineup)
-│   ├── ui.js                    # DOM rendering and interaction
+│   ├── index.html               # The app page (the build copies it to callback.html for /callback)
+│   ├── main.js                  # Bootstrap and orchestration (normal / shared / callback states)
+│   ├── app/state.js             # Pure view-model logic: results, reasons, bands, suggestions, share, diagnostics
+│   ├── core/                    # Pure engine: normalize, pool, match, recommend, share, links, search, indexes
+│   ├── data/load.js             # Memoised loaders for the two data files
+│   ├── sources/spotify.js       # Spotify library source (paging, retries, weights; injected fetch)
+│   ├── ui/                      # Rendering and events only (combobox, rows, results, pool, genre, share, service picker)
+│   ├── auth.js                  # Spotify PKCE flow; token in memory only
+│   ├── store.js                 # The only persistence: pool, service, Client ID
+│   ├── log.js                   # Dev-only logging
+│   ├── lineup.html / lineup.js  # /lineup transparency page
+│   ├── setup.html / setup.js    # /setup guide for the Spotify Client ID
+│   ├── why.html, 404.html       # /why, not-found page
 │   └── style.css                # All styles
-├── .env.local                   # VITE_SPOTIFY_CLIENT_ID (gitignored)
-├── .gitignore
+├── tests/                       # Vitest
+├── docs/                        # PLAN-2027.md, ARCHITECTURE.md, evaluations
+├── .env.local                   # Pipeline credentials; optional VITE_SPOTIFY_CLIENT_ID for dev (gitignored)
 ├── CLAUDE.md
 ├── LICENSE                      # MIT
 ├── README.md
@@ -136,26 +143,21 @@ spotifort/
 
 ### User Flow
 
-1. User lands on spotifort.com
-2. User sees a brief explanation of what the app does, disclaimers, and a "Connect Spotify" button
-3. User clicks the button → redirected to Spotify auth → grants `user-library-read` permission
-4. Redirected back to spotifort.com/callback with auth code
-5. App exchanges code for access token (PKCE), stores in memory
-6. App fetches all Liked Songs (paginated, 50/request), extracts unique artist IDs
-7. App loads /lineups/<year>.json, matches artist IDs
-8. App displays matched artists in List A with [+] genre-based expansion
+1. Visitor lands on spotifort.com: "Who should you see at Treefort 2027?", one search box, "Try:" example chips, "or connect your Spotify library", "or browse by genre"
+2. Typing shows autocomplete over lineup artists (marked "Playing Treefort") and ~11,000 outside artists from the similarity index (WAI-ARIA combobox). Picking one adds it to **My artists** (the pool). A name we have no data for is not added; the visitor is offered the genre picker
+3. Results recompute on every change: **Playing Treefort** (lineup artists already in the pool, "unconfirmed" when matched by name or to an unverified record) and **Recommended for you** (grouped Strong match / Good match / Worth a listen, each with a "because you like …" reason)
+4. Each row has a listen link for the chosen service ("I listen on: Spotify / Apple Music / Tidal / Bandcamp"; a search link when no verified link exists), a "more" control for the other services, and `[+]`
+5. The pool is saved on the device and restored on return. "Share my picks" copies a `#s=` link with the Treefort picks only; opening one shows a read-only "Shared picks" view with "Find your own"
+6. Optional Spotify: the visitor pastes their own Client ID (remembered on the device if they choose), logs in with PKCE, returns to /callback, and the app imports Liked Songs (parallel pages, progress shown), top artists and followed artists as one pool source, shown as one summary chip ("Spotify library · 1,341 artists") with Refresh and Remove
+7. "Forget my data" (near the pool and in the footer) clears the pool, Client ID and service preference
 
 ### [+] Expansion Feature
 
-When user clicks [+] on a matched artist, the app looks up that artist's genres from the year file and finds other Treefort lineup artists that share at least one genre. Results are displayed as an indented sub-list sorted by genre overlap count. This is entirely client-side using pre-fetched genre data — no runtime API calls needed.
+`[+]` on any artist row (a button with `aria-expanded`) shows the other lineup artists in that artist's `similar` list in `lineup.json`, labelled "similar listeners" (direct or neighbour signal) or "similar tags", each with its own listen link. No runtime API calls.
 
 ### Lineup Transparency Page
 
-A /lineup page shows the full Treefort lineup data from the year file:
-- Artists on Spotify (with links)
-- Artists not found on Spotify
-- Last updated date
-- Explanation of data sourcing methodology
+/lineup lists every lineup artist with a listen link for the chosen service, its tags, an "unverified" marker, its Last.fm page link (Last.fm attribution), the last-updated date, and the data-sourcing methodology with MusicBrainz and Last.fm credits.
 
 ### UI Design
 
@@ -163,13 +165,15 @@ A /lineup page shows the full Treefort lineup data from the year file:
 - **Typography:** Ubuntu font (self-hosted), bold, for all headings/titles. System sans-serif for body.
 - **Layout:** Two-column on desktop (CSS Grid or Flexbox), single column stacked on mobile. Breakpoint ~768px.
 - **Lists:** Displayed in boxes with thick black borders
-- **List items:** Each artist is a bullet with `[+]` as a collapsible toggle for genre-based similar artists
+- **List items:** Each artist is a row with `[+]` as a collapsible toggle for similar lineup artists
+- **Accessibility:** semantic landmarks and headings, visible focus, keyboard operable, 44px touch targets, `aria-live` announcements when results change, `prefers-reduced-motion` respected
 
 ### Required Disclaimers (visible on the page)
 
 - "Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify"
 - "Privacy: your Spotify data stays in your browser. Page visits are counted with Cloudflare Web Analytics, which uses no cookies and does not identify you." (linked to https://www.cloudflare.com/web-analytics/)
-- "Lineup data last updated: [date from the year file]" with note that lineup is manually maintained
+- "Lineup data last updated: [date from lineup.json]"
+- "Similar-artist data from Last.fm" (main page footer) and each artist's Last.fm link on /lineup
 - "Use at your own risk — no guarantees of accuracy"
 - "FOSS — MIT License" with link to repo
 - "Built with Claude Code" with link
@@ -191,14 +195,11 @@ Verbose logging in dev (auth flow steps, API call counts, match results). Silent
 
 ## Future Enhancements (NOT in current scope)
 
-These are tracked for later and should NOT be built yet:
+These are tracked in `docs/PLAN-2027.md` and should NOT be built without a decision there:
 
-- **List B:** Top artists from user's listening history that aren't at Treefort, with Treefort artists in similar genres (uses `GET /me/top/artists`)
-- **Followed Artists matching:** Use `GET /me/following` to match followed artists against lineup, catching fans who follow but haven't liked specific tracks
-- **Bring Your Own Client ID:** UI for users to enter their own Spotify Client ID, with a setup guide page. Required for public launch beyond 5 users.
-- **Schedule/venue data:** When bands are playing and where during Treefort
-- **Bandcamp/Soundcloud:** Support for artists not on Spotify
-- **Rate limiting / progress UI:** Progress bar for users with large libraries
+- **Tidal** source (proof of concept first), as a sibling of `src/sources/spotify.js`
+- **Live Last.fm lookup** for typed names missing from the static index (optional Pages Function)
+- **Playlist creation**, **schedule/venue data**
 
 ## Commands
 
@@ -232,9 +233,9 @@ npm run check:dist
 3. **Static per-year lineup file** — generated by pipeline script, more reliable than API-dependent approaches
 4. **Lineup pipeline** — scrape Treefort website for ground truth names → Spotify search for IDs → MusicBrainz links → Last.fm similar artists and tags → static outputs. Avoids the blocked playlist endpoint and Spotify's deprecated genres.
 5. **Match on Spotify artist IDs** — not string names, to avoid mismatches
-6. **Genre-based similar artists** — replaces Spotify's Related Artists endpoint (blocked in Dev Mode) with genre overlap from pre-fetched data in the year file
+6. **Last.fm similar artists** — replace Spotify's Related Artists endpoint (blocked in Dev Mode); tags are only a fallback (genre picker)
 7. **Vanilla JS + Vite** — minimal dependencies, fast builds, simple
 8. **spotifort.com** — standalone domain, Cloudflare Pages
-9. **MVP = List A + genre expansion** — ship before Treefort starts (see `festival.config.js`)
+9. **No-login first** — the default experience needs no account; Spotify is an optional upgrade (PR 2.5)
 10. **BYOCID required for public launch** — Dev Mode 5-user limit has no workaround for individual developers
 11. **Old Spotify app deleted** — new app (created post-Feb 2026) has restricted permissions. Batch artist endpoint and related artists endpoint both return 403. Cannot be recovered.

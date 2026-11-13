@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { copyFileSync } from 'fs';
 import festival from './festival.config.js';
 
 /**
@@ -23,15 +24,36 @@ function festivalTokens() {
   };
 }
 
+/**
+ * Cloudflare Pages serves /callback from callback.html. The Spotify login returns there, and it must be the app
+ * page itself, so the build writes dist/callback.html as a copy of the built dist/index.html (same hashed assets)
+ * instead of keeping a hand-made duplicate. The dev server needs nothing: Vite already serves index.html for
+ * /callback (its HTML fallback).
+ */
+function callbackPage() {
+  let outDir;
+  return {
+    name: 'callback-page',
+    apply: 'build',
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir);
+    },
+    closeBundle() {
+      copyFileSync(resolve(outDir, 'index.html'), resolve(outDir, 'callback.html'));
+    },
+  };
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: 'src',
   envDir: '..',
   publicDir: '../public',
-  plugins: [festivalTokens()],
+  plugins: [festivalTokens(), callbackPage()],
   define: {
     __FESTIVAL_YEAR__: JSON.stringify(festival.year),
+    __EXAMPLE_ARTISTS__: JSON.stringify(festival.exampleArtists ?? []),
   },
   server: {
     port: 9090,
@@ -43,7 +65,6 @@ export default defineConfig({
     rolldownOptions: {
       input: {
         main: resolve(__dirname, 'src/index.html'),
-        callback: resolve(__dirname, 'src/callback.html'),
         lineup: resolve(__dirname, 'src/lineup.html'),
         setup: resolve(__dirname, 'src/setup.html'),
         why: resolve(__dirname, 'src/why.html'),

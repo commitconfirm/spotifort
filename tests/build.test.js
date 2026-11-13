@@ -28,7 +28,6 @@ describe('buildOutputs', () => {
     const out = buildOutputs({ state: fixture(), overrides: {} });
     expect(out.lineup.artists.map((a) => a.name)).toEqual(['Alpha', 'Beta', 'Gamma']);
     expect(keysOf(out.similarity)).not.toContain('ghost only');
-    expect(out.legacy.artists.map((a) => a.name)).not.toContain('Gone');
     expect(out.stats.removed).toBe(1);
   });
 
@@ -60,7 +59,6 @@ describe('buildOutputs', () => {
     const b = buildOutputs({ state: JSON.parse(JSON.stringify(fixture())), overrides: {} });
     expect(formatCompactLines(a.lineup)).toBe(formatCompactLines(b.lineup));
     expect(formatCompactLines(a.similarity)).toBe(formatCompactLines(b.similarity));
-    expect(JSON.stringify(a.legacy)).toBe(JSON.stringify(b.legacy));
     expect(a.review).toBe(b.review);
     expect(a.sanity).toBe(b.sanity);
   });
@@ -166,23 +164,10 @@ describe('buildOutputs', () => {
     expect(keysOf(out.similarity)).not.toContain('beta band');
   });
 
-  it('legacy file: same shape as Phase 1, genres from tags, additionalSpotifyIds for duos', () => {
-    const s = fixture();
-    const out = buildOutputs({ state: s, overrides: { Beta: { spotifyIds: ['6hhmxPotJ2kCsQjUGPtH14', '2Icsf5D1lAs2EFx6kggg5D'] }, Gamma: { spotifyIds: [] } } });
-    expect(Object.keys(out.legacy)).toEqual(['lastUpdated', 'enriched', 'artists']);
-    const by = Object.fromEntries(out.legacy.artists.map((a) => [a.name, a]));
-    expect(by.Alpha).toEqual({ name: 'Alpha', spotifyId: s.artists[0].spotify.ids[0], spotifyUrl: `https://open.spotify.com/artist/${s.artists[0].spotify.ids[0]}`, notOnSpotify: false, genres: ['indie'] });
-    expect(by.Beta.additionalSpotifyIds).toEqual(['2Icsf5D1lAs2EFx6kggg5D']);
-    expect(by.Gamma).toMatchObject({ spotifyId: null, spotifyUrl: null, notOnSpotify: true });
-    expect(out.legacy.enriched).toBe(true);
-  });
-
-  it('legacy enriched is false while any artist is unresolved, and unresolved is not "not on Spotify"', () => {
+  it('reports artists whose Spotify lookup is unresolved', () => {
     const s = fixture();
     delete s.artists[2].spotify;
     const out = buildOutputs({ state: s, overrides: {} });
-    expect(out.legacy.enriched).toBe(false);
-    expect(out.legacy.artists.find((a) => a.name === 'Gamma').notOnSpotify).toBe(false);
     expect(out.review).toMatch(/Spotify not resolved yet \(1\)/);
   });
 
