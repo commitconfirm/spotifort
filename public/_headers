@@ -9,3 +9,6 @@
 
 /lineups/*
   Cache-Control: public, max-age=300, must-revalidate
+
+/data/*
+  Cache-Control: public, max-age=300, must-revalidate

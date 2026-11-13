@@ -2,6 +2,10 @@
 // Guards what a strict CSP (script-src 'self'; style-src 'self') and the build rely on.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
+import { PLATFORMS, cleanPlatformUrl } from '../../src/core/link-hosts.js';
+import { normalizeName } from '../../src/core/normalize.js';
+import { gzipSize } from './size.js';
+import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP, NEIGHBOURS_PER_ARTIST } from './constants.js';
 
 const TAG_RE = /<([a-zA-Z][\w-]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>/g;
 const ATTR_RE = /([^\s"'<>/=]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/g;
@@ -86,6 +90,128 @@ export function checkLineup(year, raw) {
   return out;
 }
 
+const SIGNALS = new Set(['direct', 'neighbours', 'tags']);
+const isInt = (v) => Number.isInteger(v);
+
+function parseOrViolation(name, raw, out) {
+  if (raw === null) {
+    out.push(`${name}: missing from dist/`);
+    return null;
+  }
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    out.push(`${name}: does not parse (${e.message})`);
+    return null;
+  }
+}
+
+/**
+ * Structure and budget checks for data/<year>/lineup.json and similarity.json (see docs/ARCHITECTURE.md).
+ * Cheap on purpose: shape, cross references, URL allow-list, gzip size. Not a semantic review.
+ * @param {number} year
+ * @param {string|null} lineupRaw file text, null if missing
+ * @param {string|null} similarityRaw file text, null if missing
+ * @returns {string[]} violations
+ */
+export function checkData(year, lineupRaw, similarityRaw) {
+  const out = [];
+  const lname = `data/${year}/lineup.json`;
+  const sname = `data/${year}/similarity.json`;
+  const lineup = parseOrViolation(lname, lineupRaw, out);
+  const sim = parseOrViolation(sname, similarityRaw, out);
+  const ns = new Set();
+
+  if (lineup) {
+    const bad = (m) => out.push(`${lname}: ${m}`);
+    if (lineup.year !== year) bad(`"year" is ${lineup.year}, expected ${year}`);
+    if (!Array.isArray(lineup.artists) || lineup.artists.length === 0) {
+      bad('"artists" is missing or empty');
+    } else {
+      for (const a of lineup.artists) if (isInt(a?.n)) ns.add(a.n);
+      lineup.artists.forEach((a, i) => {
+        const who = `artist ${a?.name ?? i}`;
+        if (!isInt(a?.n) || a.n < 1) return bad(`${who}: "n" must be a positive integer`);
+        if (typeof a.id !== 'string' || !a.id) bad(`${who}: "id" must be a non-empty string`);
+        if (typeof a.name !== 'string' || !a.name) bad(`${who}: "name" must be a non-empty string`);
+        if (!Array.isArray(a.spotifyIds) || !a.spotifyIds.every((x) => typeof x === 'string')) bad(`${who}: "spotifyIds" must be an array of strings`);
+        if (a.ids === null || typeof a.ids !== 'object' || Array.isArray(a.ids)) bad(`${who}: "ids" must be an object`);
+        if (!Array.isArray(a.tags) || !a.tags.every((x) => typeof x === 'string')) bad(`${who}: "tags" must be an array of strings`);
+        if (a.links === null || typeof a.links !== 'object' || Array.isArray(a.links)) {
+          bad(`${who}: "links" must be an object`);
+        } else {
+          for (const [platform, url] of Object.entries(a.links)) {
+            if (!PLATFORMS.includes(platform)) bad(`${who}: unknown link platform "${platform}"`);
+            else if (cleanPlatformUrl(platform, url) === null) bad(`${who}: links.${platform} is not an https URL on the allow-list (${url})`);
+          }
+        }
+        if (!Array.isArray(a.similar)) return bad(`${who}: "similar" must be an array`);
+        if (a.similar.length > NEIGHBOURS_PER_ARTIST) bad(`${who}: more than ${NEIGHBOURS_PER_ARTIST} similar entries`);
+        for (const e of a.similar) {
+          const okShape = Array.isArray(e) && e.length === 3 && isInt(e[0]) && typeof e[1] === 'number' && e[1] >= 0 && e[1] <= 1 && SIGNALS.has(e[2]);
+          if (!okShape) bad(`${who}: malformed similar entry ${JSON.stringify(e)}`);
+          else if (!ns.has(e[0])) bad(`${who}: similar entry points at unknown artist n=${e[0]}`);
+          else if (e[0] === a.n) bad(`${who}: similar entry points at itself`);
+        }
+      });
+      if (ns.size !== lineup.artists.length) bad('artist numbers "n" are not unique');
+      if (new Set(lineup.artists.map((a) => a?.id)).size !== lineup.artists.length) bad('artist "id" values are not unique');
+    }
+  }
+
+  if (sim) {
+    const bad = (m) => out.push(`${sname}: ${m}`);
+    const { names, edges, minMatch } = sim;
+    if (typeof minMatch !== 'number' || !(minMatch > 0 && minMatch <= 1)) bad('"minMatch" must be a number in (0, 1]');
+    if (![names, edges].every(Array.isArray)) {
+      bad('"names" and "edges" must both be arrays');
+    } else if (names.length !== edges.length) {
+      bad(`"names" (${names.length}) and "edges" (${edges.length}) differ in length`);
+    } else {
+      if (!names.every((x) => typeof x === 'string')) bad('"names" must hold strings');
+      else {
+        // The client derives the lookup keys with normalizeName: they must be unique and in sorted order.
+        const keys = names.map(normalizeName);
+        const unsorted = keys.filter((k, i) => i > 0 && k < keys[i - 1]).length;
+        if (unsorted) bad(`"names" is not sorted by normalised key (${unsorted} out of order)`);
+        const distinct = new Set(keys).size;
+        if (distinct !== names.length) bad(`normalised keys are not unique (${names.length - distinct} repeated)`);
+      }
+      let reported = 0;
+      edges.forEach((e, i) => {
+        if (reported >= 5) return;
+        const okShape = Array.isArray(e) && e.length > 0 && e.length % 2 === 0 && e.every(isInt);
+        let problem = okShape ? null : 'is not a flat list of integer [n, score] pairs';
+        if (!problem) {
+          for (let j = 0; j < e.length; j += 2) {
+            if (ns.size && !ns.has(e[j])) problem = `points at unknown artist n=${e[j]}`;
+            else if (e[j + 1] < 1 || e[j + 1] > 100) problem = `has score ${e[j + 1]} outside 1..100`;
+            if (problem) break;
+          }
+        }
+        if (problem) {
+          bad(`edges[${i}] (${names[i]}) ${problem}`);
+          reported++;
+        }
+      });
+    }
+  }
+
+  if (lineupRaw !== null && gzipSize(lineupRaw) > BUDGET_LINEUP_GZIP) {
+    out.push(`${lname}: ${gzipSize(lineupRaw)} bytes gzipped, over the ${BUDGET_LINEUP_GZIP} byte budget`);
+  }
+  if (similarityRaw !== null && gzipSize(similarityRaw) > BUDGET_SIMILARITY_GZIP) {
+    out.push(`${sname}: ${gzipSize(similarityRaw)} bytes gzipped, over the ${BUDGET_SIMILARITY_GZIP} byte budget`);
+  }
+  return out;
+}
+
+/** Raw and gzip sizes of the two data files, for reporting. Missing files give null. */
+export function dataSizes(lineupRaw, similarityRaw) {
+  const size = (raw, budget) => (raw === null ? null : { raw: Buffer.byteLength(raw), gzip: gzipSize(raw), budget });
+  return { lineup: size(lineupRaw, BUDGET_LINEUP_GZIP), similarity: size(similarityRaw, BUDGET_SIMILARITY_GZIP) };
+}
+
 const CLIENT_ID_RE = /client[_-]?id["']?\s*[:=]\s*["'][0-9a-f]{32}["']/i;
 const SECRET_RE = /[A-Z_]*(?:SECRET|API_KEY|TOKEN)=\S+/;
 
@@ -121,5 +247,6 @@ export function checkDist(distDir, year) {
   }
   out.push(...checkHeaders(readOrNull(join(distDir, '_headers'))));
   out.push(...checkLineup(year, readOrNull(join(distDir, 'lineups', `${year}.json`))));
+  out.push(...checkData(year, readOrNull(join(distDir, 'data', String(year), 'lineup.json')), readOrNull(join(distDir, 'data', String(year), 'similarity.json'))));
   return out;
 }

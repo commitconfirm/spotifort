@@ -25,3 +25,6 @@ npm-debug.log*
 debug/
 .env*.old
 .wrangler/
+
+# Raw API responses cached by the lineup pipeline
+.cache/

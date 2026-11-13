@@ -22,7 +22,8 @@
       "genres": [
         "stoner rock",
         "psychedelic rock",
-        "blues rock"
+        "blues rock",
+        "psychedelic"
       ]
     },
     {
@@ -65,7 +66,8 @@
         "post-hardcore",
         "emo",
         "indie",
-        "indie rock"
+        "indie rock",
+        "alternative"
       ]
     },
     {
@@ -77,8 +79,7 @@
         "chanson francaise",
         "female vocalists",
         "chanson"
-      ],
-      "manual": true
+      ]
     },
     {
       "name": "Bardo",
@@ -89,7 +90,8 @@
         "ambient black metal",
         "ambient",
         "black metal",
-        "neofolk"
+        "neofolk",
+        "hungarian"
       ]
     },
     {
@@ -141,7 +143,9 @@
       "notOnSpotify": false,
       "genres": [
         "surf rock",
-        "indie rock"
+        "indie rock",
+        "surf",
+        "psychedelic rock"
       ]
     },
     {
@@ -151,7 +155,9 @@
       "notOnSpotify": false,
       "genres": [
         "country",
-        "bluegrass"
+        "bluegrass",
+        "americana",
+        "folk"
       ]
     },
     {
@@ -162,7 +168,9 @@
       "genres": [
         "garage rock",
         "indie",
-        "garage punk"
+        "garage punk",
+        "garage",
+        "rock"
       ]
     },
     {
@@ -196,7 +204,8 @@
         "indie rock",
         "singer-songwriter",
         "folk rock",
-        "indie folk"
+        "indie folk",
+        "alternative folk"
       ]
     },
     {
@@ -214,7 +223,9 @@
       "genres": [
         "grunge",
         "indie rock",
-        "alternative rock"
+        "alternative rock",
+        "punk",
+        "rock"
       ]
     },
     {
@@ -233,7 +244,8 @@
         "soul",
         "pop",
         "afrobeat",
-        "electronic"
+        "electronic",
+        "dance"
       ]
     },
     {
@@ -243,7 +255,9 @@
       "notOnSpotify": false,
       "genres": [
         "singer-songwriter",
-        "indie"
+        "indie",
+        "funk_add_to_lidarr_batch_5",
+        "lo-fi"
       ]
     },
     {
@@ -252,7 +266,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/2ziSUHAT6LbHKCJIlwHhDG",
       "notOnSpotify": false,
       "genres": [
-        "chillout"
+        "chillout",
+        "psychedelic",
+        "indie"
       ]
     },
     {
@@ -274,7 +290,8 @@
         "folk",
         "indie",
         "indie pop",
-        "singer-songwriter"
+        "singer-songwriter",
+        "alt-country"
       ]
     },
     {
@@ -292,7 +309,9 @@
       "genres": [
         "americana",
         "country",
-        "singer-songwriter"
+        "singer-songwriter",
+        "indie country",
+        "storyteller"
       ]
     },
     {
@@ -303,7 +322,9 @@
       "genres": [
         "singer-songwriter",
         "folk",
-        "indie"
+        "indie",
+        "indie folk",
+        "indie rock"
       ]
     },
     {
@@ -332,21 +353,17 @@
       "spotifyId": "4Qrdi1c8Icxq566uOw50HL",
       "spotifyUrl": "https://open.spotify.com/artist/4Qrdi1c8Icxq566uOw50HL",
       "notOnSpotify": false,
-      "genres": [
-        "hard rock",
-        "rock",
-        "heavy metal",
-        "progressive rock",
-        "blues rock",
-        "classic rock"
-      ]
+      "genres": []
     },
     {
       "name": "Deeveaux",
       "spotifyId": "0cjW5lD0MBB3pGqPNgYE2y",
       "spotifyUrl": "https://open.spotify.com/artist/0cjW5lD0MBB3pGqPNgYE2y",
       "notOnSpotify": false,
-      "genres": []
+      "genres": [
+        "dj",
+        "mixed music"
+      ]
     },
     {
       "name": "Delicate Steve",
@@ -356,7 +373,9 @@
       "genres": [
         "indie",
         "electronic",
-        "guitar"
+        "guitar",
+        "dance",
+        "instrumental"
       ]
     },
     {
@@ -366,7 +385,8 @@
       "notOnSpotify": false,
       "genres": [
         "progressive rock",
-        "canterbury scene"
+        "canterbury scene",
+        "jazz rock"
       ]
     },
     {
@@ -376,7 +396,8 @@
       "notOnSpotify": false,
       "genres": [
         "math rock",
-        "experimental"
+        "experimental",
+        "post-hardcore"
       ]
     },
     {
@@ -398,7 +419,8 @@
         "hardcore",
         "post-hardcore",
         "hardcore punk",
-        "punk"
+        "punk",
+        "emo"
       ]
     },
     {
@@ -409,7 +431,9 @@
       "genres": [
         "experimental",
         "electronic",
-        "art pop"
+        "art pop",
+        "ambient",
+        "freak folk"
       ]
     },
     {
@@ -420,7 +444,8 @@
       "genres": [
         "singer-sonwriter",
         "indie",
-        "folk"
+        "folk",
+        "americana"
       ]
     },
     {
@@ -440,7 +465,10 @@
       "notOnSpotify": false,
       "genres": [
         "post-hardcore",
-        "trancecore"
+        "trancecore",
+        "nintendocore",
+        "hardcore",
+        "screamo"
       ]
     },
     {
@@ -462,7 +490,8 @@
       "genres": [
         "americana",
         "alternative",
-        "indie folk"
+        "indie folk",
+        "folk"
       ]
     },
     {
@@ -470,8 +499,7 @@
       "spotifyId": null,
       "spotifyUrl": null,
       "notOnSpotify": true,
-      "genres": [],
-      "manual": true
+      "genres": []
     },
     {
       "name": "Fenne Lily",
@@ -481,7 +509,8 @@
       "genres": [
         "folk",
         "singer-songwriter",
-        "female vocalists"
+        "female vocalists",
+        "indie folk"
       ]
     },
     {
@@ -505,7 +534,9 @@
       "notOnSpotify": false,
       "genres": [
         "slowcore",
-        "post-hardcore"
+        "post-hardcore",
+        "noise rock",
+        "shoegaze"
       ]
     },
     {
@@ -515,7 +546,9 @@
       "notOnSpotify": false,
       "genres": [
         "pop punk",
-        "melodic hardcore"
+        "melodic hardcore",
+        "hardcore",
+        "beardcore"
       ]
     },
     {
@@ -526,7 +559,9 @@
       "genres": [
         "instrumental",
         "jazz",
-        "vocal"
+        "vocal",
+        "european",
+        "percussion"
       ]
     },
     {
@@ -545,7 +580,8 @@
       "notOnSpotify": false,
       "genres": [
         "psychedelic rock",
-        "psychedelic"
+        "psychedelic",
+        "rock"
       ]
     },
     {
@@ -555,7 +591,8 @@
       "notOnSpotify": false,
       "genres": [
         "soul",
-        "jazz"
+        "jazz",
+        "indie pop"
       ]
     },
     {
@@ -575,7 +612,8 @@
       "notOnSpotify": false,
       "genres": [
         "garage rock",
-        "punk"
+        "punk",
+        "punk rock"
       ]
     },
     {
@@ -586,7 +624,9 @@
       "genres": [
         "punk",
         "garage punk",
-        "garage rock"
+        "garage rock",
+        "rock",
+        "j-rock"
       ]
     },
     {
@@ -596,7 +636,9 @@
       "notOnSpotify": false,
       "genres": [
         "folk",
-        "american primitivism"
+        "american primitivism",
+        "americana",
+        "guitar"
       ]
     },
     {
@@ -651,7 +693,9 @@
       "notOnSpotify": false,
       "genres": [
         "indie rock",
-        "folk"
+        "folk",
+        "emo",
+        "alternative"
       ]
     },
     {
@@ -661,7 +705,9 @@
       "notOnSpotify": false,
       "genres": [
         "hyperpop",
-        "trance"
+        "trance",
+        "electronic",
+        "dance"
       ]
     },
     {
@@ -695,7 +741,8 @@
       "notOnSpotify": false,
       "genres": [
         "indie rock",
-        "indie pop"
+        "indie pop",
+        "post-punk"
       ]
     },
     {
@@ -706,7 +753,9 @@
       "genres": [
         "post-punk",
         "punk",
-        "post-hardcore"
+        "post-hardcore",
+        "rock",
+        "hardcore punk"
       ]
     },
     {
@@ -715,7 +764,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/3So3vlAfrEh2FbpvG7sxO4",
       "notOnSpotify": false,
       "genres": [
-        "ambient"
+        "ambient",
+        "electronic",
+        "turkish",
+        "turkey"
       ]
     },
     {
@@ -738,9 +790,10 @@
       "notOnSpotify": false,
       "genres": [
         "punk rock",
-        "pop punk"
-      ],
-      "spotifyName": "Jeffrey Lewis"
+        "pop punk",
+        "pop",
+        "rock"
+      ]
     },
     {
       "name": "Jejune",
@@ -749,7 +802,9 @@
       "notOnSpotify": false,
       "genres": [
         "emo",
-        "midwest emo"
+        "midwest emo",
+        "indie rock",
+        "indie"
       ]
     },
     {
@@ -792,16 +847,17 @@
       "notOnSpotify": false,
       "genres": [
         "singer-songwriter",
-        "acoustic"
+        "acoustic",
+        "pop",
+        "indie"
       ]
     },
     {
       "name": "JÜN",
-      "spotifyId": null,
-      "spotifyUrl": null,
-      "notOnSpotify": true,
-      "genres": [],
-      "manual": true
+      "spotifyId": "3hV7q0P8wimZFHmdykKaRN",
+      "spotifyUrl": "https://open.spotify.com/artist/3hV7q0P8wimZFHmdykKaRN",
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Karen y Los Remedios",
@@ -819,7 +875,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/5RAwXhLQfEX5khIsfnvDne",
       "notOnSpotify": false,
       "genres": [
-        "folk"
+        "folk",
+        "indie",
+        "singer-songwriter"
       ]
     },
     {
@@ -829,7 +887,9 @@
       "notOnSpotify": false,
       "genres": [
         "rap",
-        "hip-hop"
+        "hip-hop",
+        "trap",
+        "rap rock"
       ]
     },
     {
@@ -859,7 +919,8 @@
         "soul",
         "rap",
         "jazz rap",
-        "conscious hip hop"
+        "conscious hip hop",
+        "to tag"
       ]
     },
     {
@@ -868,7 +929,11 @@
       "spotifyUrl": "https://open.spotify.com/artist/5ijO3JnnKpoAOTU4QaDgdW",
       "notOnSpotify": false,
       "genres": [
-        "garage rock"
+        "garage rock",
+        "indie rock",
+        "dance punk",
+        "art punk",
+        "post-punk"
       ]
     },
     {
@@ -879,7 +944,8 @@
       "genres": [
         "post-hardcore",
         "progressive rock",
-        "experimental"
+        "experimental",
+        "indie"
       ]
     },
     {
@@ -900,7 +966,8 @@
       "notOnSpotify": false,
       "genres": [
         "indie rock",
-        "indie pop"
+        "indie pop",
+        "lo-fi"
       ]
     },
     {
@@ -910,7 +977,8 @@
       "notOnSpotify": false,
       "genres": [
         "indie rock",
-        "indie pop"
+        "indie pop",
+        "dance-punk"
       ]
     },
     {
@@ -921,7 +989,8 @@
       "genres": [
         "digital hardcore",
         "punk",
-        "synth punk"
+        "synth punk",
+        "electronic"
       ]
     },
     {
@@ -931,7 +1000,9 @@
       "notOnSpotify": false,
       "genres": [
         "power pop",
-        "indie rock"
+        "indie rock",
+        "indie",
+        "punk"
       ]
     },
     {
@@ -939,10 +1010,7 @@
       "spotifyId": "4VsV4p5seMhiQOzQVeOoRb",
       "spotifyUrl": "https://open.spotify.com/artist/4VsV4p5seMhiQOzQVeOoRb",
       "notOnSpotify": false,
-      "genres": [
-        "singer-songwriter",
-        "soft rock"
-      ]
+      "genres": []
     },
     {
       "name": "Los Blenders",
@@ -962,7 +1030,8 @@
       "notOnSpotify": false,
       "genres": [
         "cumbia",
-        "chicha"
+        "chicha",
+        "psychedelic"
       ]
     },
     {
@@ -971,7 +1040,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/58dOfabvkhScGZJNO2HONt",
       "notOnSpotify": false,
       "genres": [
-        "hardcore"
+        "hardcore",
+        "emo",
+        "post-hardcore",
+        "screamo"
       ]
     },
     {
@@ -981,7 +1053,8 @@
       "notOnSpotify": false,
       "genres": [
         "house",
-        "electronic"
+        "electronic",
+        "synthpop"
       ]
     },
     {
@@ -1006,11 +1079,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/49ECnwhYzm6Nu97puMvwjG",
       "notOnSpotify": false,
       "genres": [],
-      "spotifyName": "Bill Orcutt",
       "additionalSpotifyIds": [
         "7yHfb2D8qIBgrzclpSsTeo"
-      ],
-      "manual": true
+      ]
     },
     {
       "name": "Maci Mattravers",
@@ -1036,7 +1107,9 @@
       "notOnSpotify": false,
       "genres": [
         "house",
-        "electronic"
+        "electronic",
+        "indie rock",
+        "shoegaze"
       ]
     },
     {
@@ -1046,7 +1119,9 @@
       "notOnSpotify": false,
       "genres": [
         "shoegaze",
-        "slowcore"
+        "slowcore",
+        "post-hardcore",
+        "alternative"
       ]
     },
     {
@@ -1056,7 +1131,9 @@
       "notOnSpotify": false,
       "genres": [
         "post-rock",
-        "instrumental"
+        "instrumental",
+        "from monument to masses",
+        "oakland"
       ]
     },
     {
@@ -1089,7 +1166,8 @@
         "indie rock",
         "indie",
         "alternative",
-        "alternative rock"
+        "alternative rock",
+        "rock"
       ]
     },
     {
@@ -1131,7 +1209,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/08W3G3y83p0TLqqjiyKXBk",
       "notOnSpotify": false,
       "genres": [
-        "dream pop"
+        "dream pop",
+        "alternative",
+        "minnesota",
+        "lo-fi"
       ]
     },
     {
@@ -1164,7 +1245,9 @@
       "genres": [
         "shoegaze",
         "grunge",
-        "alternative rock"
+        "alternative rock",
+        "post-hardcore",
+        "alternative metal"
       ]
     },
     {
@@ -1174,7 +1257,8 @@
       "notOnSpotify": false,
       "genres": [
         "rnb",
-        "soul"
+        "soul",
+        "pop"
       ]
     },
     {
@@ -1196,7 +1280,8 @@
       "notOnSpotify": false,
       "genres": [
         "hardcore punk",
-        "punk rock"
+        "punk rock",
+        "punk"
       ]
     },
     {
@@ -1206,7 +1291,8 @@
       "notOnSpotify": false,
       "genres": [
         "jazz",
-        "instrumental"
+        "instrumental",
+        "piano"
       ]
     },
     {
@@ -1218,7 +1304,8 @@
         "hardcore",
         "melodic hardcore",
         "hardcore punk",
-        "post-hardcore"
+        "post-hardcore",
+        "straight edge"
       ]
     },
     {
@@ -1228,7 +1315,9 @@
       "notOnSpotify": false,
       "genres": [
         "country",
-        "alt-country"
+        "alt-country",
+        "americana",
+        "gothic country"
       ]
     },
     {
@@ -1240,14 +1329,10 @@
     },
     {
       "name": "PLAYDEAD",
-      "spotifyId": null,
-      "spotifyUrl": null,
-      "notOnSpotify": true,
-      "genres": [
-        "post-punk",
-        "gothic rock"
-      ],
-      "manual": true
+      "spotifyId": "6rZf3CPChuam4RdRiT0lR9",
+      "spotifyUrl": "https://open.spotify.com/artist/6rZf3CPChuam4RdRiT0lR9",
+      "notOnSpotify": false,
+      "genres": []
     },
     {
       "name": "Porcelain Tongue",
@@ -1265,7 +1350,8 @@
       "notOnSpotify": false,
       "genres": [
         "psychedelic rock",
-        "psychedelic"
+        "psychedelic",
+        "indie rock"
       ]
     },
     {
@@ -1276,7 +1362,9 @@
       "genres": [
         "psychedelic",
         "soul",
-        "rock n roll"
+        "rock n roll",
+        "psychedelic rock",
+        "vintage"
       ]
     },
     {
@@ -1285,7 +1373,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/3QWUxLJqRsyGpjdKo4xeJN",
       "notOnSpotify": false,
       "genres": [
-        "shoegaze"
+        "shoegaze",
+        "alternative rock"
       ]
     },
     {
@@ -1294,7 +1383,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/4cCA6V2DRIDqeYDyGIcEoj",
       "notOnSpotify": false,
       "genres": [
-        "indie rock"
+        "indie rock",
+        "garage rock",
+        "indie"
       ]
     },
     {
@@ -1304,7 +1395,8 @@
       "notOnSpotify": false,
       "genres": [
         "indie rock",
-        "indie"
+        "indie",
+        "indie pop"
       ]
     },
     {
@@ -1320,7 +1412,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/3OWO2LOPTl1u6XvJHkwHmd",
       "notOnSpotify": false,
       "genres": [
-        "indie pop"
+        "indie pop",
+        "surf"
       ]
     },
     {
@@ -1330,7 +1423,8 @@
       "notOnSpotify": false,
       "genres": [
         "folk",
-        "singer-songwriter"
+        "singer-songwriter",
+        "guitar"
       ]
     },
     {
@@ -1351,7 +1445,10 @@
       "notOnSpotify": false,
       "genres": [
         "rare sad girl",
-        "singer-songwriter"
+        "singer-songwriter",
+        "indie rock",
+        "indie folk",
+        "rare sads"
       ]
     },
     {
@@ -1359,8 +1456,7 @@
       "spotifyId": "2pI9qPV311bnXUoJHhdtqF",
       "spotifyUrl": "https://open.spotify.com/artist/2pI9qPV311bnXUoJHhdtqF",
       "notOnSpotify": false,
-      "genres": [],
-      "spotifyName": "Sam and Louise Sullivan"
+      "genres": []
     },
     {
       "name": "Sarah Julia",
@@ -1369,7 +1465,9 @@
       "notOnSpotify": false,
       "genres": [
         "indie pop",
-        "indie"
+        "indie",
+        "folk",
+        "dutch"
       ]
     },
     {
@@ -1377,8 +1475,7 @@
       "spotifyId": null,
       "spotifyUrl": null,
       "notOnSpotify": true,
-      "genres": [],
-      "manual": true
+      "genres": []
     },
     {
       "name": "Saves The Day",
@@ -1387,7 +1484,10 @@
       "notOnSpotify": false,
       "genres": [
         "pop punk",
-        "emo"
+        "emo",
+        "indie",
+        "rock",
+        "punk"
       ]
     },
     {
@@ -1418,7 +1518,9 @@
       "genres": [
         "post-punk",
         "crank wave",
-        "spoken word"
+        "spoken word",
+        "rap punk",
+        "punk"
       ]
     },
     {
@@ -1430,7 +1532,8 @@
         "dream pop",
         "shoegaze",
         "indie pop",
-        "indie rock"
+        "indie rock",
+        "lo-fi"
       ]
     },
     {
@@ -1444,16 +1547,16 @@
     },
     {
       "name": "SOOT",
-      "spotifyId": null,
-      "spotifyUrl": null,
-      "notOnSpotify": true,
+      "spotifyId": "0U98BlSqzrAWjctKQwVccL",
+      "spotifyUrl": "https://open.spotify.com/artist/0U98BlSqzrAWjctKQwVccL",
+      "notOnSpotify": false,
       "genres": [
         "post-hardcore",
         "punk",
         "experimental rock",
-        "post-punk"
-      ],
-      "manual": true
+        "post-punk",
+        "noise rock"
+      ]
     },
     {
       "name": "Street Play",
@@ -1471,18 +1574,17 @@
       "spotifyId": "31HKAfxJ13M8jpwvJN8TXq",
       "spotifyUrl": "https://open.spotify.com/artist/31HKAfxJ13M8jpwvJN8TXq",
       "notOnSpotify": false,
-      "genres": []
+      "genres": [
+        "rock",
+        "garage pop"
+      ]
     },
     {
       "name": "Sunbloc",
       "spotifyId": "7wfbwZyhasLmQ5bM7sJN8y",
       "spotifyUrl": "https://open.spotify.com/artist/7wfbwZyhasLmQ5bM7sJN8y",
       "notOnSpotify": false,
-      "genres": [
-        "house",
-        "dance",
-        "contemporary r&b"
-      ]
+      "genres": []
     },
     {
       "name": "SunDog",
@@ -1490,7 +1592,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/1LY3y5mjHG8oE9rpHbbQy6",
       "notOnSpotify": false,
       "genres": [
-        "goa trance"
+        "goa trance",
+        "psychedelic trance"
       ]
     },
     {
@@ -1514,7 +1617,9 @@
       "notOnSpotify": false,
       "genres": [
         "jazz",
-        "funk"
+        "funk",
+        "instrumental",
+        "psychedelic"
       ]
     },
     {
@@ -1523,7 +1628,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/3yxZJMBn5A2OMEGO7Tvg72",
       "notOnSpotify": false,
       "genres": [
-        "indie pop"
+        "indie pop",
+        "psychedelic",
+        "organ",
+        "indie"
       ]
     },
     {
@@ -1534,7 +1642,9 @@
       "genres": [
         "krautrock",
         "psychedelic rock",
-        "post-punk"
+        "post-punk",
+        "new wave",
+        "indie rock"
       ]
     },
     {
@@ -1544,7 +1654,9 @@
       "notOnSpotify": false,
       "genres": [
         "indie",
-        "indie pop"
+        "indie pop",
+        "female vocalists",
+        "kill rock stars"
       ]
     },
     {
@@ -1562,7 +1674,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/5LTUoyFqp3m3i3xolfdwPI",
       "notOnSpotify": false,
       "genres": [
-        "rock"
+        "rock",
+        "psychedelic",
+        "psychedelia",
+        "latin"
       ]
     },
     {
@@ -1571,7 +1686,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/756gZe3CRrsmKQGhCTmQ5J",
       "notOnSpotify": false,
       "genres": [
-        "garage rock"
+        "garage rock",
+        "punk",
+        "indie rock",
+        "blues rock"
       ]
     },
     {
@@ -1594,7 +1712,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/6AQK0LVPwC6KeOhMYPN1WX",
       "notOnSpotify": false,
       "genres": [
-        "psychedelic rock"
+        "psychedelic rock",
+        "psychedelic"
       ]
     },
     {
@@ -1631,7 +1750,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/2PyWfmEeKmRNhQkAJ1zJXw",
       "notOnSpotify": false,
       "genres": [
-        "bluegrass"
+        "bluegrass",
+        "folk",
+        "indie folk"
       ]
     },
     {
@@ -1652,7 +1773,8 @@
       "genres": [
         "indie",
         "electronic",
-        "indietronica"
+        "indietronica",
+        "indie rock"
       ]
     },
     {
@@ -1668,7 +1790,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/0oK5D6uPhGu4Jk2dbZfodU",
       "notOnSpotify": false,
       "genres": [
-        "soul"
+        "soul",
+        "funk",
+        "rnb"
       ]
     },
     {
@@ -1698,7 +1822,9 @@
       "notOnSpotify": false,
       "genres": [
         "indie",
-        "indie pop"
+        "indie pop",
+        "singer-songwriter",
+        "acoustic"
       ]
     },
     {
@@ -1739,7 +1865,9 @@
       "notOnSpotify": false,
       "genres": [
         "indie rock",
-        "alternative"
+        "alternative",
+        "folk",
+        "singer-songwriter"
       ]
     },
     {
@@ -1749,7 +1877,8 @@
       "notOnSpotify": false,
       "genres": [
         "post-punk",
-        "indie rock"
+        "indie rock",
+        "alternative rock"
       ]
     },
     {
@@ -1760,7 +1889,8 @@
       "genres": [
         "indie pop",
         "shoegaze",
-        "indie rock"
+        "indie rock",
+        "psychedelic"
       ]
     },
     {
@@ -1769,7 +1899,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/0HHh73DHIGrZjm3dADNdcH",
       "notOnSpotify": false,
       "genres": [
-        "synthpop"
+        "synthpop",
+        "pop"
       ]
     },
     {
@@ -1778,7 +1909,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/63tTs259cHmrkQ7lGTmDdp",
       "notOnSpotify": false,
       "genres": [
-        "indie rock"
+        "indie rock",
+        "brooklyn"
       ]
     },
     {
@@ -1787,7 +1919,8 @@
       "spotifyUrl": "https://open.spotify.com/artist/3PbVZAe3y6cQKBDdG2YASB",
       "notOnSpotify": false,
       "genres": [
-        "alternative rock"
+        "alternative rock",
+        "rock"
       ]
     },
     {
@@ -1812,7 +1945,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/6I0liQbFH687PhtMjQ4WMK",
       "notOnSpotify": false,
       "genres": [
-        "rock"
+        "rock",
+        "psychedelic rock",
+        "psychedelic",
+        "folk"
       ]
     },
     {
@@ -1823,7 +1959,8 @@
       "genres": [
         "shoegaze",
         "indie rock",
-        "dream pop"
+        "dream pop",
+        "indie pop"
       ]
     },
     {
@@ -1832,7 +1969,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/3VQXCMRCSzdKek71OkAL3Q",
       "notOnSpotify": false,
       "genres": [
-        "indie rock"
+        "indie rock",
+        "indie pop",
+        "jangle pop"
       ]
     },
     {
@@ -1841,7 +1980,10 @@
       "spotifyUrl": "https://open.spotify.com/artist/48Nf4afKn9nV8OqgnTP7dV",
       "notOnSpotify": false,
       "genres": [
-        "laptop twee"
+        "laptop twee",
+        "psychedelic",
+        "indietronica",
+        "indie"
       ]
     },
     {
@@ -1850,7 +1992,9 @@
       "spotifyUrl": "https://open.spotify.com/artist/6bR96LMvgvYgDlumR7JwPX",
       "notOnSpotify": false,
       "genres": [
-        "touhou"
+        "touhou",
+        "noise",
+        "female vocalists"
       ]
     },
     {
@@ -1869,7 +2013,8 @@
         "berri txarrak",
         "euskal rock",
         "idi gorriak",
-        "ekon"
+        "ekon",
+        "piperrak"
       ]
     }
   ]

@@ -9,9 +9,12 @@
     "preview": "vite preview",
     "test": "vitest run",
     "check:dist": "node scripts/check-dist.js",
-    "lineup": "node scripts/fetch-lineup.js",
-    "lineup:genres": "node scripts/add-genres.js",
-    "lineup:clean-genres": "node scripts/add-genres.js --clean-only"
+    "lineup": "npm run lineup:scrape && npm run lineup:spotify && npm run lineup:musicbrainz && npm run lineup:lastfm && npm run lineup:build",
+    "lineup:scrape": "node scripts/lineup-scrape.js",
+    "lineup:spotify": "node scripts/lineup-spotify.js",
+    "lineup:musicbrainz": "node scripts/lineup-musicbrainz.js",
+    "lineup:lastfm": "node scripts/lineup-lastfm.js",
+    "lineup:build": "node scripts/lineup-build.js"
   },
   "devDependencies": {
     "@fontsource/ubuntu": "^5.3.0",

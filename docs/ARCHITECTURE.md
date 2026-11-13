@@ -32,7 +32,7 @@ Written 2026-11-13 from the measurements in "What the data looks like" below. `d
 |---|---|---|---|
 | **Overrides** — hand corrections | `data/<year>/overrides.json` | The owner, by hand | Yes |
 | **State** — everything the pipeline has resolved | `data/<year>/state.json` | Pipeline only | Yes |
-| **Raw API cache** | `.cache/` | Pipeline only | No (gitignored) |
+| **Raw API cache** | `~/.cache/spotifort/` (or `$SPOTIFORT_CACHE_DIR`), outside the repository | Pipeline only | No |
 | **Public outputs** — what the site loads | `public/data/<year>/lineup.json`, `similarity.json` | Generated from state + overrides | Yes |
 
 Outputs are committed so the Cloudflare build needs no network and no secrets. `public/lineups/<year>.json` (the Phase 1 format) stays until the new experience ships, then is removed.
@@ -46,7 +46,7 @@ Outputs are committed so the Cloudflare build needs no network and no secrets. `
   "name": "Mabe Fratti & Bill Orcutt",   // exactly as the festival writes it
   "firstSeen": "2026-11-13",
   "spotify": { "ids": ["49EC…", "7yHf…"], "matchedName": "Bill Orcutt", "confidence": "exact|inexact|ambiguous|manual|none" },
-  "mbid": "…" | null,
+  "mbid": "…" | null,                    // null = MusicBrainz was asked and does not know the Spotify id
   "links": { "spotify": "https://…", "appleMusic": "…", "tidal": "…", "deezer": "…", "bandcamp": "…", "youtube": "…", "soundcloud": "…", "lastfm": "…" },
   "lastfm": { "queriedName": "Ratboys", "resolvedName": "Ratboy", "nameChanged": "cosmetic|different|no", "listeners": 2813,
               "similar": [["Waxahatchee", 0.70], …],     // up to 250, match as number
@@ -54,16 +54,34 @@ Outputs are committed so the Cloudflare build needs no network and no secrets. `
 }
 ```
 
+Fields the spec above leaves implicit, as built:
+
+- Absent means "not looked up yet", never "not found": a record with no `spotify` is unresolved and is searched again; `confidence: "none"` means a search succeeded with no result. Likewise `mbid` (absent vs `null`) and `lastfm`.
+- `lastfm` also carries `url`, and `notFound: true` (Last.fm error 6) or `skipped: true` (an override said use none). Last.fm data with `nameChanged: "different"` is **not used** by the build until an override confirms it (see Overrides).
+- `ids` holds platform artist ids read from MusicBrainz URLs: `tidal`, `appleMusic`, `deezer`.
+- `mbFor` (the Spotify id `mbid` was resolved from) and `mbFetched` (the MBID the links were read for) let the MusicBrainz stage resume and re-resolve when an id changes.
+- `mbName` is the MusicBrainz artist's name, read with the links (`mbFetched` says which MBID it belongs to). The build uses it to confirm Spotify matches (see the `unverified` rule under Public outputs).
+- Top level: `lastUpdated` (date any stage last changed data; also the date shown on the site) and `lastScrape` (`{date, added, removed}` for the review report). Removed artists keep their record with `removed: "<date>"`.
+- `spotify.confidence` is `exact` when the Spotify name equals the festival name after normalisation (so "&" vs "and" is exact), `inexact` when the top hit was used with no equal name, `ambiguous` when several share the name. `manual` is never stored in state: it is what an override produces in the build.
+
 ### Overrides
 
 Keyed by the festival's name for the artist. Any field present replaces the resolved value; `null` clears it.
 
 ```
 { "Barbara": { "spotifyIds": ["6hhm…"], "note": "owner confirmed 2026-11-13" },
-  "PLAYDEAD": { "spotifyIds": [], "lastfmName": null, "note": "not on Spotify; Last.fm autocorrects to a UK goth band" } }
+  "PLAYDEAD": { "spotifyIds": ["6rZf…"], "lastfmName": null, "unverified": true, "note": "owner decision; Last.fm autocorrects to a UK goth band" } }
 ```
 
-The seven Phase 1 `manual: true` records migrate into this file.
+Fields: `spotifyIds`, `mbid`, `lastfmName`, `links` (per platform), `ids`, `tags`, `unverified`, `note`. `unverified: true` (the only valid value) makes the build flag the artist `unverified` in `lineup.json` even though an override fixed the Spotify id, for matches the owner accepted without proof; MusicBrainz confirmation (rule below) clears it. The file is validated on every load (unknown fields, bad ids and URLs off the allow-list are errors). `lastfmName` is the name to ask Last.fm for, so confirming an autocorrect the pipeline flagged as `different` means setting `lastfmName` to the name Last.fm returned.
+
+Owner decisions 2026-11-13 on the five Phase 1 hand-corrected "not on Spotify" artists: **JÜN** (`3hV7…`), **PLAYDEAD** (`6rZf…`) and **SOOT** (`0U98…`) take the exact-name Spotify artist, accepted but unconfirmed (could be a different act with the same name), so they carry `unverified: true`; **Fatal Femmes** and **Sautrah** stay `spotifyIds: []`, kept as not on Spotify.
+
+The seven Phase 1 `manual: true` records migrated into this file, together with three Last.fm corrections found by the spike:
+
+- **Ratboys** → `lastfmName: "Ratboy"`. Last.fm redirects "Ratboys" to its misspelling "Ratboy", but that page is the same band (same bio, Chicago indie rock; tags include "wrong name") and is the one holding the similar-artist and tag data. The page literally named "Ratboys" has 202k listeners and no data.
+- **Sunbloc** → `lastfmName: null`. Autocorrect gives "Sunblock", a trance act. The real "Sunbloc" page (Albany NY, alt/punk, 1.7k listeners) has no similar artists or tags.
+- **PLAYDEAD** → `lastfmName: null`. Autocorrect gives "Play Dead", a UK goth band. The "Playdead" page (1.8k listeners) has no data.
 
 ### Public outputs
 
@@ -74,18 +92,24 @@ The seven Phase 1 `manual: true` records migrate into this file.
   "artists": [ { "n", "id", "name", "spotifyIds": [], "ids": { "tidal": "…", "appleMusic": "…" }, "links": {…},
                  "tags": ["indie rock", …],            // top 5
                  "similar": [[n, score, "direct|neighbours|tags"], …],   // up to 12 other lineup artists
-                 "unverified": true } ] }                // set when Spotify confidence is inexact or ambiguous
+                 "unverified": true } ] }                // see the rule below
 ```
 
-`similarity.json` — lazy-loaded when the visitor starts typing or connects a library; keep under 200 KB gzip.
+`unverified` is set when the Spotify match is `inexact` or `ambiguous`, or an override says `unverified: true`, **unless MusicBrainz confirms it**. Confirmed means: the chosen Spotify id resolved to a MusicBrainz artist (the `mbid` was obtained from that Spotify URL, not set by an override) and that artist's name equals the festival name after normalisation. Of 2027's 21 ambiguous matches, 16 are confirmed this way and 5 still need a human look (listed in `review.md`).
+
+`similarity.json` — lazy-loaded when the visitor starts typing or connects a library; keep under **250 KB gzip** (`BUDGET_SIMILARITY_GZIP`, shared by build and `check-dist`).
 
 ```
-{ "names": ["Big Thief", "Waxahatchee", …],     // display names of outside artists, sorted; this is also the autocomplete list
-  "keys":  ["big thief", "waxahatchee", …],     // normalised form, same order
+{ "minMatch": 0.1,                              // the cutoff the build settled on (see below)
+  "names": ["Big Thief", "Waxahatchee", …],     // display names of outside artists, sorted by normalised key; also the autocomplete list
   "edges": [[17, 70, 4, 22], …] }               // per name: flat pairs of [lineup n, score × 100]
 ```
 
-Built from each lineup artist's Last.fm similar list at **limit 250, match ≥ 0.1**. Both values are named constants in the pipeline; CI fails if either file exceeds its size budget.
+There is no `keys` array: the client derives each key with the shared `normalizeName` from `names` at load time. The build guarantees the normalised keys are unique and `names` is sorted by them, and `check-dist` verifies both.
+
+Built from each lineup artist's Last.fm similar list at **limit 250**. The match cutoff is adaptive: the build starts at `REVERSE_MIN_MATCH` (0.1) and steps up the ladder 0.1, 0.12, 0.15, 0.2, 0.25, 0.3 (`REVERSE_MIN_MATCH_LADDER`) to the first cutoff whose gzipped file fits the budget, and fails with a clear message if none does. Size is measured with a fixed gzip level (9; Node writes no timestamp), so the choice is reproducible. The cutoff used is written in the file (`minMatch`) and in `review.md`. CI fails if either file exceeds its budget. Lineup artists (by any of their normalised names) and self references are excluded; names that collide after normalisation merge, keeping the higher score and its spelling.
+
+Measured for 2027 (188 artists): cutoff 0.1, 11,005 names, 21,586 pairs, 340 KB raw, 122 KB gzip of 250 KB; `lineup.json` is 114 KB raw, 24 KB gzip of 60 KB. Headroom estimate: tripling the lineup to 564 artists with no overlap between the new artists' similar lists and the existing ones (a pessimistic case) needs cutoff 0.15 and about 211 KB gzip; at 0.1 it would be 288 KB.
 
 ## Pipeline
 
@@ -93,25 +117,28 @@ One command per stage, each incremental and safe to rerun. `npm run lineup` runs
 
 | Stage | Reads | Does | Network |
 |---|---|---|---|
-| `scrape` | Treefort lineup page | New names get a record and the next `n`; names gone from the page are reported and marked `removed`, never deleted | Treefort |
-| `spotify` | state | Spotify search for records with no Spotify result; sets `confidence` | Spotify |
-| `musicbrainz` | state | Spotify URL → MBID → platform links, 1 request/second | MusicBrainz |
-| `lastfm` | state | `getInfo`, `getSimilar` (250), `getTopTags` by name with autocorrect; classifies name changes | Last.fm |
-| `build` | state + overrides | Applies overrides, computes lineup-to-lineup similarity, writes the two public files and a review report | None |
+| `scrape` | Treefort lineup page | New names get a record and the next `n`; names gone from the page are reported and marked `removed`, never deleted. Fails under 50 names, or if it would remove more than half the lineup | Treefort |
+| `spotify` | state, overrides | Spotify search for records with no Spotify result and no override; sets `confidence`. Needs no credential when there is nothing to look up | Spotify |
+| `musicbrainz` | state, overrides | Spotify URL → MBID → platform links and ids, 1 request/second. Only https URLs on the per-platform host allow-list are stored | MusicBrainz |
+| `lastfm` | state, overrides | `getInfo`, `getSimilar` (250), `getTopTags` by name with autocorrect; classifies name changes; at most 4 requests/second | Last.fm |
+| `build` | state + overrides | Applies overrides, computes lineup-to-lineup similarity, writes the two public files, the legacy Phase 1 file, `review.md` and `sanity.md` | None |
 
 Rules that came out of Phase 1 and the spike:
 
 - An API failure never becomes a negative fact. A record is `unresolved` until a successful call says otherwise.
 - Hand corrections live only in overrides, so a full rebuild from scratch reproduces them.
-- The review report (printed, and written to `data/<year>/review.md` for the scheduled pull request) lists: inexact and ambiguous Spotify matches, Last.fm names that changed to a different artist, artists with no similar data, artists added and removed.
+- The review report (printed, and written to `data/<year>/review.md` for the scheduled pull request) lists: inexact and ambiguous Spotify matches (ambiguous ones split into confirmed by MusicBrainz and needing a human look), owner-accepted unconfirmed matches, the reverse-index cutoff used, Last.fm names that changed to a different artist, artists with no similar data, artists added and removed.
 - Retry transient non-JSON 200s from Last.fm and never cache them. Treat Last.fm `error: 6` as "not found".
-- `scripts/lib/` holds pure, tested logic; the stage scripts hold only I/O.
+- `scripts/lib/` holds pure, tested logic; the stage scripts hold only I/O. Every stage is incremental and resumable (state is saved as it goes), stops after three consecutive API failures, and never prints or caches an API key.
+- Raw API answers are cached in `~/.cache/spotifort/` (override with `SPOTIFORT_CACHE_DIR`), outside the repository so a synced folder never carries it, keyed by the request without credentials, so reruns and rebuilds on one machine are free. CI starts with an empty cache and relies on state alone.
 
 ## Scoring
 
 ### Name normalisation (one function, used by pipeline and app)
 
 Unicode NFKD → drop combining marks → lowercase → `&` becomes `and` → drop punctuation but keep all Unicode letters and digits → collapse whitespace → drop a leading `the `. When two names collide after normalisation their edges merge, keeping the higher score.
+
+Implemented in `src/core/normalize.js`, with these precisions: only Latin/Greek/Cyrillic-style combining accents are dropped (kana dakuten and Indic vowel signs are kept, otherwise が and か collapse); a few letters NFKD leaves alone are folded (ø→o, ł→l, ß→ss, æ→ae, œ→oe, đ ð þ ı); apostrophes and dots vanish inside a word (`a.m.` = `am`) while other punctuation separates words (`Jay-Z` = `Jay Z`); and a name made only of punctuation or symbols (`!!!`) keeps its characters instead of collapsing to an empty key.
 
 ### Lineup-to-lineup similarity (build time)
 
@@ -121,7 +148,9 @@ For lineup artists A and B, three signals in [0, 1]:
 - **neighbours** `g` — cosine similarity of their Last.fm similar lists as sparse vectors weighted by match. This is what makes the graph dense: two acts that share many similar artists are similar even if neither lists the other.
 - **tags** `t` — cosine similarity of their tag vectors, weighted by inverse document frequency across the lineup, so "rock" counts for little and "shoegaze" for a lot.
 
-Combined: `s = 1 − (1 − d)(1 − 0.7·g)(1 − 0.4·t)`. Keep the top 12 per artist with `s ≥ 0.08`, and record which signal contributed most. The weights are starting values: the pipeline pull request must include a printed sanity report (twenty hand-picked pairs, and the count of artists with fewer than three neighbours) and tune them if the report looks wrong.
+Combined: `s = 1 − (1 − d)(1 − 0.7·g)(1 − 0.3·t)`. Keep the top 12 per artist with `s ≥ 0.08`, and record which signal contributed most (the largest of `d`, `0.7·g`, `0.3·t`; ties go to direct, then neighbours, then tags). IDF is `ln(1 + N/df)` over the lineup, and a tag's weight is `count/100 × idf`. All of these are named constants in `scripts/lib/constants.js` and `scripts/lib/similarity.js`.
+
+**Tuned in PR 2.3.** The starting tag weight was 0.4. The sanity report (`data/<year>/sanity.md`, regenerated by every build) showed 49% of neighbour links dominated by tags, and artists such as Modest Mouse getting ten near-identical "indie rock" neighbours that outranked weaker but real Last.fm links. At 0.3 tag-dominated links fall to 40%, direct rise to 37% and neighbours to 23%, with the same number of isolated artists. The neighbour weight (0.7) and cutoff (0.08) were kept. Re-run the sanity report and re-tune if a later lineup changes the mix.
 
 ### Pool to lineup recommendations (run time)
 
@@ -158,7 +187,7 @@ src/store.js   localStorage wrapper: versioned keys, pool and Client ID only, ne
 
 - **Share link.** `#s=<year>.<base64url of a bitset over n>`; picks only. Because `n` is stable, links survive lineup updates.
 - **Listen links.** A verified link when `links` has one; otherwise a search URL on that platform built from the name and marked as a search. Every rendered URL passes a host allow-list.
-- **Persistence.** `spotifort:v1:pool` and `spotifort:v1:clientId`. A "clear my data" control removes both.
+- **Persistence.** `localStorage`, never cookies (a cookie would be sent to the server on every request and the site promises none). The Spotify setup form has a "Remember my Client ID on this device" checkbox, ticked by default; unticked, the ID lives in `sessionStorage` for the tab only. The artist pool is remembered automatically. One visible "Forget my data" control clears the pool and the Client ID together. Keys are `spotifort:v1:pool` and `spotifort:v1:clientId`. A stored Client ID is re-validated against the 32-hex-character pattern on every read. Access and refresh tokens are never stored.
 - **One HTML entry point for the app.** `/callback` is served by the same page instead of a hand-copied duplicate; the landing preview is generated from lineup data or removed.
 
 ## Live lookup — reduced role
@@ -177,6 +206,6 @@ The design interview chose "precomputed plus live". The spike shows the live par
 
 ## Known gaps
 
-- Exact-name Spotify matches for small acts have no second source to confirm them when MusicBrainz does not know the artist (47 of 183). They ship flagged `unverified` only when the name match was inexact or ambiguous; the rest rely on the owner's review of the report.
+- Exact-name Spotify matches for small acts have no second source to confirm them when MusicBrainz does not know the artist (47 of 183). They ship flagged `unverified` only when the name match was inexact or ambiguous (and MusicBrainz does not confirm it) or an override says so; the rest rely on the owner's review of the report.
 - Seven lineup artists have no Last.fm similarity and few or no tags. They can be matched but will rarely be recommended.
 - Collaboration billings resolve to one member in MusicBrainz; their platform links may point at that member.
