@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { checkHtml, checkHeaders, checkLineup, checkSecrets, checkData, dataSizes } from '../scripts/lib/check-dist.js';
 import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP } from '../scripts/lib/constants.js';
@@ -42,6 +43,23 @@ describe('checkHeaders', () => {
     expect(checkHeaders(null)).toHaveLength(1);
     expect(checkHeaders('/*\n  X-Frame-Options: DENY')).toHaveLength(1);
     expect(checkHeaders("/*\n  Content-Security-Policy: default-src 'self'")).toEqual([]);
+  });
+});
+
+describe('_headers CSP', () => {
+  const csp = readFileSync(new URL('../public/_headers', import.meta.url), 'utf8')
+    .split('\n')
+    .find((l) => /^\s*Content-Security-Policy\s*:/i.test(l));
+  const directive = (name) =>
+    csp.split(':').slice(1).join(':').split(';').map((d) => d.trim().split(/\s+/)).find((d) => d[0] === name)?.slice(1) ?? [];
+  it("has no 'unsafe-inline' and no wildcard source", () => {
+    expect(csp).toBeTruthy();
+    expect(csp).not.toContain("'unsafe-inline'");
+    expect(csp.split(/[\s;]+/)).not.toContain('*');
+    expect(csp).not.toMatch(/\*\./);
+  });
+  it('script-src lists only self and the Cloudflare beacon', () => {
+    expect(directive('script-src')).toEqual(["'self'", 'https://static.cloudflareinsights.com/beacon.min.js']);
   });
 });
 

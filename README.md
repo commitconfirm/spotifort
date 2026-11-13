@@ -22,7 +22,7 @@ Spotifort matches your Spotify Liked Songs against the [Treefort Music Fest](htt
 
 ## Privacy First
 
-All processing happens **client-side in your browser**. Spotifort has no backend, no database, no analytics, no cookies, and no tracking. Your Spotify data never leaves your device. The access token is held in memory only. Your Client ID (and, during login, the PKCE verifier and OAuth state) is kept in this tab's session storage until you close the tab. When you close the tab, everything is gone.
+All processing happens **client-side in your browser**. Spotifort has no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts are collected with Cloudflare Web Analytics. Your Spotify data never leaves your device. The access token is held in memory only. Your Client ID (and, during login, the PKCE verifier and OAuth state) is kept in this tab's session storage until you close the tab. When you close the tab, everything is gone.
 
 ## How It Works
 
