@@ -144,6 +144,9 @@ function setPool(next, { save = true, announceChange = true } = {}) {
   app.pool = next;
   if (save) store.savePool(next);
   renderPool();
+  // Recommendations need the similarity index. It is lazy, so any path that fills the pool (typing, a chip,
+  // a Spotify import arriving on a fresh /callback page load) must make sure it is on its way.
+  if (next.entries.length) ensureSimilarity();
   recompute({ announceChange });
 }
 
@@ -354,6 +357,8 @@ function setImportStatus(text, progress) {
 
 async function runImport() {
   app.importing = true;
+  // Start loading the similarity index alongside the library, so results are complete when the import ends.
+  ensureSimilarity();
   renderPool();
   setImportStatus('Connecting to Spotify…');
   try {
