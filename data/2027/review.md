@@ -3,7 +3,7 @@
 State last updated 2026-11-13. 188 artists on the lineup.
 Fix anything below by adding an entry to `data/2027/overrides.json`, then run `npm run lineup:build`.
 
-similarity.json: reverse-index cutoff 0.1 (lowest that fits the size budget), 11005 names, 121.9 KB gzip.
+similarity.json: reverse-index cutoff 0.1 (lowest that fits the size budget), 11005 names, 122.6 KB gzip.
 
 ## Lineup source
 Source this run: the vendor API. 188 performers included.
