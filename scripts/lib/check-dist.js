@@ -2,7 +2,7 @@
 // Guards what a strict CSP (script-src 'self'; style-src 'self') and the build rely on.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
-import { PLATFORMS, cleanPlatformUrl } from '../../src/core/link-hosts.js';
+import { PLATFORMS, cleanPlatformUrl } from '../../src/core/links.js';
 import { normalizeName } from '../../src/core/normalize.js';
 import { gzipSize } from './size.js';
 import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP, NEIGHBOURS_PER_ARTIST } from './constants.js';

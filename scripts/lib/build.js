@@ -3,7 +3,7 @@
  * no file I/O), so unchanged inputs give byte-identical outputs.
  */
 import { normalizeName } from '../../src/core/normalize.js';
-import { PLATFORMS, cleanPlatformUrl } from '../../src/core/link-hosts.js';
+import { PLATFORMS, cleanPlatformUrl } from '../../src/core/links.js';
 import { indexOverrides, overrideFor, unusedOverrides } from './overrides.js';
 import { effectiveSpotify, lastfmQueryName } from './state.js';
 import { computeLineupSimilarity, fitReverseIndex, roundTo } from './similarity.js';
