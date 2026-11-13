@@ -186,7 +186,6 @@ export function buildOutputs({ state, overrides }) {
     unverified: artists.filter((a) => a.unverified).length,
     confirmedByMusicbrainz: artists.filter((a) => a.confirmedByMb).length,
     reverseMinMatch: fit.minMatch,
-    similarityGzip: fit.gzip,
     similarityRaw: fit.raw,
     reverseNames: reverse.names.length,
     reversePairs: reverse.edges.reduce((s, e) => s + e.length / 2, 0),

@@ -184,6 +184,15 @@ describe('buildOutputs', () => {
   });
 });
 
+describe('committed reports', () => {
+  it('review.md and sanity.md carry no gzip sizes (they depend on the zlib version)', () => {
+    const out = buildOutputs({ state: fixture(), overrides: {} });
+    expect(out.review).not.toMatch(/gzip/i);
+    expect(out.sanity).not.toMatch(/gzip/i);
+    expect(out.review).toMatch(/similarity\.json: reverse-index cutoff .* KB raw\./);
+  });
+});
+
 describe('resolveRecord', () => {
   it('falls back to the Last.fm page for the lastfm link only when MusicBrainz had none', () => {
     const r = rec(1, 'Alpha', { lastfm: lf([], [], { queriedName: 'Alpha', resolvedName: 'Alpha', url: 'https://www.last.fm/music/Alpha' }) });

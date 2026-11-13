@@ -22,7 +22,9 @@ export const MAX_SCHEDULE_EVENTS = 5000;    // a schedule larger than this is no
 export const MAX_CONSECUTIVE_ERRORS = 3;    // abort a stage after this many failed records in a row
 
 // The public reverse index keeps only matches at or above a cutoff. The build starts at the first rung and
-// steps up this ladder until similarity.json fits its gzip budget; no rung fits = the build fails.
+// steps up this ladder until similarity.json fits its RAW byte budget (BUDGET_SIMILARITY_RAW); no rung fits =
+// the build fails. The decision uses raw bytes on purpose: gzip output differs between zlib versions, and
+// everything the build commits must come out the same on every machine.
 export const REVERSE_MIN_MATCH_LADDER = [0.1, 0.12, 0.15, 0.2, 0.25, 0.3];
 export const REVERSE_MIN_MATCH = REVERSE_MIN_MATCH_LADDER[0];
 
@@ -32,5 +34,17 @@ export const WEIGHT_NEIGHBOURS = 0.7;       // weight of the shared-similar-arti
 export const WEIGHT_TAGS = 0.3;             // weight of the IDF-weighted tag cosine
 export const TAGS_IN_OUTPUT = 5;            // tags shipped per artist in lineup.json
 
+// Size budgets. The build enforces the RAW budgets (deterministic, so safe to commit decisions made from them).
+// The gzip budgets are what visitors download; scripts/check-dist.js guards the built site against them with
+// GZIP_GUARD_HEADROOM on top, so a zlib difference of a percent or two cannot flip the check.
+//
+// BUDGET_SIMILARITY_RAW = 1000 KB: 2027 is 340 KB raw (122 KB gzip) at cutoff 0.1, about 3x headroom; the
+// pessimistic tripled lineup (docs/ARCHITECTURE.md) was 913 KB raw (211 KB gzip) at cutoff 0.15 and still fits.
+// The raw-to-gzip ratio of this file is 2.8 to 4.3, so 1000 KB raw is roughly 230 to 350 KB gzip: about the
+// 250 KB gzip target, with the ladder stepping up before a visitor-facing download gets bigger than that.
+// BUDGET_LINEUP_RAW = 256 KB: lineup.json is 129 KB raw (28 KB gzip, ratio about 4.7), 256 KB is about 55 KB gzip.
+export const BUDGET_LINEUP_RAW = 256 * 1024;
+export const BUDGET_SIMILARITY_RAW = 1000 * 1024;
 export const BUDGET_LINEUP_GZIP = 60 * 1024;
 export const BUDGET_SIMILARITY_GZIP = 250 * 1024;
+export const GZIP_GUARD_HEADROOM = 1.1;     // check-dist fails a gzip size only above budget x this

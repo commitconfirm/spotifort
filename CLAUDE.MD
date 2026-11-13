@@ -77,7 +77,7 @@ Files:
 - `data/<year>/state.json`: everything the pipeline resolved (committed, pipeline-only)
 - `data/<year>/overrides.json`: hand corrections, always respected (Spotify ids, Last.fm name, links, tags)
 - `data/<year>/review.md`, `sanity.md`: reports from the build
-- `public/data/<year>/lineup.json`, `similarity.json`: what the site loads (committed; size budgets 60 KB / 250 KB gzip, enforced by `check:dist`). `lineup.json` loads on every visit; `similarity.json` only on the first interaction with the search box, or when a saved pool exists
+- `public/data/<year>/lineup.json`, `similarity.json`: what the site loads (committed; size budgets 60 KB / 250 KB gzip, guarded by `check:dist` with 10% headroom; the build enforces raw budgets, `BUDGET_*_RAW`). `lineup.json` loads on every visit; `similarity.json` only on the first interaction with the search box, or when a saved pool exists
 - `.cache/`: raw API responses (gitignored)
 
 Matching is by platform ID (Spotify ID for a library import), by lineup number for an artist picked from autocomplete, and only otherwise by normalised name (shown as "unconfirmed"). The `[+]` expansion uses each artist's `similar` list in `lineup.json`.
@@ -90,7 +90,7 @@ npm run lineup:festival -- --refresh   # re-fetch every performer (when the fest
 ```
 Each stage is incremental and resumable. An API failure never becomes a negative fact (the artist stays unresolved and is retried); a stage stops after 3 consecutive failures. Artists gone from the lineup are marked `removed` in state and excluded from outputs. Credentials in `.env.local` (see `.env.local.example`): `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (else `SPOTIFY_ACCESS_TOKEN`, else a hidden prompt) and `LASTFM_API_KEY`. MusicBrainz needs none and runs at 1 request per second. Pure logic is in `scripts/lib/`; fix a wrong match by adding an entry to `overrides.json` and running `npm run lineup:build`. The name normaliser `src/core/normalize.js` is shared with the app.
 
-**Scheduled run:** `.github/workflows/lineup.yml` runs `npm run lineup` twice daily (14:17 and 02:43 UTC) and `workflow_dispatch`, on `main` only, with secrets `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `LASTFM_API_KEY` (missing: the job ends green with a notice). On a change it runs tests, build and `check-dist`, force-pushes branch `lineup-update` (fresh from `main`), opens or updates the PR (text from `scripts/lineup-pr-text.js`), and dispatches `ci.yml` on the branch because pushes made with `GITHUB_TOKEN` do not trigger `pull_request` runs. Never commit to `lineup-update` by hand: it is rebuilt each run.
+**Scheduled run:** `.github/workflows/lineup.yml` runs `npm run lineup` twice daily (14:17 and 02:43 UTC) and `workflow_dispatch`, on `main` only, with secrets `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `LASTFM_API_KEY` (missing: the job ends green with a notice). On a change it runs tests, build and `check-dist`, force-pushes branch `lineup-update` (fresh from `main`), opens or updates the PR (text from `scripts/lineup-pr-text.js`). GitHub holds the PR's `pull_request` CI run as `action_required` because a workflow opened it: the owner clicks "Approve and run" on the PR (the job dispatches nothing and has no `actions: write`). Everything the build commits must be environment-independent: size decisions and reports use raw bytes, never gzip. Never commit to `lineup-update` by hand: it is rebuilt each run.
 
 ## Tech Stack
 

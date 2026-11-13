@@ -8,9 +8,8 @@
  */
 import { normalizeName } from '../../src/core/normalize.js';
 import { formatCompactLines } from './json-format.js';
-import { gzipSize } from './size.js';
 import {
-  BUDGET_SIMILARITY_GZIP,
+  BUDGET_SIMILARITY_RAW,
   MIN_SIMILARITY,
   NEIGHBOURS_PER_ARTIST,
   REVERSE_MIN_MATCH,
@@ -210,27 +209,28 @@ export function buildReverseIndex(artists, opts = {}) {
 export const publicSimilarity = (reverse, minMatch) => ({ minMatch, names: reverse.names, edges: reverse.edges });
 
 /**
- * Build the reverse index at the lowest cutoff on the ladder whose gzipped public file fits the budget.
+ * Build the reverse index at the lowest cutoff on the ladder whose public file fits the raw byte budget.
+ * The decision depends only on the UTF-8 byte length of the serialised file, never on gzip, so every machine
+ * and Node version picks the same cutoff and produces the same file.
  * @param {Array} artists see the module comment
  * @param {object} [opts]
- * @param {number} [opts.budget] gzip bytes
+ * @param {number} [opts.budget] raw UTF-8 bytes of similarity.json
  * @param {number[]} [opts.ladder] ascending cutoffs to try
- * @returns {{reverse: {names: string[], keys: string[], edges: number[][]}, similarity: object, minMatch: number, gzip: number, raw: number}}
+ * @returns {{reverse: {names: string[], keys: string[], edges: number[][]}, similarity: object, minMatch: number, raw: number}}
  * @throws if even the last cutoff does not fit
  */
 export function fitReverseIndex(artists, opts = {}) {
-  const { budget = BUDGET_SIMILARITY_GZIP, ladder = REVERSE_MIN_MATCH_LADDER } = opts;
+  const { budget = BUDGET_SIMILARITY_RAW, ladder = REVERSE_MIN_MATCH_LADDER } = opts;
   let last = 0;
   for (const minMatch of ladder) {
     const reverse = buildReverseIndex(artists, { minMatch });
     const similarity = publicSimilarity(reverse, minMatch);
-    const text = formatCompactLines(similarity);
-    const gzip = gzipSize(text);
-    if (gzip <= budget) return { reverse, similarity, minMatch, gzip, raw: Buffer.byteLength(text) };
-    last = gzip;
+    const raw = Buffer.byteLength(formatCompactLines(similarity));
+    if (raw <= budget) return { reverse, similarity, minMatch, raw };
+    last = raw;
   }
   throw new Error(
-    `similarity.json does not fit its ${budget} byte gzip budget even at the highest cutoff ` +
+    `similarity.json does not fit its ${budget} byte (raw) budget even at the highest cutoff ` +
     `(${ladder[ladder.length - 1]}: ${last} bytes). Raise the budget or shorten the Last.fm similar lists.`
   );
 }

@@ -51,7 +51,8 @@ describe('summarize', () => {
     const s = state([art(1, 'A')]);
     const { title, body } = summarize({ oldState: s, newState: s, review });
     expect(title).toBe('Lineup update 2027: data refreshed, no artist changes');
-    expect(body).toContain('both required checks');
+    expect(body).toContain('Approve and run');
+    expect(body).toContain('`check` and `Cloudflare Pages`');
   });
   it('builds a title from the facts', () => {
     const { title, body } = summarize({

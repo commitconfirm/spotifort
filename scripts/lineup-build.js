@@ -8,7 +8,7 @@ import { loadOverrides, loadState, paths, writeFileAtomic } from './lib/store.js
 import { buildOutputs } from './lib/build.js';
 import { formatCompactLines } from './lib/json-format.js';
 import { gzipSize } from './lib/size.js';
-import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP } from './lib/constants.js';
+import { BUDGET_LINEUP_RAW, BUDGET_SIMILARITY_RAW } from './lib/constants.js';
 
 function writeIfChanged(path, text) {
   if (existsSync(path) && readFileSync(path, 'utf8') === text) return false;
@@ -24,8 +24,8 @@ function main() {
   const out = buildOutputs({ state, overrides: loadOverrides() });
 
   const files = [
-    [paths.lineupOut, formatCompactLines(out.lineup), BUDGET_LINEUP_GZIP],
-    [paths.similarityOut, formatCompactLines(out.similarity), BUDGET_SIMILARITY_GZIP],
+    [paths.lineupOut, formatCompactLines(out.lineup), BUDGET_LINEUP_RAW],
+    [paths.similarityOut, formatCompactLines(out.similarity), BUDGET_SIMILARITY_RAW],
     [paths.review, out.review, null],
     [paths.sanity, out.sanity, null],
   ];
@@ -33,9 +33,10 @@ function main() {
   for (const [path, text, budget] of files) {
     if (writeIfChanged(path, text)) wrote++;
     if (budget) {
-      const gz = gzipSize(text);
-      console.log(`${path.slice(path.indexOf('public/'))}: ${kb(Buffer.byteLength(text))} raw, ${kb(gz)} gzip (budget ${kb(budget)})`);
-      if (gz > budget) throw new Error(`${path} is over its gzip budget`);
+      const raw = Buffer.byteLength(text);
+      // gzip is printed for information only (it varies with the zlib version); the budget is on raw bytes.
+      console.log(`${path.slice(path.indexOf('public/'))}: ${kb(raw)} raw (budget ${kb(budget)}), ${kb(gzipSize(text))} gzip`);
+      if (raw > budget) throw new Error(`${path} is over its raw size budget`);
     }
   }
   const s = out.stats;

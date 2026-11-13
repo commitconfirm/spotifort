@@ -128,7 +128,7 @@ To fix a wrong match, add the artist to `overrides.json` (see `docs/ARCHITECTURE
 
 ### Lineup updates
 
-A scheduled GitHub Actions workflow (`.github/workflows/lineup.yml`) reruns `npm run lineup` twice a day, at 14:17 and 02:43 UTC (about 7:17 am and 7:43 pm Mountain Standard Time, one hour later in daylight time). If the data changed it runs the tests and the build, pushes the branch `lineup-update` (rebuilt from `main` each run) and opens or updates one pull request whose description carries the review report. Merge it when `check` and `Cloudflare Pages` are green. If nothing changed, nothing is pushed.
+A scheduled GitHub Actions workflow (`.github/workflows/lineup.yml`) reruns `npm run lineup` twice a day, at 14:17 and 02:43 UTC (about 7:17 am and 7:43 pm Mountain Standard Time, one hour later in daylight time). If the data changed it runs the tests and the build, pushes the branch `lineup-update` (rebuilt from `main` each run) and opens or updates one pull request whose description carries the review report. GitHub holds the checks on a pull request opened by a workflow: on the pull request click "Approve and run", then merge when `check` and `Cloudflare Pages` are green. If nothing changed, nothing is pushed.
 
 It needs three repository secrets (Settings, Secrets and variables, Actions): `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `LASTFM_API_KEY`. While any is missing the job ends green with a notice and does nothing. To run it by hand: Actions tab, "Lineup update", "Run workflow" (on `main`).
 

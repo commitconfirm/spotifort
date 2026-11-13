@@ -12,11 +12,10 @@ on:
     - cron: '43 2 * * *'
   workflow_dispatch:
 
-# Only what the job needs: push the branch, open/update the PR, dispatch CI on the branch.
+# Only what the job needs: push the branch, open/update the PR.
 permissions:
   contents: write
   pull-requests: write
-  actions: write
 
 # Runs never overlap, and a run in progress is never cancelled (a queued one waits).
 concurrency:
@@ -70,9 +69,13 @@ jobs:
 
       # The pipeline's raw API answers live outside the repository. Restore the newest cache and save a new one
       # after every run (also after a failed run, so the partial progress is kept).
+      # The directory is created up front: a run with nothing to look up writes nothing to it, and the save step
+      # would warn about a missing path.
       - name: Set cache directory
         if: steps.secrets.outputs.ready == 'true'
-        run: echo "SPOTIFORT_CACHE_DIR=${RUNNER_TEMP}/spotifort-cache" >> "$GITHUB_ENV"
+        run: |
+          mkdir -p "${RUNNER_TEMP}/spotifort-cache"
+          echo "SPOTIFORT_CACHE_DIR=${RUNNER_TEMP}/spotifort-cache" >> "$GITHUB_ENV"
 
       - name: Restore API cache
         if: steps.secrets.outputs.ready == 'true'
@@ -155,8 +158,12 @@ jobs:
           { echo "### Lineup update: changes found"; echo; echo "Title: $(cat "$RUNNER_TEMP/pr/title.txt")"; } >> "$GITHUB_STEP_SUMMARY"
 
       # The branch is rebuilt from the current main on every run, so the pull request always shows exactly
-      # "main + latest data". If the branch already holds the same data on the same main, nothing is pushed
-      # (no pointless CI run or preview deploy); the pull request text is still refreshed below.
+      # "main + latest data". If the branch already holds the same data on the same main (same tree, same parent),
+      # nothing is pushed: no pointless preview deploy, and the checks already held or run for that identical commit
+      # stay valid. The pull request text is still refreshed below.
+      #
+      # A pull request opened by a workflow gets its `pull_request` CI run held as "action_required". The owner clicks
+      # "Approve and run" on the pull request to start `check`; nothing here dispatches CI.
       - name: Commit and push branch
         id: push
         if: steps.changes.outputs.changed == 'true'
@@ -182,14 +189,6 @@ jobs:
             gitx push --force origin lineup-update
             echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
-
-      # A push made with GITHUB_TOKEN does not trigger the pull_request workflow, so ci.yml (job `check`, a required
-      # status check) would never run on this branch. workflow_dispatch is the documented exception.
-      - name: Run CI on the branch
-        if: steps.push.outputs.pushed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run ci.yml --ref lineup-update
 
       - name: Open or update pull request
         if: steps.changes.outputs.changed == 'true'
