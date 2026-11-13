@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Add genres to lineup.json using MusicBrainz API with Last.fm fallback
+ * Add genres to the year's lineup file (public/lineups/<year>.json) using MusicBrainz API with Last.fm fallback
  *
  * For each artist: try MusicBrainz first, if no genres found, try Last.fm
  *
  * Usage:
  *   node scripts/add-genres.js
+ *   node scripts/add-genres.js --clean-only   (strip non-genre tags from the existing file; no network)
  *
  * Requires:
  *   - LASTFM_API_KEY in .env.local (get one at https://www.last.fm/api/account/create)
@@ -16,9 +17,11 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
+import festival from '../festival.config.js';
+import { filterGenres, cleanLineupGenres } from './lib/genre-filter.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const LINEUP_PATH = join(__dirname, '..', 'public', 'lineup.json');
+const LINEUP_PATH = join(__dirname, '..', 'public', 'lineups', `${festival.year}.json`);
 const ENV_PATH = join(__dirname, '..', '.env.local');
 
 // Load environment variables
@@ -159,9 +162,27 @@ function saveLineup(lineup) {
 }
 
 /**
+ * Strip non-genre tags from the existing file without any network calls.
+ * Only `genres` arrays change; lastUpdated is left alone.
+ */
+function cleanOnly() {
+  const raw = JSON.parse(readFileSync(LINEUP_PATH, 'utf8'));
+  const before = raw.artists.filter(a => a.genres?.length > 0).length;
+  const { lineup, removed, emptied } = cleanLineupGenres(raw);
+  writeFileSync(LINEUP_PATH, JSON.stringify(lineup, null, 2) + '\n');
+  const after = lineup.artists.filter(a => a.genres?.length > 0).length;
+  console.log('Removed tags:');
+  for (const [tag, n] of Object.entries(removed).sort((a, b) => b[1] - a[1])) console.log(`  ${tag}: ${n}`);
+  console.log(`Artists left with no genres: ${emptied.length}`);
+  for (const name of emptied) console.log(`  ${name}`);
+  console.log(`Artists with at least one genre: ${before} -> ${after}`);
+}
+
+/**
  * Main function
  */
 async function main() {
+  if (process.argv.includes('--clean-only')) return cleanOnly();
   console.log('');
   console.log('Add Genres (MusicBrainz + Last.fm)');
   console.log('==================================');
@@ -175,7 +196,7 @@ async function main() {
   }
 
   // Load existing lineup
-  console.log('Loading lineup.json...');
+  console.log(`Loading ${LINEUP_PATH}...`);
   const lineup = JSON.parse(readFileSync(LINEUP_PATH, 'utf8'));
   const artists = lineup.artists;
 
@@ -237,7 +258,8 @@ async function main() {
       }
     }
 
-    artist.genres = genres;
+    artist.genres = filterGenres(genres, artist.name);
+    genres = artist.genres;
 
     if (genres.length > 0) {
       console.log(` → [${source}] ${genres.slice(0, 3).join(', ')}${genres.length > 3 ? '...' : ''}`);

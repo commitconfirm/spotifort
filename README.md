@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Find which artists you love are playing Treefort 2026</strong>
+  <strong>Find which artists you love are playing Treefort 2027</strong>
 </p>
 
 <p align="center">
@@ -16,11 +16,11 @@
 
 ## What Is This?
 
-Spotifort matches your Spotify Liked Songs against the [Treefort Music Fest 2026](https://treefortmusicfest.com/) lineup (March 25–29, Boise, Idaho). Connect your Spotify account and instantly see which artists you already like that are playing the festival.
+Spotifort matches your Spotify Liked Songs against the [Treefort Music Fest](https://treefortmusicfest.com/) 2027 lineup (March 31 – April 4, Boise, Idaho). Connect your Spotify account and instantly see which artists you already like that are playing the festival.
 
 ## Privacy First
 
-All processing happens **client-side in your browser**. Spotifort has no backend, no database, no analytics, no cookies, and no tracking. Your Spotify data never leaves your device. When you close the tab, everything is gone.
+All processing happens **client-side in your browser**. Spotifort has no backend, no database, no analytics, no cookies, and no tracking. Your Spotify data never leaves your device. The access token is held in memory only. Your Client ID (and, during login, the PKCE verifier and OAuth state) is kept in this tab's session storage until you close the tab. When you close the tab, everything is gone.
 
 ## How It Works
 
@@ -75,14 +75,26 @@ npm run build
 
 ### Updating Lineup Data
 
-```bash
-# Regenerate lineup.json from Treefort website + Spotify search
-# Prompts for a Spotify access token
-node scripts/fetch-lineup.js
+The festival year and dates live in one place, `festival.config.js`. Lineup data is stored per year in `public/lineups/<year>.json`.
 
-# Add genre data to existing lineup.json
-node scripts/add-genres.js
+```bash
+# Scrape the Treefort lineup page and look up new artists on Spotify.
+# Existing records are kept; only new artists are searched.
+# Uses SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET from .env.local if set
+# (see .env.local.example), else SPOTIFY_ACCESS_TOKEN, else prompts (hidden) for an access token.
+npm run lineup
+
+# Scrape only and print artist names (no Spotify, no file written)
+node scripts/fetch-lineup.js --names-only
+
+# Add genre data to the existing lineup file (needs LASTFM_API_KEY for the Last.fm fallback)
+npm run lineup:genres
+
+# Strip non-genre tags (countries, places, meta tags) from existing genres; no network
+npm run lineup:clean-genres
 ```
+
+Genre data comes from [MusicBrainz](https://musicbrainz.org/) and [Last.fm](https://www.last.fm/).
 
 ## Disclaimer
 

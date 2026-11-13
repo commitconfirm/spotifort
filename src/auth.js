@@ -1,8 +1,9 @@
 // Spotify PKCE Auth Flow
 // Access token lives in memory only — never persisted to storage
-// Code verifier and Client ID are temporarily stored in sessionStorage during auth flow only
+// Code verifier, OAuth state and Client ID are kept in sessionStorage (per tab) so they survive the redirect to Spotify
 
 import { log } from './main.js';
+import { statesMatch } from './utils.js';
 
 // Environment variable Client ID (for dev builds)
 const ENV_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -14,6 +15,7 @@ const SCOPES = 'user-library-read';
 const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const VERIFIER_KEY = 'spotifort_pkce_verifier';
+const STATE_KEY = 'spotifort_oauth_state';
 const CLIENT_ID_KEY = 'spotifort_client_id';
 
 // In-memory storage (never persisted beyond session)
@@ -201,6 +203,10 @@ export async function initiateAuth() {
   const codeVerifier = generateRandomString(64);
   sessionStorage.setItem(VERIFIER_KEY, codeVerifier);
 
+  // Random OAuth state, checked on the callback to reject forged or replayed redirects
+  const state = generateRandomString(32);
+  sessionStorage.setItem(STATE_KEY, state);
+
   // Generate code challenge
   const codeChallenge = await generateCodeChallenge(codeVerifier);
 
@@ -212,6 +218,7 @@ export async function initiateAuth() {
     scope: SCOPES,
     code_challenge_method: 'S256',
     code_challenge: codeChallenge,
+    state,
   });
 
   const authUrl = `${AUTH_URL}?${params.toString()}`;
@@ -242,9 +249,20 @@ export async function handleCallback() {
   // Handle error from Spotify
   if (error) {
     log.error('Spotify auth error:', error);
+    sessionStorage.removeItem(STATE_KEY);
     window.history.replaceState({}, document.title, '/');
     throw new Error(`Spotify authorization failed: ${error}`);
   }
+
+  // Verify OAuth state before touching the stored PKCE verifier. On mismatch the verifier and
+  // state are left in place so a forged callback cannot break a login that is in progress.
+  const storedState = sessionStorage.getItem(STATE_KEY);
+  if (!statesMatch(storedState, urlParams.get('state'))) {
+    log.error('OAuth state missing or mismatched — rejecting callback');
+    window.history.replaceState({}, document.title, '/');
+    throw new Error('Login could not be verified (state mismatch). Please start the login again from the home page.');
+  }
+  sessionStorage.removeItem(STATE_KEY);
 
   log.info('Received auth code, exchanging for token');
 
@@ -334,5 +352,6 @@ export function isAuthenticated() {
 export function clearAuth() {
   accessToken = null;
   sessionStorage.removeItem(VERIFIER_KEY);
+  sessionStorage.removeItem(STATE_KEY);
   log.info('Auth cleared');
 }
