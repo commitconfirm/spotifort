@@ -6,7 +6,7 @@
 
 - **Live site:** https://spotifort.com
 - **Repo:** https://github.com/commitconfirm/spotifort
-- **Project manager thread:** This project is managed via a dedicated Claude.ai chat thread. Architectural decisions, scope changes, and priorities are tracked there.
+- **2027 plan — read first:** `docs/PLAN-2027.md` is the source of truth for decisions, phases, working rules and status. It wins where this file disagrees. `main` is protected: all work, including docs, lands through a pull request.
 
 ## Architecture & Constraints
 

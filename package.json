@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "check:dist": "node scripts/check-dist.js",
     "lineup": "node scripts/fetch-lineup.js",
     "lineup:genres": "node scripts/add-genres.js",
     "lineup:clean-genres": "node scripts/add-genres.js --clean-only"
