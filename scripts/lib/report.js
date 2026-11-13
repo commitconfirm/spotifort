@@ -50,7 +50,7 @@ export function formatReview({ state, artists, warnings, stats }) {
   out.push(`State last updated ${state.lastUpdated ?? 'never'}. ${artists.length} artists on the lineup.`);
   out.push('Fix anything below by adding an entry to `data/' + state.year + '/overrides.json`, then run `npm run lineup:build`.');
   out.push('');
-  out.push(`similarity.json: reverse-index cutoff ${stats.reverseMinMatch} (lowest that fits the size budget), ${stats.reverseNames} names, ${(stats.similarityGzip / 1024).toFixed(1)} KB gzip.`);
+  out.push(`similarity.json: reverse-index cutoff ${stats.reverseMinMatch} (lowest that fits the size budget), ${stats.reverseNames} names, ${(stats.similarityRaw / 1024).toFixed(1)} KB raw.`);
   out.push('');
   out.push(...sourceSection(state.source));
   out.push('');

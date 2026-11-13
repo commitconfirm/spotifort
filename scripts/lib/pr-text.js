@@ -97,7 +97,7 @@ export function summarize({ oldState, newState, oldLineup, newLineup, review }) 
   lines.push('## Correcting a match', '');
   lines.push(`Do not edit the generated files by hand. Add or change an entry in \`data/${year}/overrides.json\`, then run \`npm run lineup:build\` and commit. The job always respects overrides. Note this branch is rebuilt from \`main\` on every run, so merge the overrides on \`main\` first, or push them to \`main\` through a separate pull request.`, '');
   lines.push('## Merging', '');
-  lines.push('Safe to merge when both required checks, `check` and `Cloudflare Pages`, are green.', '');
+  lines.push('GitHub holds the checks on a pull request opened by a workflow. On this pull request click **Approve and run** so they start, then merge when `check` and `Cloudflare Pages` are green.', '');
   lines.push('_Opened by the scheduled lineup workflow. Replaced in place on each run while open._');
 
   let body = lines.join('\n');

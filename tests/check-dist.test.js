@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { checkHtml, checkHeaders, checkAppPages, checkExamples, checkSecrets, checkData, dataSizes } from '../scripts/lib/check-dist.js';
-import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP } from '../scripts/lib/constants.js';
+import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP, GZIP_GUARD_HEADROOM } from '../scripts/lib/constants.js';
 
 const page = (body = '', head = '') =>
   `<!doctype html><html><head><title>t</title>${head}</head><body>${body}</body></html>`;
@@ -193,7 +193,8 @@ describe('checkData', () => {
     expect(run(m, sim()).join()).toMatch(/"tags" must be an array/);
   });
 
-  it('enforces the gzip budgets', () => {
+  it('enforces the gzip budgets (with the guard headroom on top)', () => {
+    expect(GZIP_GUARD_HEADROOM).toBeGreaterThanOrEqual(1.05);
     // Random-looking content that does not compress.
     let x = 12345;
     const noise = () => { x = (x * 1103515245 + 12345) & 0x7fffffff; return x.toString(36); };

@@ -5,7 +5,10 @@ import { join, extname } from 'node:path';
 import { PLATFORMS, cleanPlatformUrl } from '../../src/core/links.js';
 import { normalizeName } from '../../src/core/normalize.js';
 import { gzipSize } from './size.js';
-import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP, NEIGHBOURS_PER_ARTIST } from './constants.js';
+import { BUDGET_LINEUP_GZIP, BUDGET_SIMILARITY_GZIP, GZIP_GUARD_HEADROOM, NEIGHBOURS_PER_ARTIST } from './constants.js';
+
+const LINEUP_GZIP_LIMIT = Math.floor(BUDGET_LINEUP_GZIP * GZIP_GUARD_HEADROOM);
+const SIMILARITY_GZIP_LIMIT = Math.floor(BUDGET_SIMILARITY_GZIP * GZIP_GUARD_HEADROOM);
 
 const TAG_RE = /<([a-zA-Z][\w-]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>/g;
 const ATTR_RE = /([^\s"'<>/=]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/g;
@@ -213,11 +216,12 @@ export function checkData(year, lineupRaw, similarityRaw) {
     }
   }
 
-  if (lineupRaw !== null && gzipSize(lineupRaw) > BUDGET_LINEUP_GZIP) {
-    out.push(`${lname}: ${gzipSize(lineupRaw)} bytes gzipped, over the ${BUDGET_LINEUP_GZIP} byte budget`);
+  // A guard on what visitors download, not a build input: the limit is the budget plus headroom for zlib differences.
+  if (lineupRaw !== null && gzipSize(lineupRaw) > LINEUP_GZIP_LIMIT) {
+    out.push(`${lname}: ${gzipSize(lineupRaw)} bytes gzipped, over the ${BUDGET_LINEUP_GZIP} byte budget (guard limit ${LINEUP_GZIP_LIMIT})`);
   }
-  if (similarityRaw !== null && gzipSize(similarityRaw) > BUDGET_SIMILARITY_GZIP) {
-    out.push(`${sname}: ${gzipSize(similarityRaw)} bytes gzipped, over the ${BUDGET_SIMILARITY_GZIP} byte budget`);
+  if (similarityRaw !== null && gzipSize(similarityRaw) > SIMILARITY_GZIP_LIMIT) {
+    out.push(`${sname}: ${gzipSize(similarityRaw)} bytes gzipped, over the ${BUDGET_SIMILARITY_GZIP} byte budget (guard limit ${SIMILARITY_GZIP_LIMIT})`);
   }
   return out;
 }

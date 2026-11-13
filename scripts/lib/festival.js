@@ -124,7 +124,7 @@ export function parseSocialLinks(items, typeKey) {
   }
   // A performer may list several; the artist page is the one we want, then an album, then whatever else.
   const spotify = spotifyLinks.find((l) => l.kind === 'artist') ?? spotifyLinks.find((l) => l.kind === 'album') ?? spotifyLinks[0];
-  return { spotify, links: Object.fromEntries(Object.entries(links).sort(([a], [b]) => a.localeCompare(b))) };
+  return { spotify, links: Object.fromEntries(Object.entries(links).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) };
 }
 
 /**

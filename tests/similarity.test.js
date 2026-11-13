@@ -1,4 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import zlib from 'node:zlib';
+import { formatCompactLines } from '../scripts/lib/json-format.js';
 import {
   buildReverseIndex,
   fitReverseIndex,
@@ -198,7 +200,7 @@ describe('fitReverseIndex (adaptive cutoff ladder)', () => {
     return [{ n: 1, name: 'lineup', keys: ['lineup'], similar, tags: [] }];
   };
   const ladder = [0.1, 0.12, 0.15, 0.2, 0.25, 0.3];
-  const sizeAt = (artists, m) => fitReverseIndex(artists, { ladder: [m], budget: Infinity }).gzip;
+  const sizeAt = (artists, m) => fitReverseIndex(artists, { ladder: [m], budget: Infinity }).raw;
 
   it('uses the first step when it fits', () => {
     const artists = synthetic();
@@ -214,19 +216,40 @@ describe('fitReverseIndex (adaptive cutoff ladder)', () => {
     expect(sizes[0]).toBeGreaterThan(sizes[2]);
     const r = fitReverseIndex(artists, { ladder, budget: sizes[2] });
     expect(r.minMatch).toBe(0.15);
-    expect(r.gzip).toBe(sizes[2]);
+    expect(r.raw).toBe(sizes[2]);
     expect(r.similarity.names.length).toBeLessThan(3000);
+  });
+
+  it('measures the UTF-8 byte length of the serialised file', () => {
+    const artists = synthetic();
+    const r = fitReverseIndex(artists, { ladder, budget: Infinity });
+    expect(r.raw).toBe(Buffer.byteLength(formatCompactLines(r.similarity)));
   });
 
   it('is reproducible', () => {
     const artists = synthetic();
-    const a = fitReverseIndex(artists, { ladder, budget: 20000 });
-    const b = fitReverseIndex(artists, { ladder, budget: 20000 });
+    const a = fitReverseIndex(artists, { ladder, budget: 60000 });
+    const b = fitReverseIndex(artists, { ladder, budget: 60000 });
     expect(a.minMatch).toBe(b.minMatch);
-    expect(a.gzip).toBe(b.gzip);
+    expect(a.raw).toBe(b.raw);
+  });
+
+  it('does not depend on gzip: the choice is the same when zlib is stubbed to a wild size', () => {
+    const artists = synthetic();
+    const budget = sizeAt(artists, 0.15);
+    const before = fitReverseIndex(artists, { ladder, budget });
+    const spy = vi.spyOn(zlib, 'gzipSync').mockImplementation(() => Buffer.alloc(10 ** 9));
+    try {
+      const during = fitReverseIndex(artists, { ladder, budget });
+      expect(during.minMatch).toBe(before.minMatch);
+      expect(formatCompactLines(during.similarity)).toBe(formatCompactLines(before.similarity));
+      expect(spy).not.toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('throws a clear error when even the last step does not fit', () => {
-    expect(() => fitReverseIndex(synthetic(), { ladder, budget: 10 })).toThrow(/does not fit its 10 byte gzip budget even at the highest cutoff \(0\.3/);
+    expect(() => fitReverseIndex(synthetic(), { ladder, budget: 10 })).toThrow(/does not fit its 10 byte \(raw\) budget even at the highest cutoff \(0\.3/);
   });
 });
