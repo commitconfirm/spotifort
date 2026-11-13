@@ -12,7 +12,7 @@
 
 ### Client-Side Only — No Backend
 
-This is a **privacy-first** application. All processing happens in the browser. There is no server, no database, no analytics, no cookies, no tracking. The Spotify access token lives in a JS variable in memory and is never written to any storage API. The user's Client ID, the PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify) and disappear when the tab closes. Nothing is ever put in localStorage.
+This is a **privacy-first** application. All processing happens in the browser. There is no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts come from Cloudflare Web Analytics (injected at the edge by Cloudflare Pages, not in the repo or `dist/`). Spotify data never leaves the browser. The Spotify access token lives in a JS variable in memory and is never written to any storage API. The user's Client ID, the PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify) and disappear when the tab closes. Nothing is ever put in localStorage.
 
 ### Spotify API — PKCE Auth Flow
 
@@ -94,7 +94,7 @@ Each stage is incremental and resumable. An API failure never becomes a negative
 
 - **Language:** Vanilla JavaScript (no TypeScript, no framework)
 - **Build tool:** Vite 8 (`build.rolldownOptions`); tests: Vitest (`npm test`)
-- **Security headers:** `public/_headers` (strict CSP: no inline scripts, handlers or `style=` attributes anywhere in `src/`)
+- **Security headers:** `public/_headers` (strict CSP: no inline scripts, handlers or `style=` attributes anywhere in `src/`; `script-src` allows only `'self'` and `https://static.cloudflareinsights.com/beacon.min.js` for the Cloudflare Web Analytics beacon, which Cloudflare injects at the edge; `connect-src` additionally allows `https://cloudflareinsights.com`, where the beacon posts its reports — Cloudflare's docs say same-origin `/cdn-cgi/rum`, but on this project the beacon was observed posting to `cloudflareinsights.com/cdn-cgi/rum`)
 - **Styling:** Plain CSS (no Tailwind, no CSS framework)
 - **Font:** Ubuntu (self-hosted via `@fontsource/ubuntu`, weight 700 only) for headings, bold; system sans-serif for body
 - **Hosting:** Cloudflare Pages (auto-deploy from `main` branch)
@@ -166,6 +166,7 @@ A /lineup page shows the full Treefort lineup data from the year file:
 ### Required Disclaimers (visible on the page)
 
 - "Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify"
+- "Privacy: your Spotify data stays in your browser. Page visits are counted with Cloudflare Web Analytics, which uses no cookies and does not identify you." (linked to https://www.cloudflare.com/web-analytics/)
 - "Lineup data last updated: [date from the year file]" with note that lineup is manually maintained
 - "Use at your own risk — no guarantees of accuracy"
 - "FOSS — MIT License" with link to repo
