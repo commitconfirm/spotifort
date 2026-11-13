@@ -1,0 +1,208 @@
+name: Lineup update
+
+# Reruns the lineup pipeline and opens (or updates) a pull request when the data changed. The owner reviews and
+# merges it. See README.md ("Lineup updates") and docs/ARCHITECTURE.md ("Pipeline").
+
+on:
+  schedule:
+    # Twice daily, off the hour (GitHub delays runs scheduled on the hour at peak load).
+    # 14:17 UTC = 07:17 Mountain Standard / 08:17 Mountain Daylight
+    - cron: '17 14 * * *'
+    # 02:43 UTC = 19:43 Mountain Standard / 20:43 Mountain Daylight (the evening before, local time)
+    - cron: '43 2 * * *'
+  workflow_dispatch:
+
+# Only what the job needs: push the branch, open/update the PR, dispatch CI on the branch.
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+# Runs never overlap, and a run in progress is never cancelled (a queued one waits).
+concurrency:
+  group: lineup-update
+  cancel-in-progress: false
+
+jobs:
+  lineup:
+    name: lineup
+    # Scheduled runs only ever happen on the default branch; this also stops a manual run from another branch.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # No token left in .git/config while the pipeline and build scripts run; the push step supplies it itself.
+          persist-credentials: false
+
+      - name: Check for secrets
+        id: secrets
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+        run: |
+          missing=""
+          [ -n "$SPOTIFY_CLIENT_ID" ] || missing="$missing SPOTIFY_CLIENT_ID"
+          [ -n "$SPOTIFY_CLIENT_SECRET" ] || missing="$missing SPOTIFY_CLIENT_SECRET"
+          [ -n "$LASTFM_API_KEY" ] || missing="$missing LASTFM_API_KEY"
+          if [ -n "$missing" ]; then
+            msg="Lineup update skipped: Actions secret(s) not set:${missing}. Add them under Settings > Secrets and variables > Actions; the job then runs on its next schedule."
+            echo "::notice title=Lineup update skipped::${msg}"
+            { echo "### Lineup update skipped"; echo; echo "$msg"; } >> "$GITHUB_STEP_SUMMARY"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Node
+        if: steps.secrets.outputs.ready == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.secrets.outputs.ready == 'true'
+        run: npm ci
+
+      # The pipeline's raw API answers live outside the repository. Restore the newest cache and save a new one
+      # after every run (also after a failed run, so the partial progress is kept).
+      - name: Set cache directory
+        if: steps.secrets.outputs.ready == 'true'
+        run: echo "SPOTIFORT_CACHE_DIR=${RUNNER_TEMP}/spotifort-cache" >> "$GITHUB_ENV"
+
+      - name: Restore API cache
+        if: steps.secrets.outputs.ready == 'true'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/spotifort-cache
+          key: spotifort-api-${{ github.run_id }}
+          restore-keys: spotifort-api-
+
+      - name: "Pipeline: source"
+        if: steps.secrets.outputs.ready == 'true'
+        run: .github/scripts/run-stage.sh source
+
+      - name: "Pipeline: spotify"
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: .github/scripts/run-stage.sh spotify
+
+      - name: "Pipeline: musicbrainz"
+        if: steps.secrets.outputs.ready == 'true'
+        run: .github/scripts/run-stage.sh musicbrainz
+
+      - name: "Pipeline: lastfm"
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+        run: .github/scripts/run-stage.sh lastfm
+
+      - name: "Pipeline: build"
+        if: steps.secrets.outputs.ready == 'true'
+        run: .github/scripts/run-stage.sh build
+
+      - name: Save API cache
+        if: ${{ !cancelled() && steps.secrets.outputs.ready == 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/spotifort-cache
+          key: spotifort-api-${{ github.run_id }}
+
+      - name: Detect changes
+        id: changes
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          if [ -z "$(git status --porcelain -- data public/data)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            { echo "### Lineup update: no changes"; echo; echo "The pipeline ran and produced no change under \`data/\` or \`public/data/\`. Nothing was pushed. An open \`lineup-update\` pull request, if any, was left alone."; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git status --short -- data public/data
+          fi
+
+      # Never open a pull request with data that breaks the checks.
+      - name: Test
+        if: steps.changes.outputs.changed == 'true'
+        run: npm test
+
+      - name: Build
+        if: steps.changes.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Check built site
+        if: steps.changes.outputs.changed == 'true'
+        run: node scripts/check-dist.js
+
+      - name: Write pull request text
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          year="$(node -e "import('./festival.config.js').then((m) => console.log(m.default.year))")"
+          case "$year" in (*[!0-9]*|'') echo "Bad year: $year" >&2; exit 1;; esac
+          mkdir -p "$RUNNER_TEMP/pr"
+          git show "HEAD:data/${year}/state.json" > "$RUNNER_TEMP/pr/old-state.json" 2>/dev/null || : > "$RUNNER_TEMP/pr/old-state.json"
+          git show "HEAD:public/data/${year}/lineup.json" > "$RUNNER_TEMP/pr/old-lineup.json" 2>/dev/null || : > "$RUNNER_TEMP/pr/old-lineup.json"
+          node scripts/lineup-pr-text.js \
+            --old-state "$RUNNER_TEMP/pr/old-state.json" --new-state "data/${year}/state.json" \
+            --old-lineup "$RUNNER_TEMP/pr/old-lineup.json" --new-lineup "public/data/${year}/lineup.json" \
+            --review "data/${year}/review.md" \
+            --title-file "$RUNNER_TEMP/pr/title.txt" --body-file "$RUNNER_TEMP/pr/body.md"
+          { echo "### Lineup update: changes found"; echo; echo "Title: $(cat "$RUNNER_TEMP/pr/title.txt")"; } >> "$GITHUB_STEP_SUMMARY"
+
+      # The branch is rebuilt from the current main on every run, so the pull request always shows exactly
+      # "main + latest data". If the branch already holds the same data on the same main, nothing is pushed
+      # (no pointless CI run or preview deploy); the pull request text is still refreshed below.
+      - name: Commit and push branch
+        id: push
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B lineup-update
+          git add -- data public/data
+          git commit --quiet -m "$(cat "$RUNNER_TEMP/pr/title.txt")"
+
+          auth="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          echo "::add-mask::$auth"
+          gitx() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" "$@"; }
+
+          if gitx fetch --quiet --depth=2 origin lineup-update 2>/dev/null \
+             && [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse 'FETCH_HEAD^{tree}')" ] \
+             && [ "$(git rev-parse 'HEAD~1')" = "$(git rev-parse 'FETCH_HEAD~1')" ]; then
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            echo "Branch lineup-update already holds this data on this main; not pushing."
+          else
+            gitx push --force origin lineup-update
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A push made with GITHUB_TOKEN does not trigger the pull_request workflow, so ci.yml (job `check`, a required
+      # status check) would never run on this branch. workflow_dispatch is the documented exception.
+      - name: Run CI on the branch
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --ref lineup-update
+
+      - name: Open or update pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number="$(gh pr list --head lineup-update --base main --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$number" ]; then
+            url="$(gh pr create --base main --head lineup-update --title "$(cat "$RUNNER_TEMP/pr/title.txt")" --body-file "$RUNNER_TEMP/pr/body.md")"
+            echo "Opened $url"
+            { echo; echo "Opened pull request: $url"; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            gh pr edit "$number" --title "$(cat "$RUNNER_TEMP/pr/title.txt")" --body-file "$RUNNER_TEMP/pr/body.md"
+            echo "Updated pull request #$number"
+            { echo; echo "Updated pull request #$number (branch pushed: ${{ steps.push.outputs.pushed }})"; } >> "$GITHUB_STEP_SUMMARY"
+          fi
