@@ -1,5 +1,7 @@
 # Spotifort
 
+[![CI](https://github.com/commitconfirm/spotifort/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/commitconfirm/spotifort/actions/workflows/ci.yml)
+
 <p align="center">
   <img src="public/spotifort_transparent.png" alt="Spotifort Logo" width="200">
 </p>
@@ -71,7 +73,15 @@ npm run dev
 
 # Build for production
 npm run build
+
+# Run the tests
+npm test
+
+# After a build, check dist/ against the CSP and build rules
+npm run check:dist
 ```
+
+Every change lands through a pull request. CI runs the tests, build, `npm audit` (high and critical fail) and `check:dist` on each PR; `main` deploys to spotifort.com.
 
 ### Updating Lineup Data
 
