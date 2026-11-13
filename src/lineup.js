@@ -1,28 +1,23 @@
 // Lineup page — displays full Treefort lineup data
 
-/**
- * Format ISO date string to readable format
- */
-function formatDate(isoDate) {
-  try {
-    const date = new Date(isoDate);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return isoDate;
-  }
-}
+import { escapeHtml, safeSpotifyUrl, formatDate } from './utils.js';
 
 /**
- * Escape HTML special characters
+ * Render a plain list of artist names
+ * @param {Array} artists
+ * @returns {string} HTML
  */
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+function renderNameList(artists) {
+  const items = artists
+    .map(artist => `
+        <li>
+          <span class="artist-link">
+            <span class="artist-marker">[-]</span>
+            <span class="artist-name">${escapeHtml(artist.name)}</span>
+          </span>
+        </li>`)
+    .join('');
+  return `<ul class="artist-list">${items}</ul>`;
 }
 
 /**
@@ -36,8 +31,11 @@ function renderLineup(data) {
   lastUpdated.textContent = `Lineup last updated: ${formatDate(data.lastUpdated)}`;
 
   // Separate artists by Spotify availability
-  const onSpotify = data.artists.filter(a => !a.notOnSpotify && a.spotifyId);
-  const notOnSpotify = data.artists.filter(a => a.notOnSpotify || !a.spotifyId);
+  // Records with no Spotify ID and notOnSpotify false were never looked up (or the lookup failed):
+  // they are "pending", not "not found".
+  const onSpotify = data.artists.filter(a => a.spotifyId);
+  const notOnSpotify = data.artists.filter(a => !a.spotifyId && a.notOnSpotify);
+  const pending = data.artists.filter(a => !a.spotifyId && !a.notOnSpotify);
 
   // Build HTML
   let html = '<div class="lineup-grid">';
@@ -50,8 +48,9 @@ function renderLineup(data) {
   `;
 
   for (const artist of onSpotify) {
-    const link = artist.spotifyUrl
-      ? `<a href="${escapeHtml(artist.spotifyUrl)}" target="_blank" rel="noopener noreferrer" class="artist-link">
+    const spotifyUrl = safeSpotifyUrl(artist.spotifyUrl);
+    const link = spotifyUrl
+      ? `<a href="${escapeHtml(spotifyUrl)}" target="_blank" rel="noopener noreferrer" class="artist-link">
           <span class="artist-marker">[+]</span>
           <span class="artist-name">${escapeHtml(artist.name)}</span>
         </a>`
@@ -67,32 +66,34 @@ function renderLineup(data) {
     </div>
   `;
 
-  // Artists not on Spotify
+  // Artists not on Spotify (searched successfully, no result)
   html += `
     <div class="list-box">
       <h2>Artists Not Found on Spotify (${notOnSpotify.length})</h2>
   `;
 
   if (notOnSpotify.length > 0) {
-    html += '<ul class="artist-list">';
-    for (const artist of notOnSpotify) {
-      html += `
-        <li>
-          <span class="artist-link">
-            <span class="artist-marker">[-]</span>
-            <span class="artist-name">${escapeHtml(artist.name)}</span>
-          </span>
-        </li>
-      `;
-    }
-    html += '</ul>';
-  } else {
+    html += renderNameList(notOnSpotify);
+  } else if (pending.length === 0) {
     html += '<p class="empty-state">All artists were found on Spotify.</p>';
+  } else {
+    html += '<p class="empty-state">None confirmed yet.</p>';
   }
 
   html += `
     </div>
   `;
+
+  // Artists whose Spotify lookup has not completed
+  if (pending.length > 0) {
+    html += `
+    <div class="list-box">
+      <h2>Spotify Lookup Pending (${pending.length})</h2>
+      <p class="lineup-pending-note">These artists are on the festival lineup, but their Spotify lookup has not completed yet, so they cannot be matched to your library for now.</p>
+      ${renderNameList(pending)}
+    </div>
+    `;
+  }
 
   html += '</div>';
 
@@ -105,8 +106,8 @@ function renderLineup(data) {
 function showError(message) {
   const content = document.getElementById('lineup-content');
   content.innerHTML = `
-    <div class="list-box" style="text-align: center;">
-      <p style="color: #000;">Error: ${escapeHtml(message)}</p>
+    <div class="list-box centered">
+      <p class="lineup-error-text">Error: ${escapeHtml(message)}</p>
     </div>
   `;
 }
@@ -116,7 +117,7 @@ function showError(message) {
  */
 async function init() {
   try {
-    const response = await fetch('/lineup.json');
+    const response = await fetch(`/lineups/${__FESTIVAL_YEAR__}.json`);
     if (!response.ok) {
       throw new Error(`Failed to load lineup: ${response.status}`);
     }

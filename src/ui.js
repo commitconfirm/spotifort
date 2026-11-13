@@ -2,6 +2,7 @@
 
 import { log } from './main.js';
 import { setClientId, clearClientId } from './auth.js';
+import { escapeHtml, safeSpotifyUrl, formatDate } from './utils.js';
 
 // Module-level state for expansion feature
 let lineupArtists = [];
@@ -86,8 +87,8 @@ export function showSetup() {
     </div>
 
     <p class="setup-note">
-      Your Client ID is stored in memory only and will be cleared when you close this tab.
-      We never store it permanently or send it anywhere except to Spotify.
+      Your Client ID is kept in this browser tab's session storage until you close the tab, and is only sent to Spotify.
+      Your access token is held in memory only. Nothing is stored permanently.
     </p>
   `;
 
@@ -287,8 +288,9 @@ function renderListA(matchedArtists) {
     const items = matchedArtists
       .map((artist) => {
         const artistId = artist.spotifyId || '';
-        const spotifyLink = artist.spotifyUrl
-          ? `<a href="${escapeHtml(artist.spotifyUrl)}" target="_blank" rel="noopener noreferrer" class="artist-name-link">${escapeHtml(artist.name)}</a>`
+        const spotifyUrl = safeSpotifyUrl(artist.spotifyUrl);
+        const spotifyLink = spotifyUrl
+          ? `<a href="${escapeHtml(spotifyUrl)}" target="_blank" rel="noopener noreferrer" class="artist-name-link">${escapeHtml(artist.name)}</a>`
           : `<span class="artist-name">${escapeHtml(artist.name)}</span>`;
 
         return `
@@ -418,8 +420,9 @@ function renderSimilarArtists(container, similarArtists) {
   const items = similarArtists
     .map(({ artist, sharedGenres }) => {
       const genresText = sharedGenres.join(', ');
-      const nameHtml = artist.spotifyUrl
-        ? `<a href="${escapeHtml(artist.spotifyUrl)}" target="_blank" rel="noopener noreferrer" class="related-artist-link">${escapeHtml(artist.name)}</a>`
+      const spotifyUrl = safeSpotifyUrl(artist.spotifyUrl);
+      const nameHtml = spotifyUrl
+        ? `<a href="${escapeHtml(spotifyUrl)}" target="_blank" rel="noopener noreferrer" class="related-artist-link">${escapeHtml(artist.name)}</a>`
         : `<span>${escapeHtml(artist.name)}</span>`;
 
       return `<li>${nameHtml} <span class="shared-genres">(${escapeHtml(genresText)})</span></li>`;
@@ -488,37 +491,8 @@ export function showError(message) {
     // Add error message
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
-    errorDiv.style.cssText = 'color: #000; margin-top: 1rem; padding: 1rem; border: 2px solid #000; background: #fff;';
     errorDiv.textContent = `Error: ${message}`;
     authSection.appendChild(errorDiv);
   }
 }
 
-/**
- * Format ISO date string to readable format
- * @param {string} isoDate - ISO date string
- * @returns {string} - Formatted date
- */
-function formatDate(isoDate) {
-  try {
-    const date = new Date(isoDate);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return isoDate;
-  }
-}
-
-/**
- * Escape HTML special characters
- * @param {string} text - Text to escape
- * @returns {string} - Escaped text
- */
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}

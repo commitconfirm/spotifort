@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Spotifort** is a client-side web application that matches a user's Spotify Liked Songs against the Treefort Music Fest 2026 lineup (March 25–29, Boise, Idaho). It identifies which artists the user already likes that are playing the festival and suggests other Treefort artists by genre overlap.
+**Spotifort** is a client-side web application that matches a user's Spotify Liked Songs against the Treefort Music Fest 2027 lineup (March 31 – April 4, 2027, Boise, Idaho; year and dates live only in `festival.config.js`). It identifies which artists the user already likes that are playing the festival and suggests other Treefort artists by genre overlap.
 
 - **Live site:** https://spotifort.com
 - **Repo:** https://github.com/commitconfirm/spotifort
@@ -12,7 +12,7 @@
 
 ### Client-Side Only — No Backend
 
-This is a **privacy-first** application. All processing happens in the browser. There is no server, no database, no analytics, no cookies, no tracking. The Spotify access token lives in a JS variable in memory and is never persisted to localStorage, sessionStorage, or any storage API. When the user closes the tab, everything is gone.
+This is a **privacy-first** application. All processing happens in the browser. There is no server, no database, no analytics, no cookies, no tracking. The Spotify access token lives in a JS variable in memory and is never written to any storage API. The user's Client ID, the PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify) and disappear when the tab closes. Nothing is ever put in localStorage.
 
 ### Spotify API — PKCE Auth Flow
 
@@ -65,31 +65,35 @@ Dev Mode limits each app to 5 authorized users. Extended Quota Mode requires a r
 
 ### Treefort Lineup Data
 
-The lineup is stored as a **static JSON file** (`public/lineup.json`) maintained via a pipeline script. The Treefort Spotify playlist cannot be read by new Dev Mode apps, so the script uses a two-step approach:
+The lineup is stored as a **static JSON file per year** (`public/lineups/<year>.json`, year from `festival.config.js`) maintained via a pipeline script. The Treefort Spotify playlist cannot be read by new Dev Mode apps, so the script uses a two-step approach:
 
-1. Scrape artist names from the Treefort website (https://treefortmusicfest.com/lineup/) — the ground truth for who's performing
-2. For each artist, use the Spotify Search API to find their Spotify ID and genres
+1. Scrape artist names from the Treefort website (`lineupUrl` in `festival.config.js`; parses `<h3 class="lineup-artist-name">`) — the ground truth for who's performing
+2. For each artist new to the file, use the Spotify Search API to find their Spotify ID (the `genres` field is deprecated by Spotify and may be empty; use `npm run lineup:genres` to fill genres)
 
 This avoids the playlist restriction entirely and catches artists that may be on the website but not in the playlist.
 
 The JSON file includes:
 - `lastUpdated` — ISO date string, displayed on the site
+- `enriched` — `false` on a scrape-only placeholder (no Spotify data yet); set `true` by `npm run lineup`
 - `artists` — array of objects, each with: `name`, `spotifyId` (nullable), `spotifyUrl` (nullable), `genres` (array), `notOnSpotify` (boolean)
 
-Matching is done on `spotifyId`, NOT string comparison of names. Genre data is stored in lineup.json and used for the [+] expansion feature (no runtime API calls needed).
+Matching is done on `spotifyId`, NOT string comparison of names. Genre data is stored in the year file and used for the [+] expansion feature (no runtime API calls needed).
 
 **To update the lineup:**
 ```bash
-node scripts/fetch-lineup.js
+npm run lineup                                   # scrape + Spotify lookup of NEW artists only
+node scripts/fetch-lineup.js --names-only        # scrape only, no credentials needed
+npm run lineup:genres                            # add genres (MusicBrainz / Last.fm)
 ```
-Prompts for a Spotify access token, fetches website lineup, searches Spotify for each artist, extracts genres from search results, and writes public/lineup.json.
+Existing records are kept; only artists new on the website or still unresolved (`spotifyId` null and `notOnSpotify` false: never looked up, or the lookup failed) are searched. An API error never marks an artist `notOnSpotify`; after 3 consecutive errors the script writes what it has, leaves the rest unresolved and exits non-zero. `enriched` is true only when nothing is unresolved. Low-confidence matches (top hit used, name differs) get `spotifyName` and are listed in the summary. Artists no longer on the website are dropped and listed in the console summary. Credential: `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` in `.env.local` (client credentials; see `.env.local.example`), else `SPOTIFY_ACCESS_TOKEN`, else a hidden prompt. Pure logic is in `scripts/lib/lineup-pipeline.js`. Fails if fewer than 50 names are scraped.
 
 ## Tech Stack
 
 - **Language:** Vanilla JavaScript (no TypeScript, no framework)
-- **Build tool:** Vite
+- **Build tool:** Vite 8 (`build.rolldownOptions`); tests: Vitest (`npm test`)
+- **Security headers:** `public/_headers` (strict CSP: no inline scripts, handlers or `style=` attributes anywhere in `src/`)
 - **Styling:** Plain CSS (no Tailwind, no CSS framework)
-- **Font:** Ubuntu (Google Fonts) for headings, bold; system sans-serif for body
+- **Font:** Ubuntu (self-hosted via `@fontsource/ubuntu`, weight 700 only) for headings, bold; system sans-serif for body
 - **Hosting:** Cloudflare Pages (auto-deploy from `main` branch)
 - **Domain:** spotifort.com (purchased on Cloudflare)
 - **Dev server port:** 9090 (configure in `vite.config.js`)
@@ -99,9 +103,11 @@ Prompts for a Spotify access token, fetches website lineup, searches Spotify for
 ```
 spotifort/
 ├── public/
-│   └── lineup.json              # Treefort 2026 artist data (generated by script)
+│   └── lineups/<year>.json      # Treefort artist data per year (generated by script)
+├── festival.config.js           # Single source of festival year, dates, lineup URL
 ├── scripts/
-│   └── fetch-lineup.js          # Lineup pipeline: website scrape → Spotify search → genres → JSON
+│   ├── fetch-lineup.js          # Lineup pipeline: website scrape → Spotify search → JSON
+│   └── add-genres.js            # Genre enrichment (MusicBrainz / Last.fm)
 ├── src/
 │   ├── index.html               # Entry point
 │   ├── main.js                  # App initialization, orchestration
@@ -129,16 +135,16 @@ spotifort/
 4. Redirected back to spotifort.com/callback with auth code
 5. App exchanges code for access token (PKCE), stores in memory
 6. App fetches all Liked Songs (paginated, 50/request), extracts unique artist IDs
-7. App loads lineup.json, matches artist IDs
+7. App loads /lineups/<year>.json, matches artist IDs
 8. App displays matched artists in List A with [+] genre-based expansion
 
 ### [+] Expansion Feature
 
-When user clicks [+] on a matched artist, the app looks up that artist's genres from lineup.json and finds other Treefort lineup artists that share at least one genre. Results are displayed as an indented sub-list sorted by genre overlap count. This is entirely client-side using pre-fetched genre data — no runtime API calls needed.
+When user clicks [+] on a matched artist, the app looks up that artist's genres from the year file and finds other Treefort lineup artists that share at least one genre. Results are displayed as an indented sub-list sorted by genre overlap count. This is entirely client-side using pre-fetched genre data — no runtime API calls needed.
 
 ### Lineup Transparency Page
 
-A /lineup page shows the full Treefort lineup data from lineup.json:
+A /lineup page shows the full Treefort lineup data from the year file:
 - Artists on Spotify (with links)
 - Artists not found on Spotify
 - Last updated date
@@ -147,7 +153,7 @@ A /lineup page shows the full Treefort lineup data from lineup.json:
 ### UI Design
 
 - **Color scheme:** Black and white only
-- **Typography:** Ubuntu font (Google Fonts), bold, for all headings/titles. System sans-serif for body.
+- **Typography:** Ubuntu font (self-hosted), bold, for all headings/titles. System sans-serif for body.
 - **Layout:** Two-column on desktop (CSS Grid or Flexbox), single column stacked on mobile. Breakpoint ~768px.
 - **Lists:** Displayed in boxes with thick black borders
 - **List items:** Each artist is a bullet with `[+]` as a collapsible toggle for genre-based similar artists
@@ -155,7 +161,7 @@ A /lineup page shows the full Treefort lineup data from lineup.json:
 ### Required Disclaimers (visible on the page)
 
 - "Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify"
-- "Lineup data last updated: [date from lineup.json]" with note that lineup is manually maintained
+- "Lineup data last updated: [date from the year file]" with note that lineup is manually maintained
 - "Use at your own risk — no guarantees of accuracy"
 - "FOSS — MIT License" with link to repo
 - "Built with Claude Code" with link
@@ -201,20 +207,23 @@ npm run build
 # Preview production build locally
 npm run preview
 
-# Regenerate lineup data (prompts for Spotify access token)
-node scripts/fetch-lineup.js
+# Regenerate lineup data (scrape + Spotify lookup of new artists)
+npm run lineup
+
+# Add genres to the lineup file
+npm run lineup:genres
 ```
 
 ## Key Decisions Log
 
 1. **Client-side only** — privacy-first, no backend, no data storage
 2. **PKCE auth** — recommended by Spotify for SPAs, no client secret needed
-3. **Static lineup.json** — generated by pipeline script, more reliable than API-dependent approaches
+3. **Static per-year lineup file** — generated by pipeline script, more reliable than API-dependent approaches
 4. **Lineup pipeline** — scrape Treefort website for ground truth names → Spotify search for IDs → genres from search results. Avoids blocked playlist endpoint.
 5. **Match on Spotify artist IDs** — not string names, to avoid mismatches
-6. **Genre-based similar artists** — replaces Spotify's Related Artists endpoint (blocked in Dev Mode) with genre overlap from pre-fetched data in lineup.json
+6. **Genre-based similar artists** — replaces Spotify's Related Artists endpoint (blocked in Dev Mode) with genre overlap from pre-fetched data in the year file
 7. **Vanilla JS + Vite** — minimal dependencies, fast builds, simple
 8. **spotifort.com** — standalone domain, Cloudflare Pages
-9. **MVP = List A + genre expansion** — ship before Treefort starts March 25
+9. **MVP = List A + genre expansion** — ship before Treefort starts (see `festival.config.js`)
 10. **BYOCID required for public launch** — Dev Mode 5-user limit has no workaround for individual developers
 11. **Old Spotify app deleted** — new app (created post-Feb 2026) has restricted permissions. Batch artist endpoint and related artists endpoint both return 403. Cannot be recovered.

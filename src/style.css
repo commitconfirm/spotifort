@@ -1,3 +1,5 @@
+@import '@fontsource/ubuntu/latin-700.css';
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -1032,4 +1034,101 @@ footer {
 .why-cta {
   text-align: center;
   margin: 2rem 0;
+}
+
+/* 404 page */
+.error-page {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2rem;
+}
+.robot-art {
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 2rem 0;
+  white-space: pre;
+}
+.error-code {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 6rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+}
+.error-page-message {
+  font-size: 1.5rem;
+  margin: 1rem 0 2rem;
+}
+.robot-speech {
+  background: var(--black);
+  color: var(--white);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 6px 6px 0 var(--black);
+  border: 5px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+}
+.robot-speech::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 10px solid transparent;
+  border-top-color: var(--black);
+}
+.asimov-quote {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+  border-top: 1px solid #ddd;
+  padding-top: 0.75rem;
+}
+.glitch {
+  animation: glitch 0.3s infinite;
+}
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+}
+
+.error-page-back {
+  margin-top: 1.5rem;
+}
+
+/* Error box (app + lineup page) */
+.error-message {
+  color: var(--black);
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px solid var(--black);
+  background: var(--white);
+}
+
+.list-box.centered {
+  text-align: center;
+}
+
+.lineup-error-text {
+  color: var(--black);
+}
+
+.screenshot-placeholder.is-visible {
+  display: flex;
+}
+
+.lineup-pending-note {
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.lineup-credit {
+  margin-top: 0.5rem;
 }

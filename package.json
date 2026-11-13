@@ -6,10 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lineup": "node scripts/fetch-lineup.js",
+    "lineup:genres": "node scripts/add-genres.js",
+    "lineup:clean-genres": "node scripts/add-genres.js --clean-only"
   },
   "devDependencies": {
-    "dotenv": "^17.3.1",
-    "vite": "^6.4.2"
+    "@fontsource/ubuntu": "^5.3.0",
+    "dotenv": "^18.0.10",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   }
 }

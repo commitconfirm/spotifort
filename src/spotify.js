@@ -26,6 +26,11 @@ export async function fetchLikedSongs(accessToken, onProgress) {
     pageCount++;
     log.info(`Fetching page ${pageCount}...`);
 
+    // The bearer token must only ever go to Spotify's API host
+    if (!url.startsWith('https://api.spotify.com/')) {
+      throw new Error('Refusing to send the access token to an unexpected host');
+    }
+
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,

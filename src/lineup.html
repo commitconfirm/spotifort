@@ -3,17 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Treefort 2026 Lineup — Spotifort</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet" />
+    <title>Treefort %FESTIVAL_YEAR% Lineup — Spotifort</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="icon" type="image/png" href="/spotifort_transparent.png" />
   </head>
   <body>
     <div id="app">
       <header>
-        <h1>Treefort 2026 Lineup</h1>
+        <h1>Treefort %FESTIVAL_YEAR% Lineup</h1>
         <p class="tagline">Full lineup data used for matching</p>
       </header>
 
@@ -22,9 +19,14 @@
           <p class="back-link"><a href="/">← Back to Spotifort</a></p>
           <p id="last-updated" class="lineup-meta"></p>
           <p class="lineup-note">
-            This lineup is sourced from the official Treefort Music Fest website and cross-referenced
-            with the official Treefort Spotify playlist. Artists not found on the playlist are listed
-            separately and cannot be matched against your library.
+            Artist names are read from the official Treefort Music Fest lineup page. Each name is
+            looked up with Spotify's search, and some matches are corrected by hand. Artists with no
+            confirmed Spotify match are listed separately and cannot be matched against your library.
+            Genres come from MusicBrainz and Last.fm.
+          </p>
+          <p class="lineup-note lineup-credit">
+            Genre data from <a href="https://musicbrainz.org/" target="_blank" rel="noopener noreferrer">MusicBrainz</a>
+            and <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>.
           </p>
         </section>
 
