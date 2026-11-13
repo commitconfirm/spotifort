@@ -61,6 +61,14 @@ describe('_headers CSP', () => {
   it('script-src lists only self and the Cloudflare beacon', () => {
     expect(directive('script-src')).toEqual(["'self'", 'https://static.cloudflareinsights.com/beacon.min.js']);
   });
+  it('connect-src lists only self, Spotify and the Cloudflare beacon report host', () => {
+    expect(directive('connect-src')).toEqual([
+      "'self'",
+      'https://api.spotify.com',
+      'https://accounts.spotify.com',
+      'https://cloudflareinsights.com',
+    ]);
+  });
 });
 
 describe('checkLineup', () => {

@@ -94,7 +94,7 @@ Each stage is incremental and resumable. An API failure never becomes a negative
 
 - **Language:** Vanilla JavaScript (no TypeScript, no framework)
 - **Build tool:** Vite 8 (`build.rolldownOptions`); tests: Vitest (`npm test`)
-- **Security headers:** `public/_headers` (strict CSP: no inline scripts, handlers or `style=` attributes anywhere in `src/`; `script-src` allows only `'self'` and `https://static.cloudflareinsights.com/beacon.min.js` for the Cloudflare Web Analytics beacon, which Cloudflare injects at the edge; its reports go to same-origin `/cdn-cgi/rum`, covered by `connect-src 'self'`)
+- **Security headers:** `public/_headers` (strict CSP: no inline scripts, handlers or `style=` attributes anywhere in `src/`; `script-src` allows only `'self'` and `https://static.cloudflareinsights.com/beacon.min.js` for the Cloudflare Web Analytics beacon, which Cloudflare injects at the edge; `connect-src` additionally allows `https://cloudflareinsights.com`, where the beacon posts its reports — Cloudflare's docs say same-origin `/cdn-cgi/rum`, but on this project the beacon was observed posting to `cloudflareinsights.com/cdn-cgi/rum`)
 - **Styling:** Plain CSS (no Tailwind, no CSS framework)
 - **Font:** Ubuntu (self-hosted via `@fontsource/ubuntu`, weight 700 only) for headings, bold; system sans-serif for body
 - **Hosting:** Cloudflare Pages (auto-deploy from `main` branch)
