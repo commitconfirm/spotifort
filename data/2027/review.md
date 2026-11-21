@@ -1,18 +1,18 @@
 # Lineup review, 2027
 
-State last updated 2026-11-13. 188 artists on the lineup.
+State last updated 2026-11-21. 189 artists on the lineup.
 Fix anything below by adding an entry to `data/2027/overrides.json`, then run `npm run lineup:build`.
 
-similarity.json: reverse-index cutoff 0.1 (lowest that fits the size budget), 11005 names, 339.7 KB raw.
+similarity.json: reverse-index cutoff 0.1 (lowest that fits the size budget), 11032 names, 340.5 KB raw.
 
 ## Lineup source
-Source this run: the vendor API. 188 performers included.
+Source this run: the vendor API. 189 performers included.
 Excluded by status (0): none.
 Excluded by tag, not matched against music services (0):
 - none
 
 ## Spotify ids by source
-override 4, festival artist link 179, festival album link 2, search 3, none 0
+override 4, festival artist link 180, festival album link 2, search 3, none 0
 
 ## Festival link differs from earlier search result (0)
 The festival link wins. Check the earlier result was wrong, not the festival link.
@@ -29,8 +29,8 @@ The festival link wins. Check the earlier result was wrong, not the festival lin
 ## Fallback feed: not fetched (0); artists with neither a slug nor festival data (0)
 - none
 
-## Added (lineup update of 2026-11-13): 0
-- none
+## Added (lineup update of 2026-11-21): 1
+- underscores
 
 ## Removed from the festival lineup: 0
 - none
