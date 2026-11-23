@@ -24,7 +24,7 @@ This is a **privacy-first** application. All processing happens in the browser. 
 
 ### Spotify API Restrictions (February 2026 Dev Mode Changes)
 
-This app was created after February 11, 2026 and is subject to the new Dev Mode restrictions. The app owner must have Spotify Premium. Each developer gets one Client ID with a maximum of 5 authorized users.
+This app was created after February 11, 2026 and is subject to the new Dev Mode restrictions. The app owner must have Spotify Premium. Each Client ID allows a maximum of 5 authorized users. A developer account may hold 25 Client IDs (since July 2026; it was 1). Request quota is counted per developer account, shared across its Dev Mode Client IDs, in buckets whose sizes Spotify does not publish. A visitor's own Client ID belongs to their own account, so their quota is their own.
 
 **Endpoints confirmed WORKING for this project:**
 
@@ -33,12 +33,15 @@ This app was created after February 11, 2026 and is subject to the new Dev Mode 
 | `GET /me/tracks` | Fetch user's Liked Songs | Paginated, 50/request. Core matching feature. |
 | `GET /me/top/{type}` | User's top artists | `user-top-read`; medium_term and long_term, 50 each. Part of the library import. |
 | `GET /me/following` | User's followed artists | `user-follow-read`; `type=artist`, cursor paging (`artists.cursors.after`), 50/page. Part of the library import. |
-| `GET /artists/{id}` | Individual artist metadata + genres | Works one at a time. Batch endpoint is blocked. |
-| `GET /artists/{id}/albums` | Artist's albums | Available but not currently used. |
-| `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. |
-| `GET /me/playlists` | User's own playlists | Available but not currently used. |
-| `GET /me` | Current user profile | Available but not currently used. |
-| `GET /tracks/{id}` | Individual track metadata | Available but not currently used. |
+| `GET /artists/{id}` | Individual artist metadata | Works one at a time. Batch endpoint is blocked. `genres` is absent from the response (deprecated), as are `popularity` and `followers`; `images` is present. |
+| `GET /artists/{id}/albums` | Artist's albums | `limit` max 10 (default 5; 11 returns 400). Returned grouped by type (albums, then singles, each newest first), not newest first overall. Not currently used. |
+| `GET /albums/{id}/tracks` | Tracks of one album | `limit` max 50. Live-tested 2026-11-23, every track carried the artist's id. Not currently used. |
+| `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. `limit` max 10 (default 5; 11 returns 400). `type=track&q=artist:"Name"` works with a user token and with client credentials. Has its own quota: about 300 searches in a day from one developer account gave 429 `QUOTA_EXCEEDED` with a `Retry-After` of about 23 hours (live-tested 2026-11-23; the figure is one day's count). The scheduled lineup job's artist search shares that quota. |
+| `POST /me/playlists` | Create a playlist | Live-tested 2026-11-23 with `playlist-modify-private` alone: 201. `public:false` only keeps the playlist off the profile; the API then reports `public:true`, the Spotify app labels it "Public Playlist" and anyone with the link can open it. A private playlist cannot be made through the API. Not yet used by the app. |
+| `POST /playlists/{id}/items` | Add tracks to a playlist | Live-tested 2026-11-23: 201 with 13 URIs; max 100 per request. Not yet used by the app. |
+| `GET /me/playlists` | User's own playlists | Returned 403 "Insufficient client scope" in every live test, even with `playlist-read-private` and `playlist-read-collaborative` granted (unexplained). Not currently used. |
+| `GET /me` | Current user profile | `country`, `email`, `explicit_content`, `followers` and `product` are deprecated or removed; `account_id` was added in May 2026. Works under `playlist-modify-private`. Not currently used. |
+| `GET /tracks/{id}` | Individual track metadata | Not currently used. |
 
 **Endpoints confirmed BLOCKED (403) for new Dev Mode apps:**
 
@@ -50,11 +53,18 @@ This app was created after February 11, 2026 and is subject to the new Dev Mode 
 | `GET /tracks` (batch) | Bulk track metadata |
 | `GET /recommendations` | Music recommendations |
 | `GET /audio-features` | Track analysis |
-| `GET /playlists/{id}/tracks` (others' playlists) | Reading the Treefort Spotify playlist |
+| `GET /playlists/{id}/items` (others' playlists; renamed from `/tracks`, the old path is deprecated) | Reading the Treefort Spotify playlist |
 | `GET /users/{user_id}/playlists` | Other users' playlists |
+| `POST /users/{user_id}/playlists` | Creating a playlist (old endpoint; use `POST /me/playlists`) |
 | `GET /browse/featured-playlists` | Browse features |
 
-**Removed response fields (across all endpoints):** `popularity`, `followers`, `available_markets`, `email`, `country`.
+**Removed or deprecated response fields (across all endpoints):** `popularity`, `followers`, `available_markets`, `email`, `country`, `linked_from`, `label`, `album_group`, `explicit_content`, `product`, `preview_url` (absent live), artist `genres`.
+
+**Note on the blocked list:** the 403s above were seen live. Some of these (`GET /recommendations`, `GET /audio-features`, `GET /browse/featured-playlists`, related artists) are not in Spotify's February 2026 removal list and their reference pages say only "Deprecated"; treat the live result as the Dev Mode truth.
+
+**Library endpoints:** `PUT/DELETE /me/library` and `GET /me/library/contains` replace the old save, remove and follow endpoints; `PUT /me/following` is deprecated. The app does not use them.
+
+**Refresh tokens:** PKCE refresh needs no secret, but a refresh token expires 6 months after the user authorised and refreshing does not extend it (new apps from 18 June 2026). The app keeps no refresh token; the token lives in memory only.
 
 **Note on `external_ids`:** These were briefly removed in February 2026 but reverted in the March 2026 changelog and remain available.
 
@@ -133,8 +143,10 @@ spotifort/
 │   └── style.css                # All styles
 ├── tests/                       # Vitest
 ├── docs/                        # PLAN-2027.md, ARCHITECTURE.md, evaluations
+│   └── research/                # Dated research reports (Spotify availability, playlist live tests)
 ├── .env.local                   # Pipeline credentials; optional VITE_SPOTIFY_CLIENT_ID for dev (gitignored)
 ├── CLAUDE.md
+├── CONTEXT.md                   # Glossary of domain terms
 ├── LICENSE                      # MIT
 ├── README.md
 ├── package.json
@@ -201,7 +213,8 @@ These are tracked in `docs/PLAN-2027.md` and should NOT be built without a decis
 
 - **Tidal** source (proof of concept first), as a sibling of `src/sources/spotify.js`
 - **Live Last.fm lookup** for typed names missing from the static index (optional Pages Function)
-- **Playlist creation**, **schedule/venue data**
+- **Playlist creation** is decided and designed in `docs/PLAN-2027.md` (section "Playlist creation") and **not yet built**; research in `docs/research/spotify-playlist-live-tests-2026-11.md`
+- **Schedule/venue data**
 
 ## Commands
 
