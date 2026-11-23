@@ -195,9 +195,11 @@ src/core/      pure logic, no DOM, no fetch — all unit tested
   recommend.js        pool × lineup × similarity → ranked list with reasons; recommendByTags, listTags
   share.js            picks ↔ URL fragment
   links.js            URL allow-list (shared with scripts/), verified link or generated search link per platform
+  playlist.js         playlist plan (who gets tracks, who is left out), own-track choice, newest releases, name, batching
 src/data/load.js lazy, memoised loaders for the two JSON files
 src/sources/   one module per library source, same interface
   spotify.js     { id, label, isAvailable(), connect(clientId), isConnected(), fetchArtists(onProgress) → { items: [{ name, ids, weight }], songs, missing } }
+  spotify-playlist.js  createPlaylist({ api, plan, year, now, onProgress }) → result; lookupTracks (injected API client, no storage, no DOM)
 src/app/state.js  pure view-model logic (no DOM): results, reasons, bands, suggestions, examples, share, diagnostics
 src/ui/        rendering and events only
 src/store.js   localStorage wrapper: versioned keys; pool, listen service and Client ID only, never tokens
@@ -227,6 +229,14 @@ Built in PR 2.4 (everything above except `src/sources/` and `src/ui/`), with the
 - **"No data" messages** are shown only for hand-added artists that the index has nothing for (in practice, ones restored from an older saved pool), never for library imports.
 - **Examples.** `exampleArtists` in `festival.config.js` (injected at build time as `__EXAMPLE_ARTISTS__`). Before the similarity index loads they are checked against the lineup only, then re-checked; any that resolve to nothing are dropped. `tests/examples.test.js` and `check-dist` fail on a stale example.
 - **Diagnostics.** In development builds every recompute logs its time, pool size, the number of pool artists that contributed, and the score distribution (min, median, max, count per band, whether rank bands are in use).
+
+### As built in PR B (playlist engine)
+
+Not loaded by `src/main.js` or any page yet, so there is no visible change. The built output differs only in the main JavaScript bundle (30.01 kB to 30.40 kB, with its hashed name in `index.html` and `callback.html`), because `createApi`, which the library import already uses, gained POST and quota detection; the two playlist modules are not in the bundle. The interface comes in PR C.
+
+- **Requests.** Per artist, 4 in flight: `GET /search?type=track&limit=10&q=artist:"NAME"`. With fewer than 3 own tracks: `GET /artists/{id}/albums?include_groups=album,single&limit=10`, then `GET /albums/{id}/tracks` for up to the 3 newest releases, for each of the artist's Spotify ids. All lookups finish, then `POST /me/playlists` (`public: false`), then `POST /playlists/{id}/items`, 100 at a time, in order. Progress goes to a callback (`lookup`, `create`, `add`).
+- **Errors.** A POST is retried only on a 429; a 5xx or no answer is not, because the request may have been carried out. Only a 429 with `reason: "QUOTA_EXCEEDED"` (kind `quota`, never retried, applied to every request through `createApi`) switches the remaining artists to the newest-releases route, or stops that route. Any other failed lookup request affects that artist only. A 401, a 403 or no connection stops everything before anything is created. With no track found, nothing is created (`empty`). A failure while adding resolves as `incomplete`, with the link and what was added.
+- **Result.** `status` (`created`, `incomplete`, `empty`), `url`, `playlistId`, `name`, `trackCount`, `artistCount`, `plannedTracks`, `leftOut` (`n`, `name`, `reason`), `newestReleases` (`n`, `name`, `searched`), `searchExhausted`, `releasesExhausted`, `error`.
 
 ## Live lookup — reduced role
 

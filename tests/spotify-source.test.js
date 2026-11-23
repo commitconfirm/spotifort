@@ -86,6 +86,74 @@ describe('createApi', () => {
     });
     expect(await createApi({ token: 'tok', fetch, sleep: noSleep }).get('me')).toEqual({ fine: true });
   });
+  describe('post and quota', () => {
+    const QUOTA = { error: { status: 429, message: 'Too many requests', reason: 'QUOTA_EXCEEDED' } };
+    const noBody = (status) => ({ ok: status >= 200 && status < 300, status, headers: { get: () => null }, json: async () => { throw new SyntaxError('empty'); } });
+
+    it('post sends method, JSON body and both headers to the right URL', async () => {
+      const fetch = vi.fn(async () => json({ id: 'PL1' }, 201));
+      const out = await createApi({ token: 'tok', fetch, sleep: noSleep }).post('me/playlists', { name: 'x', public: false });
+      expect(out).toEqual({ id: 'PL1' });
+      expect(fetch).toHaveBeenCalledTimes(1);
+      const [url, init] = fetch.mock.calls[0];
+      expect(url).toBe('https://api.spotify.com/v1/me/playlists');
+      expect(init.method).toBe('POST');
+      expect(init.headers).toEqual({ Authorization: 'Bearer tok', 'Content-Type': 'application/json' });
+      expect(JSON.parse(init.body)).toEqual({ name: 'x', public: false });
+    });
+    it('post refuses other hosts without calling fetch', async () => {
+      const fetch = vi.fn(async () => json({}, 201));
+      const api = createApi({ token: 'tok', fetch, sleep: noSleep });
+      await expect(api.post('https://evil.example/x', {})).rejects.toThrow(/unexpected host/);
+      await expect(api.post('//evil.example/x', {})).rejects.toThrow(/unexpected host/);
+      expect(fetch).not.toHaveBeenCalled();
+    });
+    it('post retries a 429 (waiting Retry-After) but not a 503', async () => {
+      let n = 0;
+      const fetch = vi.fn(async () => (++n === 1 ? json({}, 429, { 'Retry-After': '2' }) : json({ ok: 1 }, 201)));
+      const sleep = vi.fn(async () => {});
+      expect(await createApi({ token: 'tok', fetch, sleep }).post('me/playlists', {})).toEqual({ ok: 1 });
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(sleep).toHaveBeenCalledTimes(1);
+      expect(sleep).toHaveBeenNthCalledWith(1, 2000);
+    });
+    it('post does not retry a 503 (it may have been carried out)', async () => {
+      const fetch = vi.fn(async () => json({}, 503));
+      const sleep = vi.fn(async () => {});
+      await expect(createApi({ token: 'tok', fetch, sleep }).post('me/playlists', {})).rejects.toMatchObject({ kind: 'http', status: 503 });
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(sleep).not.toHaveBeenCalled();
+    });
+    it('post does not retry a rejected fetch', async () => {
+      const fetch = vi.fn(async () => { throw new TypeError('offline'); });
+      const sleep = vi.fn(async () => {});
+      await expect(createApi({ token: 'tok', fetch, sleep }).post('me/playlists', {})).rejects.toMatchObject({ kind: 'network' });
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(sleep).not.toHaveBeenCalled();
+    });
+    it('post resolves null on an empty body', async () => {
+      const api = createApi({ token: 'tok', fetch: async () => noBody(201), sleep: noSleep });
+      expect(await api.post('playlists/x/items', { uris: [] })).toBeNull();
+    });
+    for (const method of ['get', 'post']) {
+      it(`a QUOTA_EXCEEDED 429 throws kind quota at once for ${method}`, async () => {
+        const fetch = vi.fn(async () => json(QUOTA, 429, { 'Retry-After': '82000' }));
+        const sleep = vi.fn(async () => {});
+        const api = createApi({ token: 'tok', fetch, sleep });
+        await expect(method === 'get' ? api.get('search?q=x') : api.post('me/playlists', {})).rejects.toMatchObject({ kind: 'quota', status: 429, message: 'Spotify is busy right now. Please try again in a minute.' });
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(sleep).not.toHaveBeenCalled();
+      });
+    }
+    it('a 429 whose body is not JSON still retries as a plain rate limit', async () => {
+      let n = 0;
+      const fetch = vi.fn(async () => (++n === 1 ? noBody(429) : json({ ok: 1 })));
+      const sleep = vi.fn(async () => {});
+      expect(await createApi({ token: 'tok', fetch, sleep }).get('me')).toEqual({ ok: 1 });
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(sleep).toHaveBeenCalledWith(1000);
+    });
+  });
   it('clamps Retry-After', () => {
     expect(retryAfterSeconds('5')).toBe(5);
     expect(retryAfterSeconds('9999')).toBe(30);

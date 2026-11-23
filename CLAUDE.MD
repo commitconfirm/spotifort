@@ -34,11 +34,11 @@ This app was created after February 11, 2026 and is subject to the new Dev Mode 
 | `GET /me/top/{type}` | User's top artists | `user-top-read`; medium_term and long_term, 50 each. Part of the library import. |
 | `GET /me/following` | User's followed artists | `user-follow-read`; `type=artist`, cursor paging (`artists.cursors.after`), 50/page. Part of the library import. |
 | `GET /artists/{id}` | Individual artist metadata | Works one at a time. Batch endpoint is blocked. `genres` is absent from the response (deprecated), as are `popularity` and `followers`; `images` is present. |
-| `GET /artists/{id}/albums` | Artist's albums | `limit` max 10 (default 5; 11 returns 400). Returned grouped by type (albums, then singles, each newest first), not newest first overall. Not currently used. |
-| `GET /albums/{id}/tracks` | Tracks of one album | `limit` max 50. Live-tested 2026-11-23, every track carried the artist's id. Not currently used. |
-| `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. `limit` max 10 (default 5; 11 returns 400). `type=track&q=artist:"Name"` works with a user token and with client credentials. Has its own quota: about 300 searches in a day from one developer account gave 429 `QUOTA_EXCEEDED` with a `Retry-After` of about 23 hours (live-tested 2026-11-23; the figure is one day's count). The scheduled lineup job's artist search shares that quota. |
-| `POST /me/playlists` | Create a playlist | Live-tested 2026-11-23 with `playlist-modify-private` alone: 201. `public:false` only keeps the playlist off the profile; the API then reports `public:true`, the Spotify app labels it "Public Playlist" and anyone with the link can open it. A private playlist cannot be made through the API. Not yet used by the app. |
-| `POST /playlists/{id}/items` | Add tracks to a playlist | Live-tested 2026-11-23: 201 with 13 URIs; max 100 per request. Not yet used by the app. |
+| `GET /artists/{id}/albums` | Artist's albums | `limit` max 10 (default 5; 11 returns 400). Returned grouped by type (albums, then singles, each newest first), not newest first overall. Used by the playlist engine, which the site does not load yet. |
+| `GET /albums/{id}/tracks` | Tracks of one album | `limit` max 50. Live-tested 2026-11-23, every track carried the artist's id. Used by the playlist engine, which the site does not load yet. |
+| `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. `limit` max 10 (default 5; 11 returns 400). `type=track&q=artist:"Name"` works with a user token and with client credentials. Has its own quota: about 300 searches in a day from one developer account gave 429 `QUOTA_EXCEEDED` with a `Retry-After` of about 23 hours (live-tested 2026-11-23; the figure is one day's count). The scheduled lineup job's artist search shares that quota. The playlist engine uses track search, which the site does not load yet. |
+| `POST /me/playlists` | Create a playlist | Live-tested 2026-11-23 with `playlist-modify-private` alone: 201. `public:false` only keeps the playlist off the profile; the API then reports `public:true`, the Spotify app labels it "Public Playlist" and anyone with the link can open it. A private playlist cannot be made through the API. Used by the playlist engine, which the site does not load yet. |
+| `POST /playlists/{id}/items` | Add tracks to a playlist | Live-tested 2026-11-23: 201 with 13 URIs; max 100 per request. Used by the playlist engine, which the site does not load yet. |
 | `GET /me/playlists` | User's own playlists | Returned 403 "Insufficient client scope" in every live test, even with `playlist-read-private` and `playlist-read-collaborative` granted (unexplained). Not currently used. |
 | `GET /me` | Current user profile | `country`, `email`, `explicit_content`, `followers` and `product` are deprecated or removed; `account_id` was added in May 2026. Works under `playlist-modify-private`. Not currently used. |
 | `GET /tracks/{id}` | Individual track metadata | Not currently used. |
@@ -130,9 +130,10 @@ spotifort/
 │   ├── index.html               # The app page (the build copies it to callback.html for /callback)
 │   ├── main.js                  # Bootstrap and orchestration (normal / shared / callback states)
 │   ├── app/state.js             # Pure view-model logic: results, reasons, bands, suggestions, share, diagnostics
-│   ├── core/                    # Pure engine: normalize, pool, match, recommend, share, links, search, indexes
+│   ├── core/                    # Pure engine: normalize, pool, match, recommend, share, links, search, indexes, playlist
 │   ├── data/load.js             # Memoised loaders for the two data files
 │   ├── sources/spotify.js       # Spotify library source (paging, retries, weights; injected fetch)
+│   ├── sources/spotify-playlist.js # Playlist engine: track lookup and playlist creation (injected API client; not loaded by the site yet)
 │   ├── ui/                      # Rendering and events only (combobox, rows, results, pool, genre, share, service picker)
 │   ├── auth.js                  # Spotify PKCE flow; token in memory only
 │   ├── store.js                 # The only persistence: pool, service, Client ID
@@ -213,7 +214,7 @@ These are tracked in `docs/PLAN-2027.md` and should NOT be built without a decis
 
 - **Tidal** source (proof of concept first), as a sibling of `src/sources/spotify.js`
 - **Live Last.fm lookup** for typed names missing from the static index (optional Pages Function)
-- **Playlist creation** is decided and designed in `docs/PLAN-2027.md` (section "Playlist creation") and **not yet built**; research in `docs/research/spotify-playlist-live-tests-2026-11.md`
+- **Playlist creation** is decided and designed in `docs/PLAN-2027.md` (section "Playlist creation") and the engine is built (`src/core/playlist.js`, `src/sources/spotify-playlist.js`) but not loaded by the site; the interface is not yet built; research in `docs/research/spotify-playlist-live-tests-2026-11.md`
 - **Schedule/venue data**
 
 ## Commands
