@@ -119,10 +119,11 @@ export function isVersionTitle(title) {
  * Picks up to `limit` own tracks, one per song, listed-first tracks and plain titles preferred.
  * @param {unknown} candidates Spotify track objects
  * @param {string[]} spotifyIds the lineup artist's Spotify ids
- * @param {{ limit?: number, already?: { id: string, name: string }[] }} [options]
+ * @param {{ limit?: number, already?: { id: string, name: string }[], exclude?: Set<string>|null }} [options]
+ *   `exclude`: track ids that must not be chosen (for example tracks another artist has already been given)
  * @returns {{ id: string, name: string }[]} `already` first, then new tracks, at most `limit` in all
  */
-export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ARTIST, already = [] } = {}) {
+export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ARTIST, already = [], exclude = null } = {}) {
   const have = Array.isArray(already) ? already.filter((t) => t && typeof t === 'object') : [];
   if (have.length >= limit) return have.slice(0, limit);
   const ids = new Set(Array.isArray(spotifyIds) ? spotifyIds.filter(isSpotifyId) : []);
@@ -133,7 +134,7 @@ export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ART
   const seenIds = new Set();
   list.forEach((t, pos) => {
     if (!t || typeof t !== 'object' || !isSpotifyId(t.id) || typeof t.name !== 'string' || !Array.isArray(t.artists)) return;
-    if (seenIds.has(t.id) || usedIds.has(t.id)) return;
+    if (seenIds.has(t.id) || usedIds.has(t.id) || (exclude && exclude.has(t.id))) return;
     seenIds.add(t.id);
     const artistIds = t.artists.map((a) => a?.id);
     if (!artistIds.some((id) => ids.has(id))) return;
@@ -154,6 +155,35 @@ export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ART
     out.push({ id: g.best.id, name: g.best.name });
   }
   return out;
+}
+
+/**
+ * Shares tracks out between lineup artists, in the order given (page order), so that the result does not depend on
+ * which lookup answered first. Two passes: first every artist takes up to `limit` of its own tracks from its search
+ * results, each track going to the first artist that wants it; then, still in order, an artist still short takes
+ * tracks from its newest-releases items that no one has taken. Finally `shared` lists own tracks the artist has but
+ * an earlier artist holds (a duet): they are not in `tracks`, so the artist is topped up from elsewhere first, but
+ * they show that the artist does have tracks on the playlist.
+ * @param {{ spotifyIds: string[], searchItems?: unknown, releaseItems?: unknown }[]} entries Spotify track objects
+ * @param {{ limit?: number }} [options]
+ * @returns {{ tracks: { id: string, name: string }[], fromSearch: number, shared: { id: string, name: string }[] }[]}
+ *   one per entry; `tracks[fromSearch..]` came from the releases items
+ */
+export function allocateTracks(entries, { limit = TRACKS_PER_ARTIST } = {}) {
+  const list = Array.isArray(entries) ? entries : [];
+  const claimed = new Set();
+  const asArray = (v) => (Array.isArray(v) ? v : []);
+  const fromSearch = list.map((e) => {
+    const picks = chooseOwnTracks(e?.searchItems, e?.spotifyIds, { limit, exclude: claimed });
+    for (const t of picks) claimed.add(t.id);
+    return picks;
+  });
+  return list.map((e, i) => {
+    const tracks = chooseOwnTracks(e?.releaseItems, e?.spotifyIds, { limit, already: fromSearch[i], exclude: claimed });
+    for (const t of tracks.slice(fromSearch[i].length)) claimed.add(t.id);
+    const padded = chooseOwnTracks([...asArray(e?.searchItems), ...asArray(e?.releaseItems)], e?.spotifyIds, { limit, already: tracks });
+    return { tracks, fromSearch: fromSearch[i].length, shared: padded.slice(tracks.length) };
+  });
 }
 
 function dateKey(value) {

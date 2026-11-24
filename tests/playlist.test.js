@@ -5,7 +5,7 @@ import { realLineup } from './helpers/real-data.js';
 import {
   TRACKS_PER_ARTIST, MAX_RELEASES, ADD_BATCH_SIZE, LEFT_OUT, PLAYLIST_DESCRIPTION,
   isSpotifyId, playlistPlan, planEstimate, songKey, isVersionTitle, chooseOwnTracks, newestReleases,
-  playlistName, trackUri, buildTrackList, batches,
+  playlistName, trackUri, buildTrackList, batches, allocateTracks,
 } from '../src/core/playlist.js';
 
 const lineup = prepareLineup({
@@ -182,6 +182,74 @@ describe('chooseOwnTracks', () => {
   });
   it('counts a repeated track id once', () => {
     expect(chooseOwnTracks([tr('t1', 'A'), tr('t1', 'A'), tr('t2', 'B')], ['spBully']).map((t) => t.id)).toEqual(['t1', 't2']);
+  });
+});
+
+describe('chooseOwnTracks: exclude', () => {
+  it('never picks an excluded id, and fills from the rest', () => {
+    const c = [tr('t1', 'A'), tr('t2', 'B'), tr('t3', 'C'), tr('t4', 'D')];
+    expect(chooseOwnTracks(c, ['spBully'], { exclude: new Set(['t1', 't3']) })).toEqual([{ id: 't2', name: 'B' }, { id: 't4', name: 'D' }]);
+  });
+  it('an excluded id does not count towards `already` or the limit', () => {
+    const c = [tr('t1', 'A'), tr('t2', 'B')];
+    expect(chooseOwnTracks(c, ['spBully'], { exclude: new Set(['t1']), already: [{ id: 'x', name: 'X' }], limit: 2 })).toEqual([{ id: 'x', name: 'X' }, { id: 't2', name: 'B' }]);
+  });
+});
+
+describe('allocateTracks', () => {
+  const one = ['spA'];
+  const two = ['spB'];
+  const duet = tr('D', 'Duet', ['spA', 'spB']);
+  it('gives a shared track to the earlier artist and tops the later one up from its other search results', () => {
+    const out = allocateTracks([
+      { spotifyIds: one, searchItems: [duet, tr('a1', 'A1', one), tr('a2', 'A2', one)] },
+      { spotifyIds: two, searchItems: [tr('D', 'Duet', ['spB', 'spA']), tr('b1', 'B1', two), tr('b2', 'B2', two), tr('b3', 'B3', two)] },
+    ]);
+    expect(out[0].tracks.map((t) => t.id)).toEqual(['D', 'a1', 'a2']);
+    expect(out[1].tracks.map((t) => t.id)).toEqual(['b1', 'b2', 'b3']);
+    expect(out[1].fromSearch).toBe(3);
+    expect(out[1].shared).toEqual([]);
+  });
+  it('is decided by position, not by what a later artist found first', () => {
+    const entries = [
+      { spotifyIds: one, searchItems: [tr('D', 'Duet', ['spA', 'spB'])] },
+      { spotifyIds: two, searchItems: [tr('D', 'Duet', ['spB', 'spA']), tr('b1', 'B1', two)] },
+    ];
+    expect(allocateTracks(entries)[0].tracks.map((t) => t.id)).toEqual(['D']);
+    expect(allocateTracks(entries)[1].tracks.map((t) => t.id)).toEqual(['b1']);
+  });
+  it('fills a short artist from release items after search, skipping taken tracks, and says how many came from search', () => {
+    const out = allocateTracks([
+      { spotifyIds: one, searchItems: [duet] },
+      { spotifyIds: two, searchItems: [tr('b1', 'B1', two)], releaseItems: [duet, tr('r1', 'R1', two), tr('r2', 'R2', two), tr('r3', 'R3', two)] },
+    ]);
+    expect(out[1].tracks.map((t) => t.id)).toEqual(['b1', 'r1', 'r2']);
+    expect(out[1].fromSearch).toBe(1);
+  });
+  it('search picks of every artist are taken before any release track, so release items cannot take a later artist\'s search track', () => {
+    const out = allocateTracks([
+      { spotifyIds: one, searchItems: [], releaseItems: [tr('X', 'Shared', ['spA', 'spB'])] },
+      { spotifyIds: two, searchItems: [tr('X', 'Shared', ['spB', 'spA'])] },
+    ]);
+    expect(out[0].tracks).toEqual([]);
+    expect(out[0].shared.map((t) => t.id)).toEqual(['X']);
+    expect(out[1].tracks.map((t) => t.id)).toEqual(['X']);
+  });
+  it('lists as `shared` the own tracks an earlier artist holds, only for the free places', () => {
+    const out = allocateTracks([
+      { spotifyIds: one, searchItems: [duet, tr('a1', 'A1', one), tr('a2', 'A2', one)] },
+      { spotifyIds: two, searchItems: [tr('D', 'Duet', ['spB', 'spA'])] },
+    ]);
+    expect(out[1].tracks).toEqual([]);
+    expect(out[1].shared.map((t) => t.id)).toEqual(['D']);
+  });
+  it('never gives one track to two artists in `tracks`, and tolerates junk', () => {
+    const out = allocateTracks([{ spotifyIds: one, searchItems: [duet, duet] }, { spotifyIds: two, searchItems: [duet] }, null, { spotifyIds: 'x', searchItems: 5 }]);
+    expect(out).toHaveLength(4);
+    expect(out[0].tracks.map((t) => t.id)).toEqual(['D']);
+    expect(out[1].tracks).toEqual([]);
+    expect(out[2]).toEqual({ tracks: [], fromSearch: 0, shared: [] });
+    expect(allocateTracks('nope')).toEqual([]);
   });
 });
 

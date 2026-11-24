@@ -107,7 +107,7 @@ describe('createPlaylist: happy path', () => {
     expect(out).toEqual({
       status: 'created', url: 'https://open.spotify.com/playlist/PL1', playlistId: 'PL1', name: playlistName(2027, NOW),
       trackCount: 9, artistCount: 3, plannedTracks: 9, leftOut: [], newestReleases: [],
-      searchExhausted: false, releasesExhausted: false, error: null,
+      searchExhausted: false, searchStopReason: null, releasesExhausted: false, error: null,
     });
     expect(f.albumReqs()).toHaveLength(0);
   });
@@ -384,18 +384,47 @@ describe('createPlaylist: quota', () => {
     expect(out.leftOut).toEqual([]);
   });
 
-  it('a plain 429 on one artist\'s search fails only that artist; later artists are still searched', async () => {
+  it('a QUOTA_EXCEEDED answer to a search records searchStopReason quota', async () => {
+    const f = fakeSpotify({ ...releasesFor, override: quotaFrom(1) });
+    const out = await run(f, mkPlan(3), { concurrency: 1 });
+    expect(out.searchExhausted).toBe(true);
+    expect(out.searchStopReason).toBe('quota');
+    expect(f.searches()).toHaveLength(2);
+    expect(f.sleep).not.toHaveBeenCalled();
+    expect(out.trackCount).toBe(9);
+  });
+
+  it('a 429 on a search that survives its retries switches every remaining artist to newest releases', async () => {
     const f = fakeSpotify({
       ...releasesFor,
-      override: (r) => (r.path === '/v1/search' && r.params.get('q') === 'artist:"Artist 0"' ? json({}, 429) : undefined),
+      override: (r) => (r.path === '/v1/search' && r.params.get('q') === 'artist:"Artist 1"' ? json({}, 429) : undefined),
     });
-    const out = await run(f, mkPlan(3), { concurrency: 1 });
-    expect(f.searches()).toHaveLength(5 + 2); // five attempts for artist 0, then one each for the others
+    const found = await lookupTracks(f.api, mkPlan(4), { concurrency: 1 });
+    // artist 0 searched once; artist 1 searched 5 times (4 waits) and is then served from releases; 2 and 3 never search
+    expect(f.searches()).toHaveLength(1 + 5);
+    expect(f.sleep).toHaveBeenCalledTimes(4);
+    expect(found.searchExhausted).toBe(true);
+    expect(found.searchStopReason).toBe('rate');
+    expect(found.releasesExhausted).toBe(false);
+    expect(found.artists.map((a) => a.searched)).toEqual([true, false, false, false]);
+    expect(f.albumReqs().map((c) => c.path)).toEqual(['/v1/artists/ART1/albums', '/v1/artists/ART2/albums', '/v1/artists/ART3/albums']);
+    expect(found.artists.every((a) => a.tracks.length === 3)).toBe(true);
+    expect(found.artists.map((a) => a.failed)).toEqual([false, false, false, false]);
+  });
+
+  it('a rate-limited search makes the playlist from newest releases and reports why', async () => {
+    const f = fakeSpotify({ ...releasesFor, override: (r) => (r.path === '/v1/search' ? json({}, 429) : undefined) });
+    const out = await run(f, mkPlan(5), { concurrency: 1 });
+    expect(f.searches()).toHaveLength(5); // one artist's five attempts, nothing afterwards
+    expect(out).toMatchObject({ status: 'created', trackCount: 15, searchExhausted: true, searchStopReason: 'rate', leftOut: [] });
+    expect(out.newestReleases.map((r) => r.searched)).toEqual([false, false, false, false, false]);
+  });
+
+  it('searchStopReason is null when search is never stopped', async () => {
+    const f = fakeSpotify();
+    const out = await run(f, mkPlan(2));
+    expect(out.searchStopReason).toBeNull();
     expect(out.searchExhausted).toBe(false);
-    expect(out.releasesExhausted).toBe(false);
-    expect(out.status).toBe('created');
-    expect(out.trackCount).toBe(9);
-    expect(out.newestReleases).toEqual([{ n: 1, name: 'Artist 0', searched: false }]);
   });
 
   it('a plain 429 on one artist\'s albums fails only that artist; later artists\' releases are still read', async () => {
@@ -506,19 +535,45 @@ describe('createPlaylist: creating', () => {
     expect(f.adds()).toHaveLength(0);
   });
 
-  it('a network failure on POST me/playlists rejects, is not retried, and adds nothing', async () => {
+  const createNames = (f) => f.posts().map((c) => c.path);
+  const expectUnconfirmed = (f, out, kind) => {
+    expect(out).toMatchObject({
+      status: 'unconfirmed', url: null, playlistId: null, name: playlistName(2027, NOW),
+      trackCount: 0, artistCount: 0, plannedTracks: 6, leftOut: [], newestReleases: [],
+    });
+    expect(out.error.kind).toBe(kind);
+    expect(out.error.message).toContain(playlistName(2027, NOW));
+    expect(out.error.message.toLowerCase()).not.toContain('try again');
+    expect(createNames(f)).toEqual(['/v1/me/playlists']); // one create request, nothing added
+    expect(f.adds()).toHaveLength(0);
+  };
+
+  it('a network failure on POST me/playlists is unconfirmed, not retried, and adds nothing', async () => {
     const f = fakeSpotify({ override: (r) => { if (r.path === '/v1/me/playlists') throw new TypeError('offline'); } });
-    await expect(run(f, mkPlan(2))).rejects.toMatchObject({ kind: 'network' });
+    expectUnconfirmed(f, await run(f, mkPlan(2)), 'network');
+    expect(f.sleep).not.toHaveBeenCalled();
+  });
+
+  it('a 502 on POST me/playlists is unconfirmed after one create request and adds nothing', async () => {
+    const f = fakeSpotify({ override: (r) => (r.path === '/v1/me/playlists' ? json({}, 502) : undefined) });
+    expectUnconfirmed(f, await run(f, mkPlan(2)), 'http');
+    expect(f.sleep).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['400', 400],
+    ['404', 404],
+  ])('a %s on POST me/playlists is a clear refusal and still rejects', async (_n, status) => {
+    const f = fakeSpotify({ override: (r) => (r.path === '/v1/me/playlists' ? json({}, status) : undefined) });
+    await expect(run(f, mkPlan(2))).rejects.toMatchObject({ kind: 'http', status });
     expect(f.posts()).toHaveLength(1);
     expect(f.adds()).toHaveLength(0);
   });
 
-  it('a 502 on POST me/playlists rejects with kind http after one create request and adds nothing', async () => {
-    const f = fakeSpotify({ override: (r) => (r.path === '/v1/me/playlists' ? json({}, 502) : undefined) });
-    await expect(run(f, mkPlan(2))).rejects.toMatchObject({ kind: 'http' });
-    expect(f.posts()).toHaveLength(1);
+  it('a 429 that survives its retries on POST me/playlists still rejects with kind rate', async () => {
+    const f = fakeSpotify({ override: (r) => (r.path === '/v1/me/playlists' ? json({}, 429) : undefined) });
+    await expect(run(f, mkPlan(2))).rejects.toMatchObject({ kind: 'rate' });
     expect(f.adds()).toHaveLength(0);
-    expect(f.sleep).not.toHaveBeenCalled();
   });
 
   it('a QUOTA_EXCEEDED 429 on POST me/playlists rejects with kind quota at once and adds nothing', async () => {
@@ -530,13 +585,27 @@ describe('createPlaylist: creating', () => {
   });
 
   it.each([
-    ['no id', {}],
-    ['an id with odd characters', { id: '../evil' }],
-    ['a non-string id', { id: 5 }],
-  ])('a create response with %s rejects with kind http', async (_n, body) => {
-    const f = fakeSpotify({ override: (r) => (r.path === '/v1/me/playlists' ? json(body, 201) : undefined) });
-    await expect(run(f, mkPlan(2))).rejects.toMatchObject({ kind: 'http' });
-    expect(f.adds()).toHaveLength(0);
+    ['no id', () => json({}, 201)],
+    ['an id with odd characters', () => json({ id: '../evil' }, 201)],
+    ['a non-string id', () => json({ id: 5 }, 201)],
+    ['an empty body', () => ({ ok: true, status: 201, headers: { get: () => null }, json: async () => { throw new SyntaxError('Unexpected end of JSON input'); } })],
+    ['a body that is not JSON', () => ({ ok: true, status: 200, headers: { get: () => null }, json: async () => { throw new SyntaxError('Unexpected token <'); } })],
+    ['a JSON body that is null', () => json(null, 201)],
+  ])('a 2xx create answer with %s is unconfirmed, never a rejection, and adds nothing', async (_n, res) => {
+    const f = fakeSpotify({ override: (r) => (r.path === '/v1/me/playlists' ? res() : undefined) });
+    expectUnconfirmed(f, await run(f, mkPlan(2)), 'response');
+  });
+
+  it('an unconfirmed result still reports the left-out list and the search stop', async () => {
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 0' ? own('OTHER9') : own('ART1')),
+      override: (r) => (r.path === '/v1/me/playlists' ? json({}, 500) : undefined),
+    });
+    const out = await run(f, mkPlan(2, [{ n: 9, name: 'Pre', reason: LEFT_OUT.NO_SPOTIFY }]));
+    expect(out.status).toBe('unconfirmed');
+    expect(out.plannedTracks).toBe(3);
+    expect(out.leftOut).toEqual([{ n: 9, name: 'Pre', reason: LEFT_OUT.NO_SPOTIFY }, { n: 1, name: 'Artist 0', reason: LEFT_OUT.NO_TRACKS }]);
+    expect(out.searchStopReason).toBeNull();
   });
 });
 
@@ -656,5 +725,231 @@ describe('lookupTracks', () => {
     expect(f.fetch).not.toHaveBeenCalled();
     expect(out).toMatchObject({ status: 'empty', url: null, playlistId: null, trackCount: 0, artistCount: 0, plannedTracks: 0, error: null });
     expect(out.leftOut).toEqual(left);
+  });
+});
+
+describe('createPlaylist: search failing without a readable body (rejected fetch)', () => {
+  const releasesFor = {
+    albums: (id) => [{ id: `AL${id}`, name: 'A', release_date: '2024-01-01' }],
+    albumTracks: (id) => own(id.slice(2), 3, 'r'),
+  };
+  const searchRejects = (r) => { if (r.path === '/v1/search') throw new TypeError('Failed to fetch'); };
+
+  it('search rejects but the releases route answers: the route switches and the playlist is made', async () => {
+    const f = fakeSpotify({ ...releasesFor, override: searchRejects });
+    const out = await run(f, mkPlan(5), { concurrency: 1 });
+    expect(f.searches()).toHaveLength(5); // one artist's five attempts; nobody searches afterwards
+    expect(f.sleep).toHaveBeenCalledTimes(4);
+    expect(out).toMatchObject({ status: 'created', trackCount: 15, searchExhausted: true, searchStopReason: 'network', leftOut: [] });
+    expect(out.newestReleases).toHaveLength(5);
+    expect(f.albumReqs()).toHaveLength(5);
+  });
+
+  it('any HTTP answer from the releases route proves the connection works, even an error answer', async () => {
+    const f = fakeSpotify({
+      ...releasesFor,
+      override: (r) => (r.path === '/v1/artists/ART0/albums' ? json({}, 404) : searchRejects(r)),
+    });
+    const out = await run(f, mkPlan(3), { concurrency: 1 });
+    expect(out.searchStopReason).toBe('network');
+    expect(f.searches()).toHaveLength(5);
+    expect(out.leftOut).toEqual([{ n: 1, name: 'Artist 0', reason: LEFT_OUT.LOOKUP_FAILED }]);
+    expect(out.trackCount).toBe(6);
+  });
+
+  it('with concurrency 4 the switch happens after the first answered releases request', async () => {
+    const f = fakeSpotify({ ...releasesFor, override: searchRejects });
+    const out = await run(f, mkPlan(20), { concurrency: 4 });
+    expect(f.searches().length).toBeLessThanOrEqual(4 * 5); // at most the four first artists, five attempts each
+    expect(out.searchStopReason).toBe('network');
+    expect(out.trackCount).toBe(60);
+  });
+
+  it('everything rejecting is a real offline state: it rejects with kind network, creates nothing, starts nothing more', async () => {
+    const f = fakeSpotify({ override: () => { throw new TypeError('offline'); } });
+    const events = [];
+    await expect(run(f, mkPlan(6), { concurrency: 1, onProgress: (p) => events.push(p) })).rejects.toMatchObject({ kind: 'network' });
+    expect(f.searches()).toHaveLength(5);
+    expect(f.albumReqs()).toHaveLength(5);
+    expect(f.fetch).toHaveBeenCalledTimes(10);
+    expect(f.posts()).toHaveLength(0);
+    expect(events).toEqual([]);
+  });
+
+  it('offline with concurrency 4 gives no progress and no POST', async () => {
+    const f = fakeSpotify({ override: () => { throw new TypeError('offline'); } });
+    const events = [];
+    await expect(run(f, mkPlan(8), { concurrency: 4, onProgress: (p) => events.push(p) })).rejects.toMatchObject({ kind: 'network' });
+    await new Promise((r) => setTimeout(r, 30));
+    expect(events).toEqual([]);
+    expect(f.posts()).toHaveLength(0);
+  });
+
+  it('a search that rejects for an artist with no releases request to make cannot prove the connection, so it is fatal', async () => {
+    const f = fakeSpotify({ override: searchRejects });
+    const plan = { artists: [{ n: 1, name: 'No ids', spotifyIds: [] }], leftOut: [] };
+    await expect(lookupTracks(f.api, plan)).rejects.toMatchObject({ kind: 'network' });
+  });
+
+  it('a search that works followed by a rejecting releases request is still fatal as before', async () => {
+    const f = fakeSpotify({ search: () => [], override: (r) => { if (/\/albums$/.test(r.path)) throw new TypeError('offline'); } });
+    await expect(run(f, mkPlan(3), { concurrency: 1 })).rejects.toMatchObject({ kind: 'network' });
+    expect(f.posts()).toHaveLength(0);
+  });
+});
+
+describe('createPlaylist: a track shared by two lineup artists', () => {
+  const SH = (order = ['ART0', 'ART1']) => trk('SH', 'Duet', ...order);
+  const slow = (ms, v) => new Promise((r) => setTimeout(() => r(v), ms));
+
+  // Artist 0 has exactly three tracks, one of them the duet. Artist 1 lists the duet first (not listed-first: it is
+  // second on the track) and then three songs of its own, so a plain "first three" would pick the duet.
+  const searchTwo = (name) => (name === 'Artist 0'
+    ? [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')]
+    : [SH(), trk('b1', 'B One', 'X1', 'ART1'), trk('b2', 'B Two', 'X1', 'ART1'), trk('b3', 'B Three', 'X1', 'ART1')]);
+
+  it('tops the later artist up from its remaining search results; the earlier artist keeps the shared track', async () => {
+    const f = fakeSpotify({ search: searchTwo });
+    const out = await run(f, mkPlan(2), { concurrency: 1 });
+    expect(addedUris(f)).toEqual(['SH', 'a1', 'a2', 'b1', 'b2', 'b3'].map((x) => `spotify:track:${x}`));
+    expect(out).toMatchObject({ status: 'created', trackCount: 6, artistCount: 2, leftOut: [], newestReleases: [] });
+    expect(f.albumReqs()).toHaveLength(0); // no extra request for the top-up
+    expect(f.searches()).toHaveLength(2);
+  });
+
+  it('gives the same result when the earlier artist\'s answers arrive last', async () => {
+    const plain = fakeSpotify({ search: searchTwo });
+    const a = await lookupTracks(plain.api, mkPlan(2), { concurrency: 2 });
+    const delayed = fakeSpotify({
+      search: searchTwo,
+      override: (r) => (r.path === '/v1/search' && r.params.get('q') === 'artist:"Artist 0"'
+        ? slow(30, json({ tracks: { items: searchTwo('Artist 0') } }))
+        : undefined),
+    });
+    const b = await lookupTracks(delayed.api, mkPlan(2), { concurrency: 2 });
+    expect(b).toEqual(a);
+    expect(b.artists[0].tracks.map((t) => t.id)).toEqual(['SH', 'a1', 'a2']);
+    expect(b.artists[1].tracks.map((t) => t.id)).toEqual(['b1', 'b2', 'b3']);
+  });
+
+  it('when search has nothing more, tops the later artist up from newest releases, skipping taken tracks', async () => {
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 0' ? [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')] : [SH(), trk('b1', 'B One', 'X1', 'ART1'), trk('b2', 'B Two', 'X1', 'ART1')]),
+      albums: (id) => (id === 'ART1' ? [{ id: 'ALB1', name: 'A', release_date: '2024-01-01' }] : []),
+      albumTracks: () => [SH(), trk('r1', 'Rel One', 'ART1')],
+    });
+    const out = await run(f, mkPlan(2), { concurrency: 2 });
+    expect(addedUris(f)).toEqual(['SH', 'a1', 'a2', 'b1', 'b2', 'r1'].map((x) => `spotify:track:${x}`));
+    expect(f.albumReqs().map((c) => c.path)).toEqual(['/v1/artists/ART1/albums']);
+    expect(out.newestReleases).toEqual([{ n: 2, name: 'Artist 1', searched: true }]);
+    expect(out.leftOut).toEqual([]);
+    expect(out.trackCount).toBe(6);
+  });
+
+  it('keeps reading releases when the newest one only holds a track that is already taken', async () => {
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 0' ? [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')] : [SH(), trk('b1', 'B One', 'X1', 'ART1'), trk('b2', 'B Two', 'X1', 'ART1')]),
+      albums: (id) => (id === 'ART1' ? [{ id: 'NEW', name: 'N', release_date: '2025-01-01' }, { id: 'OLD', name: 'O', release_date: '2020-01-01' }] : []),
+      albumTracks: (id) => (id === 'NEW' ? [SH()] : [trk('r1', 'Rel One', 'ART1')]),
+    });
+    const found = await lookupTracks(f.api, mkPlan(2), { concurrency: 1 });
+    expect(f.trackReqs().map((c) => c.path)).toEqual(['/v1/albums/NEW/tracks', '/v1/albums/OLD/tracks']);
+    expect(found.artists[1].tracks.map((t) => t.id)).toEqual(['b1', 'b2', 'r1']);
+  });
+
+  it('the releases result is the same when the earlier artist\'s search arrives last', async () => {
+    const make = (delay) => fakeSpotify({
+      search: (name) => (name === 'Artist 0' ? [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')] : [SH(), trk('b1', 'B One', 'X1', 'ART1'), trk('b2', 'B Two', 'X1', 'ART1')]),
+      albums: (id) => (id === 'ART1' ? [{ id: 'ALB1', name: 'A', release_date: '2024-01-01' }] : []),
+      albumTracks: () => [SH(), trk('r1', 'Rel One', 'ART1')],
+      override: delay ? (r) => (r.path === '/v1/search' && r.params.get('q') === 'artist:"Artist 0"'
+        ? slow(30, json({ tracks: { items: [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')] } }))
+        : undefined) : undefined,
+    });
+    const a = await lookupTracks(make(false).api, mkPlan(2), { concurrency: 2 });
+    const f = make(true);
+    const b = await lookupTracks(f.api, mkPlan(2), { concurrency: 2 });
+    expect(b).toEqual(a);
+    expect(b.artists[1].tracks.map((t) => t.id)).toEqual(['b1', 'b2', 'r1']);
+    expect(b.artists[1].newestIds).toEqual(['r1']);
+  });
+
+  it('an artist that only ever has the shared track keeps counting as included, and a release track is not asked for twice', async () => {
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 0' ? [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')] : [SH()]),
+      albums: () => [],
+    });
+    const out = await run(f, mkPlan(2), { concurrency: 2 });
+    expect(out.leftOut).toEqual([]);
+    expect(out.artistCount).toBe(2);
+    expect(out.trackCount).toBe(3);
+    expect(out.newestReleases).toEqual([]);
+  });
+
+  it('an artist with no own track at all is still left out as no-tracks, one with fewer than three is not', async () => {
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 1' ? own('OTHER9') : name === 'Artist 2' ? own('ART2', 1) : own('ART0')),
+    });
+    const out = await run(f, mkPlan(3), { concurrency: 3 });
+    expect(out.leftOut).toEqual([{ n: 2, name: 'Artist 1', reason: LEFT_OUT.NO_TRACKS }]);
+    expect(out.trackCount).toBe(4);
+  });
+
+  it('the quota switch part-way through the searches still works with shared tracks', async () => {
+    let n = 0;
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 0' ? [SH(), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')] : []),
+      albums: (id) => [{ id: `AL${id}`, name: 'A', release_date: '2024-01-01' }],
+      albumTracks: (id) => (id === 'ALART1' ? [SH(), trk('r1', 'R1', 'ART1'), trk('r2', 'R2', 'ART1'), trk('r3', 'R3', 'ART1')] : own(id.slice(2), 3, 'r')),
+      override: (r) => (r.path === '/v1/search' && ++n > 1 ? QUOTA() : undefined),
+    });
+    const out = await run(f, mkPlan(3), { concurrency: 1 });
+    expect(out.searchStopReason).toBe('quota');
+    expect(f.searches()).toHaveLength(2);
+    expect(addedUris(f)).toEqual(['SH', 'a1', 'a2', 'r1', 'r2', 'r3', 'ART2r0', 'ART2r1', 'ART2r2'].map((x) => `spotify:track:${x}`));
+    expect(out.leftOut).toEqual([]);
+  });
+
+  it('progress is monotonic, ends at total, and nothing follows a rejection', async () => {
+    const f = fakeSpotify({ search: searchTwo });
+    const events = [];
+    await run(f, mkPlan(2), { onProgress: (p) => events.push(p) });
+    const dones = events.filter((e) => e.phase === 'lookup').map((e) => e.done);
+    expect(dones).toEqual([1, 2]);
+
+    const g = fakeSpotify({ search: (name) => (name === 'Artist 0' ? own('ART0', 1) : own('ART1')), override: (r) => (/\/albums$/.test(r.path) ? json({}, 401) : undefined) });
+    const ev = [];
+    await expect(run(g, mkPlan(2), { concurrency: 1, onProgress: (p) => ev.push(p) })).rejects.toMatchObject({ kind: 'auth' });
+    expect(ev.every((e) => e.phase === 'lookup')).toBe(true);
+    expect(g.posts()).toHaveLength(0);
+  });
+});
+
+describe('createPlaylist: request counts in the ordinary case', () => {
+  it('artists with three own search results cost exactly one request each', async () => {
+    const f = fakeSpotify();
+    await run(f, mkPlan(6), { concurrency: 4 });
+    expect(f.calls.filter((c) => c.method === 'GET')).toHaveLength(6);
+    expect(f.searches()).toHaveLength(6);
+  });
+
+  it('an artist with two songs costs a search, one albums request and the tracks of one release', async () => {
+    const f = fakeSpotify({
+      search: () => own('ART0', 2),
+      albums: () => [{ id: 'AL0', name: 'A', release_date: '2024-01-01' }],
+      albumTracks: () => [],
+    });
+    await run(f, mkPlan(1));
+    expect(f.calls.filter((c) => c.method === 'GET')).toHaveLength(3);
+  });
+
+  it('sharing a track costs no request when the later artist has other own search results', async () => {
+    const f = fakeSpotify({
+      search: (name) => (name === 'Artist 0'
+        ? [trk('SH', 'Duet', 'ART0', 'ART1'), trk('a1', 'A One', 'ART0'), trk('a2', 'A Two', 'ART0')]
+        : [trk('SH', 'Duet', 'ART0', 'ART1'), trk('b1', 'B One', 'X1', 'ART1'), trk('b2', 'B Two', 'X1', 'ART1'), trk('b3', 'B Three', 'X1', 'ART1')]),
+    });
+    await run(f, mkPlan(2));
+    expect(f.calls.filter((c) => c.method === 'GET')).toHaveLength(2);
   });
 });
