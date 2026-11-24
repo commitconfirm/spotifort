@@ -125,7 +125,7 @@ A property of a playlist: it is not shown on the visitor's Spotify profile, but 
 _Avoid_: Private, hidden, unlisted
 
 **Left out**:
-A property of a Treefort pick: it gets no tracks in the playlist because it is unverified, it has no Spotify page, no **Own tracks** were found for it, Spotify's limit ran out before it could be looked up, or the lookup failed. The visitor is told which picks were left out.
+A property of a Treefort pick: it gets no tracks in the playlist because it is unverified, it has no Spotify page, no **Own tracks** were found for it, the lookups ran out before this artist's was finished (Spotify's limit on the **Newest releases** lookup, after search had stopped working or had not found enough), or a lookup for it failed. A pick with at least one track in the playlist is never left out. The visitor is told which picks were left out.
 _Avoid_: Skipped, missing, failed
 
 **Own track**:
@@ -148,6 +148,7 @@ _Avoid_: Latest albums, new music
 - A **Playlist** is made from the **Treefort picks** and is **Off-profile**.
 - Each **Treefort pick** either contributes **Own tracks** to the **Playlist** or is **Left out**; an **Unverified** lineup artist is always **Left out**.
 - When a lineup artist has too few **Own tracks**, its **Newest releases** supply the rest.
+- When two lineup artists share an **Own track**, the one earlier on the page keeps it and the other gets a different track; it appears once in the **Playlist**.
 
 ## Flagged ambiguities
 
