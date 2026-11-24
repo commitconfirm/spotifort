@@ -120,7 +120,8 @@ export function isVersionTitle(title) {
  * @param {unknown} candidates Spotify track objects
  * @param {string[]} spotifyIds the lineup artist's Spotify ids
  * @param {{ limit?: number, already?: { id: string, name: string }[], exclude?: Set<string>|null }} [options]
- *   `exclude`: track ids that must not be chosen (for example tracks another artist has already been given)
+ *   `exclude`: track ids that must not be chosen (for example tracks another artist has already been given). When an
+ *   excluded track is one of this artist's own, its other versions in `candidates` (same song key) are left out too.
  * @returns {{ id: string, name: string }[]} `already` first, then new tracks, at most `limit` in all
  */
 export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ARTIST, already = [], exclude = null } = {}) {
@@ -132,6 +133,18 @@ export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ART
   const groups = new Map();
   const list = Array.isArray(candidates) ? candidates : [];
   const seenIds = new Set();
+  // A song another artist holds (its id is in `exclude`) is blocked in every version this artist lists too: otherwise
+  // "Duet" under one artist and "Duet - Live" under the next would both reach the playlist. Keys are per artist, never
+  // global: two different artists may each have a song called "Home".
+  const blockedKeys = new Set();
+  if (exclude) {
+    for (const t of list) {
+      if (!t || typeof t !== 'object' || !isSpotifyId(t.id) || typeof t.name !== 'string' || !Array.isArray(t.artists)) continue;
+      if (!exclude.has(t.id) || !t.artists.some((a) => ids.has(a?.id))) continue;
+      const key = songKey(t.name);
+      if (key) blockedKeys.add(key);
+    }
+  }
   list.forEach((t, pos) => {
     if (!t || typeof t !== 'object' || !isSpotifyId(t.id) || typeof t.name !== 'string' || !Array.isArray(t.artists)) return;
     if (seenIds.has(t.id) || usedIds.has(t.id) || (exclude && exclude.has(t.id))) return;
@@ -139,7 +152,7 @@ export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ART
     const artistIds = t.artists.map((a) => a?.id);
     if (!artistIds.some((id) => ids.has(id))) return;
     const key = songKey(t.name);
-    if (usedKeys.has(key)) return;
+    if (usedKeys.has(key) || blockedKeys.has(key)) return;
     const entry = { id: t.id, name: t.name, listed: ids.has(artistIds[0]), plain: !isVersionTitle(t.name), pos };
     const g = groups.get(key);
     if (!g) { groups.set(key, { best: entry, listed: entry.listed, pos }); return; }
@@ -162,7 +175,7 @@ export function chooseOwnTracks(candidates, spotifyIds, { limit = TRACKS_PER_ART
  * which lookup answered first. Two passes: first every artist takes up to `limit` of its own tracks from its search
  * results, each track going to the first artist that wants it; then, still in order, an artist still short takes
  * tracks from its newest-releases items that no one has taken. Finally `shared` lists own tracks the artist has but
- * an earlier artist holds (a duet): they are not in `tracks`, so the artist is topped up from elsewhere first, but
+ * an EARLIER artist (in page order) holds (a duet): they are not in `tracks`, so the artist is topped up from elsewhere first, but
  * they show that the artist does have tracks on the playlist.
  * @param {{ spotifyIds: string[], searchItems?: unknown, releaseItems?: unknown }[]} entries Spotify track objects
  * @param {{ limit?: number }} [options]
@@ -178,10 +191,19 @@ export function allocateTracks(entries, { limit = TRACKS_PER_ARTIST } = {}) {
     for (const t of picks) claimed.add(t.id);
     return picks;
   });
-  return list.map((e, i) => {
+  const tracksOf = list.map((e, i) => {
     const tracks = chooseOwnTracks(e?.releaseItems, e?.spotifyIds, { limit, already: fromSearch[i], exclude: claimed });
     for (const t of tracks.slice(fromSearch[i].length)) claimed.add(t.id);
-    const padded = chooseOwnTracks([...asArray(e?.searchItems), ...asArray(e?.releaseItems)], e?.spotifyIds, { limit, already: tracks });
+    return tracks;
+  });
+  // Who claimed what is now final. `shared` may only list a track claimed by an EARLIER entry: a track a later entry
+  // holds would be placed under the earlier artist by buildTrackList and could split the later artist's block.
+  const claimedBy = new Map();
+  tracksOf.forEach((tracks, i) => { for (const t of tracks) if (!claimedBy.has(t.id)) claimedBy.set(t.id, i); });
+  return list.map((e, i) => {
+    const tracks = tracksOf[i];
+    const pool = [...asArray(e?.searchItems), ...asArray(e?.releaseItems)].filter((t) => claimedBy.get(t?.id) < i);
+    const padded = chooseOwnTracks(pool, e?.spotifyIds, { limit, already: tracks });
     return { tracks, fromSearch: fromSearch[i].length, shared: padded.slice(tracks.length) };
   });
 }

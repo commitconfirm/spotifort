@@ -196,6 +196,29 @@ describe('chooseOwnTracks: exclude', () => {
   });
 });
 
+describe('chooseOwnTracks: versions of a song another artist holds', () => {
+  it('excludes every version of an excluded song among one artist\'s own candidates', () => {
+    const c = [tr('D', 'Duet', ['spBully']), tr('D2', 'Duet - Live', ['spBully']), tr('b1', 'B1', ['spBully']), tr('b2', 'B2', ['spBully'])];
+    expect(chooseOwnTracks(c, ['spBully'], { exclude: new Set(['D']) }).map((t) => t.id)).toEqual(['b1', 'b2']);
+    // the same when the version comes before the excluded track
+    const r = [c[1], c[0], c[2], c[3]];
+    expect(chooseOwnTracks(r, ['spBully'], { exclude: new Set(['D']) }).map((t) => t.id)).toEqual(['b1', 'b2']);
+  });
+  it('does not make song keys global: another artist\'s track with the same title is not blocked by an excluded id it does not own', () => {
+    const c = [tr('H1', 'Home', ['spOther']), tr('H2', 'Home', ['spBully']), tr('b1', 'B1', ['spBully'])];
+    expect(chooseOwnTracks(c, ['spBully'], { exclude: new Set(['H1']) }).map((t) => t.id)).toEqual(['H2', 'b1']);
+  });
+  it('keeps the two versions apart across artists end to end', () => {
+    const out = allocateTracks([
+      { spotifyIds: ['spA'], searchItems: [tr('D', 'Duet', ['spA', 'spB'])] },
+      { spotifyIds: ['spB'], searchItems: [tr('D', 'Duet', ['spB', 'spA']), tr('D2', 'Duet - Live', ['spB']), tr('b1', 'B1', ['spB']), tr('b2', 'B2', ['spB'])] },
+    ]);
+    expect(out[1].tracks.map((t) => t.id)).toEqual(['b1', 'b2']);
+    const list = buildTrackList(out.map((o, i) => ({ n: i + 1, tracks: [...o.tracks, ...o.shared] })));
+    expect(list.map((l) => l.uri)).toEqual(['spotify:track:D', 'spotify:track:b1', 'spotify:track:b2']);
+  });
+});
+
 describe('allocateTracks', () => {
   const one = ['spA'];
   const two = ['spB'];
@@ -232,8 +255,33 @@ describe('allocateTracks', () => {
       { spotifyIds: two, searchItems: [tr('X', 'Shared', ['spB', 'spA'])] },
     ]);
     expect(out[0].tracks).toEqual([]);
-    expect(out[0].shared.map((t) => t.id)).toEqual(['X']);
     expect(out[1].tracks.map((t) => t.id)).toEqual(['X']);
+  });
+  it('pads `shared` only with a track an EARLIER artist holds, never one a later artist holds', () => {
+    const three = ['spC'];
+    const entries = [
+      { spotifyIds: one, searchItems: [], releaseItems: [tr('X', 'Shared', ['spA', 'spB'])] },
+      { spotifyIds: three, searchItems: [tr('c1', 'C1', three)] },
+      { spotifyIds: two, searchItems: [tr('X', 'Shared', ['spB', 'spA']), tr('b1', 'B1', two)] },
+    ];
+    const out = allocateTracks(entries);
+    expect(out[0].tracks).toEqual([]);
+    expect(out[0].shared).toEqual([]); // X is held by entry 2, a later one
+    expect(out[2].tracks.map((t) => t.id)).toEqual(['X', 'b1']);
+    const list = buildTrackList(out.map((o, i) => ({ n: i + 1, tracks: [...o.tracks, ...o.shared] })));
+    expect(list).toEqual([{ n: 2, uri: 'spotify:track:c1' }, { n: 3, uri: 'spotify:track:X' }, { n: 3, uri: 'spotify:track:b1' }]);
+    // artist 3's block is not split by the earlier artist's padding
+    expect(list.map((l) => l.n)).toEqual([2, 3, 3]);
+  });
+  it('a later artist still sees a track held by an earlier one as `shared`', () => {
+    const three = ['spC'];
+    const out = allocateTracks([
+      { spotifyIds: one, searchItems: [tr('X', 'Shared', ['spA', 'spC'])] },
+      { spotifyIds: two, searchItems: [tr('b1', 'B1', two)] },
+      { spotifyIds: three, searchItems: [tr('X', 'Shared', ['spC', 'spA'])] },
+    ]);
+    expect(out[2].tracks).toEqual([]);
+    expect(out[2].shared.map((t) => t.id)).toEqual(['X']);
   });
   it('lists as `shared` the own tracks an earlier artist holds, only for the free places', () => {
     const out = allocateTracks([
