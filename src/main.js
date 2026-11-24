@@ -90,6 +90,8 @@ const el = {
   playlistError: $('playlist-error'),
   playlistProgress: $('playlist-progress'),
   playlistResult: $('playlist-result'),
+  playlistDone: $('playlist-done'),
+  playlistClose: $('playlist-close'),
   forgetBtn: $('forget-btn'),
   forgetFooter: $('forget-footer'),
   results: $('results'),
@@ -334,6 +336,11 @@ function showSpotifyError(message) {
 }
 
 async function connectSpotify(clientId) {
+  if (app.playlistBusy) {
+    // A redirect now would abandon the playlist part-way, with no outcome shown.
+    showSpotifyError('A playlist is being made. Wait for it to finish, then connect.');
+    return;
+  }
   if (!spotifySource.isAvailable()) {
     showSpotifyError(new CryptoNotSupportedError().message);
     return;
@@ -427,7 +434,7 @@ async function handleCallback() {
     return;
   }
   // completeAuth removed the state and cleaned the URL, so this runs once per login: a reload creates nothing.
-  if (done.purpose === 'playlist') await runPlaylistAfterLogin();
+  if (done.purpose === 'playlist') await runPlaylist();
   else await runImport();
 }
 
@@ -485,6 +492,7 @@ function openPlaylistIntro({ focus = true } = {}) {
   el.playlistProgress.hidden = true;
   clear(el.playlistProgress);
   el.playlistResult.hidden = true;
+  el.playlistDone.hidden = true;
   clear(el.playlistResult);
   app.playlistVm = null;
   el.playlistError.textContent = '';
@@ -494,7 +502,7 @@ function openPlaylistIntro({ focus = true } = {}) {
 }
 
 function onPlaylistButton() {
-  if (app.playlistBusy) return;
+  if (app.playlistBusy || !app.lineup) return;
   if (playlistIntroOpen()) closePlaylistPanel();
   else openPlaylistIntro({ focus: true });
 }
@@ -517,7 +525,7 @@ async function onPlaylistSubmit(e) {
     return;
   }
   if (hasScopes(PLAYLIST_SCOPE)) {
-    runPlaylist(plan);
+    runPlaylist();
     return;
   }
   let id;
@@ -530,7 +538,9 @@ async function onPlaylistSubmit(e) {
       return;
     }
     el.playlistClientId.removeAttribute('aria-invalid');
-    store.saveClientId(id, { remember: el.playlistRemember.checked });
+    // An unchanged Client ID stays where it was kept: the ticked-by-default checkbox must not quietly move a
+    // tab-only ID into localStorage.
+    if (id !== savedClientId()) store.saveClientId(id, { remember: el.playlistRemember.checked });
   } else {
     id = savedClientId();
     if (!id) {
@@ -562,6 +572,7 @@ function showPlaylistProgress(text) {
   setPlaylistPanel(true);
   el.playlistIntro.hidden = true;
   el.playlistResult.hidden = true;
+  el.playlistDone.hidden = true;
   clear(el.playlistResult);
   app.playlistVm = null;
   renderPlaylistProgress(el.playlistProgress, text);
@@ -569,20 +580,56 @@ function showPlaylistProgress(text) {
 }
 
 function showPlaylistFailure(err) {
-  el.playlistProgress.hidden = true;
   const vm = playlistFailure(err);
   const heading = renderPlaylistFailure(el.playlistResult, vm);
+  el.playlistDone.hidden = false;
   announce(el.announcer, vm.announce);
   heading.focus();
 }
 
-/** Make the playlist with the token in memory. Never two at once. */
-async function runPlaylist(plan) {
+/** Leaving the page while a playlist is being made would lose the outcome, and the playlist may already exist. */
+const warnBeforeLeaving = (e) => {
+  e.preventDefault();
+  e.returnValue = '';
+};
+
+/**
+ * While a playlist is being made nothing may start a second one, send the visitor to Spotify or clear the login:
+ * the two playlist buttons and both "Forget my data" buttons are disabled, and leaving the page asks first.
+ */
+function setPlaylistBusy(busy) {
+  app.playlistBusy = busy;
+  for (const b of [el.playlistBtn, el.playlistContinue, el.forgetBtn, el.forgetFooter]) b.disabled = busy;
+  if (busy) window.addEventListener('beforeunload', warnBeforeLeaving);
+  else window.removeEventListener('beforeunload', warnBeforeLeaving);
+}
+
+/**
+ * The work of one run: what the picks need, the plan, then the lookups and the two writes.
+ * @returns {Promise<{ result: object }|{ failure: { kind: string } }|{ nothing: true }>} rejects as createPlaylist does
+ */
+async function makePlaylist(onProgress) {
+  if (!hasScopes(PLAYLIST_SCOPE)) return { failure: { kind: 'scope' } };
+  // Recommendations need the similarity index: without it the playlist would hold the matches only.
+  const sim = await ensureSimilarity();
+  if (!sim) return { failure: { kind: 'data' } };
+  recompute({ announceChange: false });
+  const plan = currentPlan();
+  if (!plan.artists.length) return { nothing: true };
+  const result = await createPlaylist({ api: createApi({ token: getAccessToken() }), plan, year: YEAR, now: new Date(), onProgress });
+  return { result };
+}
+
+/**
+ * Make the playlist with the playlist login in memory: straight after the login on /callback, or from the panel
+ * when the token is still there. Never two at once: the busy flag is set before the first await.
+ */
+async function runPlaylist() {
   if (app.playlistBusy) return;
-  app.playlistBusy = true; // first, before any await
-  el.playlistBtn.disabled = true;
-  el.playlistContinue.disabled = true;
-  showPlaylistProgress(playlistProgressText({}));
+  setPlaylistBusy(true); // first, before any await
+  const starting = playlistProgressText({});
+  showPlaylistProgress(starting);
+  announce(el.announcer, starting);
   el.playlistHeading.focus({ preventScroll: true }); // the control that started this is now hidden
   let phase = null;
   const onProgress = (p) => {
@@ -593,52 +640,33 @@ async function runPlaylist(plan) {
       announce(el.announcer, text);
     }
   };
+  let outcome;
   try {
-    const result = await createPlaylist({ api: createApi({ token: getAccessToken() }), plan, year: YEAR, now: new Date(), onProgress });
-    const vm = playlistOutcome(result);
-    if (vm.status === 'created' || vm.status === 'incomplete' || vm.status === 'unconfirmed') app.playlistMade = true;
-    app.playlistVm = vm;
-    el.playlistProgress.hidden = true;
-    const heading = renderPlaylistOutcome(el.playlistResult, vm, { lineup: app.lineup, service: app.service });
-    announce(el.announcer, vm.announce);
-    heading.focus();
+    outcome = await makePlaylist(onProgress);
   } catch (err) {
     log.error('Playlist failed:', err?.message);
     if (err?.kind === 'auth') clearAuth();
-    showPlaylistFailure(err);
-  } finally {
-    app.playlistBusy = false;
-    el.playlistBtn.disabled = false;
-    el.playlistContinue.disabled = false;
-    el.playlistProgress.hidden = true;
-    clear(el.playlistProgress);
+    outcome = { failure: err };
   }
-}
-
-/** Back from a playlist login on /callback: make the playlist straight away, once. */
-async function runPlaylistAfterLogin() {
-  showPlaylistProgress(playlistProgressText({}));
-  el.playlistBtn.disabled = true; // runPlaylist takes over; every other path below re-enables it
-  if (!hasScopes(PLAYLIST_SCOPE)) {
-    el.playlistBtn.disabled = false;
-    showPlaylistFailure({ kind: 'scope' });
-    return;
-  }
-  const sim = await ensureSimilarity();
-  if (!sim) {
-    el.playlistBtn.disabled = false;
-    showPlaylistFailure({ kind: 'data' });
-    return;
-  }
-  recompute({ announceChange: false });
-  const plan = currentPlan();
-  el.playlistBtn.disabled = false;
-  if (!plan.artists.length) {
-    el.playlistProgress.hidden = true;
+  setPlaylistBusy(false);
+  el.playlistProgress.hidden = true;
+  clear(el.playlistProgress);
+  // Rendering is outside the try: a display error must never be reported as "nothing was created".
+  if (outcome.nothing) {
     openPlaylistIntro({ focus: true }); // it explains why there is nothing to make
     return;
   }
-  await runPlaylist(plan);
+  if (outcome.failure) {
+    showPlaylistFailure(outcome.failure);
+    return;
+  }
+  const vm = playlistOutcome(outcome.result);
+  if (vm.status !== 'empty') app.playlistMade = true; // made, or may have been
+  app.playlistVm = vm;
+  const heading = renderPlaylistOutcome(el.playlistResult, vm, { lineup: app.lineup, service: app.service });
+  el.playlistDone.hidden = false;
+  announce(el.announcer, vm.announce);
+  heading.focus();
 }
 
 // --- share ---------------------------------------------------------------------------------------
@@ -686,21 +714,21 @@ function showNormal({ focus = false } = {}) {
 // --- forget --------------------------------------------------------------------------------------
 
 function forgetEverything() {
-  if (!app.playlistBusy) {
-    setPlaylistPanel(false);
-    el.playlistIntro.hidden = false;
-    clear(el.playlistProgress);
-    el.playlistProgress.hidden = true;
-    clear(el.playlistResult);
-    el.playlistResult.hidden = true;
-    app.playlistVm = null;
-    el.playlistClientId.value = '';
-    el.playlistClientId.removeAttribute('aria-invalid');
-    el.playlistClientIdError.textContent = '';
-    el.playlistError.textContent = '';
-    el.playlistRemember.checked = true;
-    app.playlistMade = false;
-  }
+  if (app.playlistBusy) return; // the buttons are disabled meanwhile: clearing the login would not stop the playlist
+  setPlaylistPanel(false);
+  el.playlistIntro.hidden = false;
+  clear(el.playlistProgress);
+  el.playlistProgress.hidden = true;
+  clear(el.playlistResult);
+  el.playlistResult.hidden = true;
+  el.playlistDone.hidden = true;
+  app.playlistVm = null;
+  el.playlistClientId.value = '';
+  el.playlistClientId.removeAttribute('aria-invalid');
+  el.playlistClientIdError.textContent = '';
+  el.playlistError.textContent = '';
+  el.playlistRemember.checked = true;
+  app.playlistMade = false;
   store.forgetAll();
   clearAuth();
   app.service = DEFAULT_SERVICE;
@@ -767,10 +795,12 @@ function wireStaticControls() {
   el.shareBtn.addEventListener('click', onShare);
   el.playlistBtn.addEventListener('click', onPlaylistButton);
   el.playlistForm.addEventListener('submit', onPlaylistSubmit);
-  el.playlistCancel.addEventListener('click', () => {
-    closePlaylistPanel();
-    el.playlistBtn.focus();
-  });
+  for (const b of [el.playlistCancel, el.playlistClose]) {
+    b.addEventListener('click', () => {
+      closePlaylistPanel();
+      el.playlistBtn.focus();
+    });
+  }
   el.playlistClientChange.addEventListener('click', () => {
     showPlaylistClient({ tokenReady: false, fields: true });
     el.playlistClientId.focus();

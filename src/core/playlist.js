@@ -74,9 +74,10 @@ const VERSION_WORDS = [
 const VERSION_RE = new RegExp(`(?<![\\p{L}\\p{N}])(?:${VERSION_WORDS.map((w) => w.replace(/ /g, '\\s+')).join('|')})(?![\\p{L}\\p{N}])`, 'iu');
 const GROUP_RE = /\([^()]*\)|\[[^[\]]*\]/g;
 const DASH_RE = / [-\u2013\u2014] /g;
-// A bare trailing featured credit: "Song feat. Bob", "Song ft Bob & Al". No nested quantifiers: each start position
-// costs O(1) until the final [\s\S]* consumes the rest once.
-const FEAT_RE = /\s(?:feat\.?|ft\.?|featuring)\s[\s\S]*/i;
+// A bare trailing featured credit: "Song feat. Bob", "Song featuring Bob". Not "ft" or "ft.": that is also Fort and
+// feet ("Drive to Ft. Worth", "Six Ft Under"), and "feat" needs its dot ("No Mean Feat Tonight"). No nested
+// quantifiers: each start position costs O(1) until the final [\s\S]* consumes the rest once.
+const FEAT_RE = /\s(?:feat\.|featuring)\s[\s\S]*/i;
 
 function stripVersions(title) {
   let s = title.slice(0, MAX_TITLE);

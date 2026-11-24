@@ -665,6 +665,11 @@ a {
   cursor: pointer;
 }
 
+.link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .link-button:hover {
   text-decoration-thickness: 3px;
 }

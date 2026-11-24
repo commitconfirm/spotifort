@@ -76,6 +76,25 @@ describe('completeAuth', () => {
     expect(hasScopes(PLAYLIST_SCOPE)).toBe(true);
     expect(hasScopes('user-library-read')).toBe(false);
   });
+  it('runs once: a finished login removes the state and the verifier and cleans the URL, so a replay is refused', async () => {
+    const { state, back, result } = await roundTrip('playlist');
+    await result;
+    expect(back.store.size).toBe(0);
+    expect(back.replaceState).toHaveBeenCalledWith(null, 't', '/');
+    // The same callback URL again (reload, back button): there is no stored state to match.
+    const again = stubBrowser({ search: `?code=c&state=${encodeURIComponent(state)}` });
+    vi.stubGlobal('fetch', tokenFetch({ access_token: 'second' }));
+    await expect(completeAuth(CLIENT)).rejects.toMatchObject({ purpose: null });
+    expect(getAccessToken()).toBe('tok');
+    expect(again.replaceState).toHaveBeenCalledWith(null, 't', '/');
+  });
+  it('hasScopes needs every scope asked for, not just one', async () => {
+    const { result } = await roundTrip('library', { tokenBody: { access_token: 'tok', scope: 'user-library-read user-top-read' } });
+    await result;
+    expect(hasScopes('user-library-read user-top-read')).toBe(true);
+    expect(hasScopes(LIBRARY_SCOPES)).toBe(false);
+    expect(hasScopes('user-library-read playlist-modify-private')).toBe(false);
+  });
   it('falls back to the requested scopes when Spotify does not list them', async () => {
     const { result } = await roundTrip('library', { tokenBody: { access_token: 'tok', scope: '  ' } });
     expect(await result).toEqual({ token: 'tok', purpose: 'library' });
@@ -83,10 +102,14 @@ describe('completeAuth', () => {
     expect(hasScopes(PLAYLIST_SCOPE)).toBe(false);
   });
   it('a mismatched state is rejected with the stored purpose, and nothing is granted', async () => {
-    const { result } = await roundTrip('playlist', { returned: 'forged.playlist' });
+    const { back, result } = await roundTrip('playlist', { returned: 'forged.playlist' });
     await expect(result).rejects.toMatchObject({ purpose: 'playlist', message: 'The login could not be verified. Please connect again from this page.' });
     expect(getAccessToken()).toBeNull();
     expect(hasScopes(PLAYLIST_SCOPE)).toBe(false);
+    expect(back.store.size).toBe(2); // the login in progress is left intact
+    // The purpose comes from the stored state, never from the forged one.
+    const lib = await roundTrip('library', { returned: 'forged.playlist' });
+    await expect(lib.result).rejects.toMatchObject({ purpose: 'library' });
   });
   it('access_denied words the message by the stored purpose', async () => {
     for (const [purpose, message] of [

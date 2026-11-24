@@ -108,7 +108,7 @@ describe('songKey / isVersionTitle', () => {
   });
   it('collapses piano, Spotify Singles, "recorded at" and a bare trailing featured credit', () => {
     const key = songKey('Song');
-    for (const t of ['Song feat. Bob', 'Song feat Bob', 'Song ft. Bob & Al', 'Song ft Bob', 'Song FEATURING Bob', 'Song (Piano)',
+    for (const t of ['Song feat. Bob', 'Song Feat. Bob & Al', 'Song FEATURING Bob', 'Song (Piano)',
       'Song - Piano Version', 'Song - Spotify Singles', 'Song - Recorded at Spotify Studios NYC', 'Song feat. Bob - Live', 'Song feat. Bob (Acoustic)']) {
       expect(songKey(t), t).toBe(key);
       expect(isVersionTitle(t), t).toBe(true);
@@ -118,11 +118,20 @@ describe('songKey / isVersionTitle', () => {
     expect(songKey('feat. Bob')).toBe(songKey('feat. Bob'));
     expect(songKey('feat. Bob')).not.toBe('');
     expect(isVersionTitle('feat. Bob')).toBe(false);
-    expect(songKey(' ft Bob')).not.toBe('');
+    expect(songKey(' feat. Bob')).not.toBe('');
+    expect(isVersionTitle(' feat. Bob')).toBe(false);
     expect(songKey('Gift ftw')).toBe(songKey('Gift ftw'));
     expect(isVersionTitle('Left Behind')).toBe(false);
     expect(isVersionTitle('Defeat Me')).toBe(false);
     expect(songKey('(Piano)')).toBe('piano');
+  });
+  it('does not read "ft" (Fort, feet) or a bare "feat" as a featured credit', () => {
+    expect(songKey('Drive to Ft. Worth')).not.toBe(songKey('Drive to Ft. Myers'));
+    expect(songKey('Six Ft Under')).not.toBe(songKey('Six Ft Deep'));
+    expect(songKey('No Mean Feat Tonight')).not.toBe(songKey('No Mean'));
+    for (const t of ['Drive to Ft. Worth', 'Six Ft Under', 'No Mean Feat Tonight']) expect(isVersionTitle(t), t).toBe(false);
+    // Known limit, the price of the rule above: a credit written "ft." or "ft" with no brackets is not collapsed.
+    expect(songKey('Song ft. Bob')).not.toBe(songKey('Song'));
   });
   it('known limits: "Home - With Friends" merges with "Home"; "Song -Live" (no space after the dash) is not collapsed', () => {
     expect(songKey('Home - With Friends')).toBe(songKey('Home'));
