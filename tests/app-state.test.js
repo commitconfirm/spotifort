@@ -8,7 +8,7 @@ import {
   reasonText, resolveName, sharePicks, shareUrl, sharedFromHash, signalLabel, similarFor, suggestions,
   useRelativeBands, validExamples, LARGE_POOL, RELATIVE_STRONG,
   playlistIntro, playlistProgressText, leftOutGroups, searchStopText, releasesStopText, playlistOutcome, playlistFailure,
-  PLAYLIST_LARGE, PLAYLIST_VISIBILITY_NOTE,
+  PLAYLIST_VISIBILITY_NOTE, beyondCapText,
 } from '../src/app/state.js';
 
 const lineup = prepareLineup({
@@ -221,9 +221,10 @@ const allStrings = (value) => {
   if (value && typeof value === 'object') return Object.values(value).flatMap(allStrings);
   return [];
 };
-const planOf = (artists, leftOut = 0) => ({
+const planOf = (artists, leftOut = 0, beyondCap = 0) => ({
   artists: Array.from({ length: artists }, (_, i) => ({ n: i + 1, name: `A${i}`, spotifyIds: ['x'] })),
   leftOut: Array.from({ length: leftOut }, (_, i) => ({ n: 1000 + i, name: `L${i}`, reason: 'unverified' })),
+  beyondCap,
 });
 const NAME = 'Spotifort: Treefort 2030 · Nov 23, 2026';
 const base = {
@@ -256,16 +257,27 @@ describe('playlistIntro', () => {
   it('adds the notes in order, with the right verb for one left-out pick', () => {
     const one = playlistIntro(planOf(1, 1));
     expect(one.notes).toEqual(['1 of your picks has no Spotify page we are sure of and will be left out. You will see which afterwards.']);
-    const intro = playlistIntro(planOf(PLAYLIST_LARGE, 3), { madeBefore: true, tokenReady: true });
+    const intro = playlistIntro(planOf(100, 3), { madeBefore: true, tokenReady: true });
     expect(intro.summary).toContain('about 300 tracks');
     expect(intro.summary).toContain('from 100 of your Treefort picks');
     expect(intro.notes).toEqual([
       '3 of your picks have no Spotify page we are sure of and will be left out. You will see which afterwards.',
-      'That is a lot of lookups, and Spotify limits how many searches a Client ID may make in a day. If the limit is reached part-way, we look at the remaining artists’ newest releases instead and tell you which.',
       'You already made a playlist in this visit. This makes another one; it does not replace the first.',
     ]);
     expect(intro.buttonText).toBe('Make the playlist');
-    expect(playlistIntro(planOf(PLAYLIST_LARGE - 1)).notes).toEqual([]);
+    expect(playlistIntro(planOf(100)).notes).toEqual([]); // exactly at the cap: nothing was cut, nothing to say
+  });
+  it('says so plainly when the cap applies, with a count and no names', () => {
+    const intro = playlistIntro(planOf(100, 3, 47), { madeBefore: true });
+    expect(intro.summary).toBe('Spotifort will make one new playlist in your Spotify account, with about 300 tracks: up to 3 each from the first 100 of your 150 Treefort picks, in the order they are listed. Nothing else in your account is changed.');
+    expect(intro.notes).toEqual([
+      'A playlist takes tracks from 100 picks at most, so the 47 further down your lists are not included.',
+      '3 of your picks have no Spotify page we are sure of and will be left out. You will see which afterwards.',
+      'You already made a playlist in this visit. This makes another one; it does not replace the first.',
+    ]);
+    expect(playlistIntro(planOf(100, 0, 1)).notes).toEqual(['A playlist takes tracks from 100 picks at most, so the 1 further down your lists is not included.']);
+    expect(playlistIntro(planOf(100, 0, 1)).summary).toContain('the first 100 of your 101 Treefort picks');
+    for (const junk of [undefined, null, -3, 2.5, 'x', NaN]) expect(playlistIntro({ ...planOf(5), beyondCap: junk }).notes).toEqual([]);
   });
   it('formats large numbers', () => {
     expect(playlistIntro(planOf(400)).summary).toContain('about 1,200 tracks');
@@ -344,6 +356,7 @@ describe('playlistOutcome', () => {
       link: { url: 'https://open.spotify.com/playlist/PL1', text: 'Open Spotify', label: 'Open Spotify to see your playlist' },
       visibility: true,
       notes: [],
+      capNote: null,
       newest: null,
       leftOut: [],
       announce: 'Your playlist is ready: 6 tracks from 2 artists.',
@@ -406,7 +419,7 @@ describe('playlistOutcome', () => {
         `Spotify did not confirm it. Look in your Spotify library for “${NAME}” before you make another one.`,
         'If it is there, it is empty: no tracks were added, and you can delete it in Spotify. If it is not there, nothing was created.',
       ],
-      link: null, visibility: false, notes: [], newest: null, leftOut: [],
+      link: null, visibility: false, notes: [], capNote: null, newest: null, leftOut: [],
       announce: 'Spotify did not confirm that the playlist was made. Look in your Spotify library before making another.',
     });
   });
@@ -435,6 +448,23 @@ describe('playlistOutcome: incomplete with nothing confirmed', () => {
     const vm = playlistOutcome({ status: 'incomplete', name: 'N', url: 'https://open.spotify.com/playlist/abc', trackCount: 0, plannedTracks: 9, artistCount: 0, leftOut: [], newestReleases: [] });
     expect(vm.lines[0]).toBe('Spotify stopped accepting tracks before any were confirmed, so “N” may be empty.');
     expect(JSON.stringify(vm)).not.toMatch(/try again|retry/i);
+  });
+});
+
+describe('picks beyond the cap in the outcome', () => {
+  const made = { status: 'created', name: 'N', url: 'https://open.spotify.com/playlist/abc', trackCount: 300, plannedTracks: 300, artistCount: 100, leftOut: [{ n: 1, name: 'L', reason: 'unverified' }], newestReleases: [] };
+  it('gives a count in its own note, never in the left-out groups', () => {
+    const vm = playlistOutcome(made, { beyondCap: 47 });
+    expect(vm.capNote).toBe('A playlist takes tracks from 100 picks at most. 47 of your picks were further down your lists and are not in it.');
+    expect(vm.leftOut).toEqual([{ reason: 'unverified', label: expect.any(String), artists: [{ n: 1, name: 'L' }] }]);
+    expect(beyondCapText(1)).toBe('A playlist takes tracks from 100 picks at most. 1 of your picks was further down your lists and is not in it.');
+  });
+  it('is absent when nothing was beyond the cap, and for an unconfirmed outcome', () => {
+    expect(playlistOutcome(made).capNote).toBeNull();
+    expect(playlistOutcome(made, { beyondCap: 0 }).capNote).toBeNull();
+    for (const junk of [undefined, null, -1, 1.5, '4']) expect(beyondCapText(junk)).toBeNull();
+    expect(playlistOutcome({ status: 'unconfirmed', name: 'N' }, { beyondCap: 47 }).capNote).toBeNull();
+    for (const status of ['incomplete', 'empty']) expect(playlistOutcome({ ...made, status }, { beyondCap: 2 }).capNote).toContain('2 of your picks were');
   });
 });
 
@@ -471,7 +501,7 @@ describe('playlist wording: hard rules', () => {
     }
   });
   it('no playlist string says "private playlist"', () => {
-    const intros = [playlistIntro(planOf(0)), playlistIntro(planOf(0, 1)), playlistIntro(planOf(PLAYLIST_LARGE, 2), { madeBefore: true, tokenReady: true })];
+    const intros = [playlistIntro(planOf(0)), playlistIntro(planOf(0, 1)), playlistIntro(planOf(100, 2, 30), { madeBefore: true, tokenReady: true })];
     const failures = ['auth', 'forbidden', 'scope', 'quota', 'rate', 'http', 'network', 'data', 'x'].map((kind) => playlistFailure({ kind }));
     const strings = [...allStrings(outcomes), ...allStrings(intros), ...allStrings(failures), PLAYLIST_VISIBILITY_NOTE];
     expect(strings.length).toBeGreaterThan(30);

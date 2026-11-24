@@ -7,6 +7,8 @@
 import { normalizeName } from './normalize.js';
 
 export const TRACKS_PER_ARTIST = 3;
+/** The cap: the most Treefort picks one playlist takes tracks from (about 300 tracks and 100 searches). */
+export const MAX_PLAYLIST_ARTISTS = 100;
 export const MAX_RELEASES = 3;
 export const ADD_BATCH_SIZE = 100;
 export const LEFT_OUT = Object.freeze({ UNVERIFIED: 'unverified', NO_SPOTIFY: 'no-spotify', NO_TRACKS: 'no-tracks', QUOTA: 'quota', LOOKUP_FAILED: 'lookup-failed' });
@@ -24,14 +26,19 @@ export function isSpotifyId(value) {
 }
 
 /**
- * Decides which picks get tracks. Order: matches, then recommendations, as given.
+ * Decides which picks get tracks. Order: matches, then recommendations, as given. At most `limit` picks get tracks:
+ * the cap is counted after the left-out rules, so an unverified or no-Spotify pick does not use up a place. Once the
+ * cap is full, every later pick (of any kind) is only counted in `beyondCap`: it is not left out for a fault of its own.
  * @param {{ matches?: { n: number }[], recommendations?: { n: number }[] }} results
  * @param {{ byN: (n: number) => any }} lineup
- * @returns {{ artists: { n: number, name: string, spotifyIds: string[] }[], leftOut: { n: number, name: string, reason: string }[] }}
+ * @param {{ limit?: number }} [options]
+ * @returns {{ artists: { n: number, name: string, spotifyIds: string[] }[], leftOut: { n: number, name: string, reason: string }[], beyondCap: number }}
  */
-export function playlistPlan(results, lineup) {
+export function playlistPlan(results, lineup, { limit = MAX_PLAYLIST_ARTISTS } = {}) {
+  const max = Number.isInteger(limit) && limit > 0 ? limit : MAX_PLAYLIST_ARTISTS;
   const artists = [];
   const leftOut = [];
+  let beyondCap = 0;
   const seen = new Set();
   const rows = [
     ...(Array.isArray(results?.matches) ? results.matches : []),
@@ -43,6 +50,10 @@ export function playlistPlan(results, lineup) {
     const a = lineup?.byN?.(n);
     if (!a) continue;
     seen.add(n);
+    if (artists.length >= max) {
+      beyondCap++;
+      continue;
+    }
     const name = typeof a.name === 'string' ? a.name : '';
     if (a.unverified === true) {
       leftOut.push({ n, name, reason: LEFT_OUT.UNVERIFIED });
@@ -52,7 +63,7 @@ export function playlistPlan(results, lineup) {
     if (ids.length === 0) leftOut.push({ n, name, reason: LEFT_OUT.NO_SPOTIFY });
     else artists.push({ n, name, spotifyIds: ids });
   }
-  return { artists, leftOut };
+  return { artists, leftOut, beyondCap };
 }
 
 /**

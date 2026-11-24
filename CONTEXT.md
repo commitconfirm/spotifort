@@ -117,8 +117,12 @@ _Avoid_: Fallback link
 ### Playlist
 
 **Playlist**:
-The Spotify playlist Spotifort makes for a visitor from the Treefort picks, holding a few tracks for each lineup artist that has a Spotify page.
+The Spotify playlist Spotifort makes for a visitor from the Treefort picks, holding a few tracks for each lineup artist that has a Spotify page, up to the **Cap**.
 _Avoid_: Mix, set list, private playlist
+
+**Cap**:
+The most Treefort picks one playlist takes tracks from: 100, counted in page order after the left-out picks. A pick beyond the cap is not **Left out**; the visitor is told how many there were, not which.
+_Avoid_: Limit (that is Spotify's quota), maximum, trimmed
 
 **Off-profile**:
 A property of a playlist: it is not shown on the visitor's Spotify profile, but anyone who has its link can open it. It is not the same as private.
@@ -146,7 +150,7 @@ _Avoid_: Latest albums, new music
 - **Treefort picks** are the **Matches** plus the **Recommendations**; a share link carries them and opens as a **Shared picks view**.
 - Each lineup artist row shows a **Listen link** or **Search link** for the **Listen service**, and a `[+]` that reveals **Similar artists**.
 - A **Playlist** is made from the **Treefort picks** and is **Off-profile**.
-- Each **Treefort pick** either contributes **Own tracks** to the **Playlist** or is **Left out**; an **Unverified** lineup artist is always **Left out**.
+- Each **Treefort pick** within the **Cap** either contributes **Own tracks** to the **Playlist** or is **Left out**; an **Unverified** lineup artist is always **Left out**. A pick beyond the **Cap** is neither.
 - When a lineup artist has too few **Own tracks**, its **Newest releases** supply the rest.
 - When two lineup artists share an **Own track**, the one earlier on the page keeps it and the other gets a different track; it appears once in the **Playlist**.
 

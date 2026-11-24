@@ -4,7 +4,7 @@ import { prepareLineup } from '../src/core/lineup-index.js';
 import { realLineup } from './helpers/real-data.js';
 import {
   TRACKS_PER_ARTIST, MAX_RELEASES, ADD_BATCH_SIZE, LEFT_OUT, PLAYLIST_DESCRIPTION,
-  isSpotifyId, playlistPlan, planEstimate, songKey, isVersionTitle, chooseOwnTracks, newestReleases,
+  isSpotifyId, playlistPlan, planEstimate, MAX_PLAYLIST_ARTISTS, songKey, isVersionTitle, chooseOwnTracks, newestReleases,
   playlistName, trackUri, buildTrackList, batches, allocateTracks,
 } from '../src/core/playlist.js';
 
@@ -63,8 +63,46 @@ describe('playlistPlan', () => {
   });
   it('tolerates junk results', () => {
     for (const r of [undefined, null, {}, { matches: 'x', recommendations: 5 }, { matches: [null, {}, { n: 'x' }] }]) {
-      expect(playlistPlan(r, lineup)).toEqual({ artists: [], leftOut: [] });
+      expect(playlistPlan(r, lineup)).toEqual({ artists: [], leftOut: [], beyondCap: 0 });
     }
+  });
+});
+
+describe('playlistPlan: the cap', () => {
+  // n 1..3 are left out (unverified, no Spotify page, unverified); every later pick has a Spotify page.
+  const big = (count) => prepareLineup({
+    artists: Array.from({ length: count }, (_, i) => {
+      const n = i + 1;
+      if (n === 1 || n === 3) return { n, name: `U${n}`, spotifyIds: [`sp${n}`], unverified: true };
+      if (n === 2) return { n, name: `N${n}` };
+      return { n, name: `A${n}`, spotifyIds: [`sp${n}`] };
+    }),
+  });
+  const picks = (count) => ({ matches: [{ n: 1 }, { n: 2 }, { n: 4 }], recommendations: Array.from({ length: count }, (_, i) => ({ n: i + 1 })) });
+  it('is 100 picks', () => {
+    expect(MAX_PLAYLIST_ARTISTS).toBe(100);
+  });
+  it('99, 100 and 101 picks with a Spotify page: left-out picks do not use up places', () => {
+    for (const [withPage, artists, beyond] of [[99, 99, 0], [100, 100, 0], [101, 100, 1]]) {
+      const total = withPage + 3;
+      const plan = playlistPlan(picks(total), big(total));
+      expect(plan.artists.length, `${withPage}`).toBe(artists);
+      expect(plan.leftOut.map((a) => a.n), `${withPage}`).toEqual([1, 2, 3]);
+      expect(plan.beyondCap, `${withPage}`).toBe(beyond);
+      expect(plan.artists.length + plan.leftOut.length + plan.beyondCap).toBe(total);
+    }
+  });
+  it('takes the first 100 in page order: matches first, then recommendations', () => {
+    const plan = playlistPlan(picks(150), big(150));
+    expect(plan.artists.slice(0, 3).map((a) => a.n)).toEqual([4, 5, 6]);
+    expect(plan.artists[99].n).toBe(103);
+    expect(plan.beyondCap).toBe(47);
+  });
+  it('a pick beyond the cap is only counted, whatever it is, and never listed as left out', () => {
+    const lineup = prepareLineup({ artists: [{ n: 1, name: 'A', spotifyIds: ['a1'] }, { n: 2, name: 'U', spotifyIds: ['u1'], unverified: true }, { n: 3, name: 'B', spotifyIds: ['b1'] }] });
+    const plan = playlistPlan({ matches: [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 3 }, { n: 99 }] }, lineup, { limit: 1 });
+    expect(plan).toEqual({ artists: [{ n: 1, name: 'A', spotifyIds: ['a1'] }], leftOut: [], beyondCap: 2 });
+    for (const limit of [0, -1, 1.5, 'x', null]) expect(playlistPlan({ matches: [{ n: 1 }, { n: 3 }] }, lineup, { limit }).artists.length).toBe(2);
   });
 });
 
@@ -419,8 +457,14 @@ describe('batches', () => {
 describe('real lineup', () => {
   it('plans every artist or leaves it out, never planning unverified or id-less ones', () => {
     const recommendations = realLineup.artists.map((a) => ({ n: a.n, name: a.name, score: 1 }));
-    const plan = playlistPlan({ matches: [], recommendations }, realLineup);
+    const plan = playlistPlan({ matches: [], recommendations }, realLineup, { limit: 10000 });
     expect(plan.artists.length + plan.leftOut.length).toBe(realLineup.artists.length);
+    expect(plan.beyondCap).toBe(0);
+    // With the cap, the whole lineup as picks gives 100 artists and the rest only counted.
+    const capped = playlistPlan({ matches: [], recommendations }, realLineup);
+    expect(capped.artists.length).toBe(MAX_PLAYLIST_ARTISTS);
+    expect(capped.artists.length + capped.leftOut.length + capped.beyondCap).toBe(realLineup.artists.length);
+    expect(capped.beyondCap).toBeGreaterThan(0);
     for (const p of plan.artists) {
       expect(p.spotifyIds.length).toBeGreaterThan(0);
       expect(p.spotifyIds.every(isSpotifyId)).toBe(true);

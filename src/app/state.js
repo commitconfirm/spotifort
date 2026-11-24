@@ -9,7 +9,7 @@ import { matchPool } from '../core/match.js';
 import { recommend, BAND_GOOD, BAND_STRONG } from '../core/recommend.js';
 import { listenLinks } from '../core/links.js';
 import { decodeShare, encodeShare } from '../core/share.js';
-import { LEFT_OUT, TRACKS_PER_ARTIST, planEstimate } from '../core/playlist.js';
+import { LEFT_OUT, MAX_PLAYLIST_ARTISTS, TRACKS_PER_ARTIST, planEstimate } from '../core/playlist.js';
 
 /** Sources the visitor adds one artist at a time; everything else is a library import shown as one summary chip. */
 export const MANUAL_SOURCES = [SOURCE_TYPED, SOURCE_PICKED];
@@ -287,17 +287,29 @@ export function diagnostics(pool, results) {
 // every string here (tested): an outcome where a playlist may already exist ('incomplete', 'unconfirmed') never says to
 // try again, and nothing calls what Spotifort makes a "private playlist" (the API cannot make one).
 
-/** With this many artists or more, the intro warns about Spotify's daily search limit. */
-export const PLAYLIST_LARGE = 100;
-
 /** Shown after a playlist was made: what Spotify does with its visibility, and how to change it. */
 export const PLAYLIST_VISIBILITY_NOTE = 'Spotify labels this playlist “Public Playlist”, and anyone who has its link can open it. It is not shown on your profile. To change that, open it in Spotify, open its ••• menu and choose Make private.';
 
 const plural = (n, one, many) => `${formatCount(n)} ${n === 1 ? one : many}`;
 
+/** How many picks were beyond the cap, from a plan's `beyondCap`; junk counts as none. */
+const picksBeyondCap = (n) => (Number.isInteger(n) && n > 0 ? n : 0);
+
+/**
+ * What the outcome says about picks beyond the cap, or null. They are not "left out": nothing is wrong with them, so
+ * they get a count and no list of names.
+ * @param {unknown} beyondCap from playlistPlan
+ * @returns {string|null}
+ */
+export function beyondCapText(beyondCap) {
+  const n = picksBeyondCap(beyondCap);
+  if (!n) return null;
+  return `A playlist takes tracks from ${formatCount(MAX_PLAYLIST_ARTISTS)} picks at most. ${formatCount(n)} of your picks ${n === 1 ? 'was' : 'were'} further down your lists and ${n === 1 ? 'is' : 'are'} not in it.`;
+}
+
 /**
  * The panel before anything is made.
- * @param {{ artists: object[], leftOut: object[] }} plan from playlistPlan
+ * @param {{ artists: object[], leftOut: object[], beyondCap?: number }} plan from playlistPlan
  * @param {{ tokenReady?: boolean, madeBefore?: boolean }} [options] tokenReady: a playlist login is in memory (no
  *   redirect needed); madeBefore: a playlist was made (or may have been) in this visit
  * @returns {{ status: 'none'|'ready', summary: string, notes: string[], buttonText: string }}
@@ -312,10 +324,15 @@ export function playlistIntro(plan, { tokenReady = false, madeBefore = false } =
       : 'Nothing to make a playlist from yet. Add artists until something appears in your lists.';
     return { status: 'none', summary, notes: [], buttonText };
   }
-  const summary = `Spotifort will make one new playlist in your Spotify account, with about ${formatCount(tracks)} tracks: up to ${TRACKS_PER_ARTIST} each from ${formatCount(artists)} of your Treefort picks, in the order they are listed. Nothing else in your account is changed.`;
+  const beyond = picksBeyondCap(plan?.beyondCap);
+  // Capped: say so in the first sentence. "The first 100 of your N" counts every pick, as the lists do.
+  const from = beyond
+    ? `the first ${formatCount(artists)} of your ${formatCount(artists + leftOut + beyond)} Treefort picks`
+    : `${formatCount(artists)} of your Treefort picks`;
+  const summary = `Spotifort will make one new playlist in your Spotify account, with about ${formatCount(tracks)} tracks: up to ${TRACKS_PER_ARTIST} each from ${from}, in the order they are listed. Nothing else in your account is changed.`;
   const notes = [];
+  if (beyond) notes.push(`A playlist takes tracks from ${formatCount(MAX_PLAYLIST_ARTISTS)} picks at most, so the ${formatCount(beyond)} further down your lists ${beyond === 1 ? 'is' : 'are'} not included.`);
   if (leftOut) notes.push(`${formatCount(leftOut)} of your picks ${leftOut === 1 ? 'has' : 'have'} no Spotify page we are sure of and will be left out. You will see which afterwards.`);
-  if (artists >= PLAYLIST_LARGE) notes.push('That is a lot of lookups, and Spotify limits how many searches a Client ID may make in a day. If the limit is reached part-way, we look at the remaining artists’ newest releases instead and tell you which.');
   if (madeBefore) notes.push('You already made a playlist in this visit. This makes another one; it does not replace the first.');
   return { status: 'ready', summary, notes, buttonText };
 }
@@ -390,11 +407,12 @@ const nonNegative = (n) => (Number.isFinite(n) && n > 0 ? n : 0);
 /**
  * What the panel says after createPlaylist resolved. Reads `status` first and never `error`.
  * @param {object} result from createPlaylist
+ * @param {{ beyondCap?: number }} [options] the plan's count of picks beyond the cap
  * @returns {{ status: string, heading: string, lines: string[], link: { url: string, text: string, label: string }|null,
- *   visibility: boolean, notes: string[], newest: { label: string, names: string[] }|null,
+ *   visibility: boolean, notes: string[], capNote: string|null, newest: { label: string, names: string[] }|null,
  *   leftOut: { reason: string, label: string, artists: { n: number, name: string }[] }[], announce: string }}
  */
-export function playlistOutcome(result) {
+export function playlistOutcome(result, { beyondCap = 0 } = {}) {
   const status = result?.status;
   const name = typeof result?.name === 'string' && result.name ? result.name : '';
   const quoted = name ? `“${name}”` : 'the playlist';
@@ -410,6 +428,7 @@ export function playlistOutcome(result) {
       link: null,
       visibility: false,
       notes: [],
+      capNote: null,
       newest: null,
       leftOut: [],
       announce: 'Spotify did not confirm that the playlist was made. Look in your Spotify library before making another.',
@@ -417,6 +436,7 @@ export function playlistOutcome(result) {
   }
   const notes = [searchStopText(result.searchStopReason), releasesStopText(result.releasesStopReason)].filter(Boolean);
   const leftOut = leftOutGroups(result.leftOut);
+  const capNote = beyondCapText(beyondCap);
   if (status === 'empty') {
     return {
       status,
@@ -425,6 +445,7 @@ export function playlistOutcome(result) {
       link: null,
       visibility: false,
       notes,
+      capNote,
       newest: null,
       leftOut,
       announce: 'No playlist was made: no tracks were found.',
@@ -452,6 +473,7 @@ export function playlistOutcome(result) {
       link,
       visibility: true,
       notes,
+      capNote,
       newest,
       leftOut,
       announce: 'Your playlist was made, but not every track was added.',
@@ -464,6 +486,7 @@ export function playlistOutcome(result) {
     link,
     visibility: true,
     notes,
+    capNote,
     newest,
     leftOut,
     announce: `Your playlist is ready: ${tracks} from ${artists}.`,

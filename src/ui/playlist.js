@@ -75,6 +75,7 @@ export function renderPlaylistOutcome(container, vm, { lineup, service }) {
       h('ul', { className: 'playlist-names' }, ...vm.newest.names.map((name) => h('li', { text: name })))
     );
   }
+  if (vm.capNote) container.append(h('p', { className: 'playlist-note', text: vm.capNote }));
   if (vm.leftOut.length) {
     container.append(h('p', { className: 'playlist-left-out-intro', text: 'Left out of the playlist:' }));
     for (const group of vm.leftOut) {

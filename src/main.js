@@ -440,7 +440,7 @@ async function handleCallback() {
 
 // --- playlist ------------------------------------------------------------------------------------
 
-/** The Treefort picks in page order (matches, then recommendations), as the playlist engine wants them. */
+/** The Treefort picks in page order (matches, then recommendations), as the playlist engine wants them; capped at 100. */
 const currentPlan = () => playlistPlan(app.results ?? {}, app.lineup);
 
 /** A valid Client ID this device already has, or null. */
@@ -606,7 +606,7 @@ function setPlaylistBusy(busy) {
 
 /**
  * The work of one run: what the picks need, the plan, then the lookups and the two writes.
- * @returns {Promise<{ result: object }|{ failure: { kind: string } }|{ nothing: true }>} rejects as createPlaylist does
+ * @returns {Promise<{ result: object, beyondCap: number }|{ failure: { kind: string } }|{ nothing: true }>} rejects as createPlaylist does
  */
 async function makePlaylist(onProgress) {
   if (!hasScopes(PLAYLIST_SCOPE)) return { failure: { kind: 'scope' } };
@@ -617,7 +617,7 @@ async function makePlaylist(onProgress) {
   const plan = currentPlan();
   if (!plan.artists.length) return { nothing: true };
   const result = await createPlaylist({ api: createApi({ token: getAccessToken() }), plan, year: YEAR, now: new Date(), onProgress });
-  return { result };
+  return { result, beyondCap: plan.beyondCap };
 }
 
 /**
@@ -660,7 +660,7 @@ async function runPlaylist() {
     showPlaylistFailure(outcome.failure);
     return;
   }
-  const vm = playlistOutcome(outcome.result);
+  const vm = playlistOutcome(outcome.result, { beyondCap: outcome.beyondCap });
   if (vm.status !== 'empty') app.playlistMade = true; // made, or may have been
   app.playlistVm = vm;
   const heading = renderPlaylistOutcome(el.playlistResult, vm, { lineup: app.lineup, service: app.service });
