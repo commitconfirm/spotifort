@@ -88,7 +88,7 @@ Measured with the app-only token over the 186 lineup artists that have a Spotify
 | Both `type=track` and `type=artist` were blocked, for the user token and the app-only token alike. | LIVE-TESTED |
 | In the same minute `GET /artists/{id}/albums`, `GET /albums/{id}/tracks` and `POST /me/playlists` returned 2xx. Search has its own quota bucket. | LIVE-TESTED |
 | "About 300 searches per 24 hours per developer account" is one day's count from one account. The size of the albums bucket is unknown. | INFERENCE |
-| In the browser the `Retry-After` header may not be readable cross-origin (it was never captured there). The body's `reason` is readable. | INFERENCE |
+| In the browser the `Retry-After` header may not be readable cross-origin (it was never captured there). Reading the body's `reason` in the browser was not observed directly: in the browser, status 429 and the message "Too many requests" were seen; the `reason` value was captured by a script outside the browser. | INFERENCE |
 
 **Consequence for the pipeline:** the scheduled lineup job's artist search draws on the same developer-account search quota. A visitor who uses their own Client ID spends their own account's quota, not the owner's.
 

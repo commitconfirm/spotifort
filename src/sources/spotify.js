@@ -24,7 +24,7 @@ const MAX_ATTEMPTS = 5;
 const MAX_RETRY_AFTER_S = 30;
 const MAX_FOLLOWED_PAGES = 200;
 
-/** A Spotify call that failed. kind: 'auth' (token expired or revoked), 'forbidden', 'rate', 'http', 'network'. */
+/** A Spotify call that failed. kind: 'auth' (token expired or revoked), 'forbidden', 'rate', 'quota' (daily quota used up), 'http', 'network'. */
 export class SpotifyError extends Error {
   constructor(message, { kind, status } = {}) {
     super(message);
@@ -46,44 +46,67 @@ export function retryAfterSeconds(value) {
 }
 
 /**
- * A tiny GET client for the Web API.
+ * A tiny GET and POST client for the Web API. One request loop serves both. A 429 is retried for both (Spotify
+ * refused the request, so it did not do the work). A 5xx and a fetch that rejects are retried for GET only: for POST
+ * a gateway error can arrive after Spotify did the work and a rejected fetch has no answer at all, so repeating it
+ * could create a second playlist or add a batch of tracks twice. A 429
+ * whose body says QUOTA_EXCEEDED is a daily quota, not a rate limit: it throws kind 'quota' at once, with no wait.
  * @param {{ token: string, fetch?: typeof fetch, sleep?: (ms: number) => Promise<void> }} options
- * @returns {{ get: (path: string) => Promise<any> }} path relative to /v1/, e.g. 'me/tracks?limit=50'
+ * @returns {{ get: (path: string) => Promise<any>, post: (path: string, body: unknown) => Promise<any> }}
+ *   path relative to /v1/, e.g. 'me/tracks?limit=50'. post resolves with the parsed JSON, or null when the body is
+ *   empty or not JSON.
  */
 export function createApi({ token, fetch: fetchFn = (...a) => globalThis.fetch(...a), sleep = defaultSleep }) {
-  return {
-    async get(path) {
-      const url = new URL(path, API_BASE).href;
-      // The bearer token must only ever go to Spotify's API host.
-      if (!url.startsWith(API_ORIGIN)) throw new Error('Refusing to send the access token to an unexpected host');
-      for (let attempt = 1; ; attempt++) {
-        let res;
-        try {
-          res = await fetchFn(url, { headers: { Authorization: `Bearer ${token}` } });
-        } catch (err) {
-          if (attempt >= MAX_ATTEMPTS) throw new SpotifyError('Could not reach Spotify. Check your connection and try again.', { kind: 'network' });
-          await sleep(500 * 2 ** (attempt - 1));
-          continue;
-        }
-        if (res.ok) return res.json();
-        if (res.status === 401) throw new SpotifyError('Your Spotify login has expired. Please connect again.', { kind: 'auth', status: 401 });
-        if (res.status === 403) throw new SpotifyError('Spotify did not allow this request.', { kind: 'forbidden', status: 403 });
-        if (attempt < MAX_ATTEMPTS && res.status === 429) {
-          const wait = retryAfterSeconds(res.headers?.get?.('Retry-After'));
-          log.warn(`Spotify rate limit; waiting ${wait}s`);
-          await sleep(wait * 1000);
-          continue;
-        }
-        if (attempt < MAX_ATTEMPTS && res.status >= 500) {
-          await sleep(500 * 2 ** (attempt - 1));
-          continue;
-        }
-        throw new SpotifyError(
-          res.status === 429 ? 'Spotify is busy right now. Please try again in a minute.' : `Spotify returned an error (${res.status}). Please try again.`,
-          { kind: res.status === 429 ? 'rate' : 'http', status: res.status }
-        );
+  async function request(method, path, body) {
+    const url = new URL(path, API_BASE).href;
+    // The bearer token must only ever go to Spotify's API host.
+    if (!url.startsWith(API_ORIGIN)) throw new Error('Refusing to send the access token to an unexpected host');
+    const init = { headers: { Authorization: `Bearer ${token}` } };
+    if (method === 'POST') {
+      init.method = 'POST';
+      init.headers['Content-Type'] = 'application/json';
+      init.body = JSON.stringify(body);
+    }
+    const busy = 'Spotify is busy right now. Please try again in a minute.';
+    for (let attempt = 1; ; attempt++) {
+      let res;
+      try {
+        res = await fetchFn(url, init);
+      } catch (err) {
+        if (method === 'POST' || attempt >= MAX_ATTEMPTS) throw new SpotifyError('Could not reach Spotify. Check your connection and try again.', { kind: 'network' });
+        await sleep(500 * 2 ** (attempt - 1));
+        continue;
       }
-    },
+      if (res.ok) {
+        if (method === 'GET') return res.json();
+        try { return await res.json(); } catch { return null; }
+      }
+      if (res.status === 401) throw new SpotifyError('Your Spotify login has expired. Please connect again.', { kind: 'auth', status: 401 });
+      if (res.status === 403) throw new SpotifyError('Spotify did not allow this request.', { kind: 'forbidden', status: 403 });
+      if (res.status === 429) {
+        let errBody = null;
+        try { errBody = await res.json(); } catch { /* missing or not JSON */ }
+        if (errBody?.error?.reason === 'QUOTA_EXCEEDED') throw new SpotifyError(busy, { kind: 'quota', status: 429 });
+      }
+      if (attempt < MAX_ATTEMPTS && res.status === 429) {
+        const wait = retryAfterSeconds(res.headers?.get?.('Retry-After'));
+        log.warn(`Spotify rate limit; waiting ${wait}s`);
+        await sleep(wait * 1000);
+        continue;
+      }
+      if (attempt < MAX_ATTEMPTS && res.status >= 500 && method === 'GET') {
+        await sleep(500 * 2 ** (attempt - 1));
+        continue;
+      }
+      throw new SpotifyError(
+        res.status === 429 ? busy : `Spotify returned an error (${res.status}). Please try again.`,
+        { kind: res.status === 429 ? 'rate' : 'http', status: res.status }
+      );
+    }
+  }
+  return {
+    get: (path) => request('GET', path),
+    post: (path, body) => request('POST', path, body),
   };
 }
 
