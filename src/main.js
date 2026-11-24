@@ -1,9 +1,13 @@
 // Spotifort main page: bootstrap and orchestration. Three states share this one page:
 //   normal    the finder, "My artists" and the two result lists
 //   shared    a read-only list of someone's picks, when the URL carries a valid #s=... fragment
-//   callback  /callback after the Spotify login (the same page; the import then runs and the normal view shows)
+//   callback  /callback after the Spotify login (the same page). The login's purpose rides in the OAuth state: a
+//             library login runs the import, a playlist login makes the playlist (once; a reload lands on / and makes
+//             nothing). The normal view shows either way.
 // All decisions live in src/app/state.js (pure, tested); src/ui/* only renders. lineup.json loads up front;
 // similarity.json loads on the first interaction with the search box, or at once when a saved pool exists.
+// "Make a Spotify playlist" (in My artists) opens a panel: intro, then the login, then progress and the outcome.
+// Nothing about a playlist is stored; whether one was made in this visit is kept in memory only.
 
 import { log } from './log.js';
 import { createStore, isValidClientId, DEFAULT_SERVICE } from './store.js';
@@ -11,14 +15,17 @@ import { loadLineup, loadSimilarity } from './data/load.js';
 import { prepareLineup } from './core/lineup-index.js';
 import { prepareSimilarity } from './core/similarity-index.js';
 import { addBatch, clearSource, emptyPool, removeSources } from './core/pool.js';
+import { playlistPlan } from './core/playlist.js';
 import { listTags } from './core/recommend.js';
 import { PLATFORM_LABELS } from './core/links.js';
 import {
   MANUAL_SOURCES, addByName, addSuggestion, computeResults, diagnostics, formatCount, importSummaryText, libraryCount, poolChips, resolveName,
   sharePicks, shareUrl, sharedFromHash, suggestions, useRelativeBands, validExamples,
+  playlistFailure, playlistIntro, playlistOutcome, playlistProgressText,
 } from './app/state.js';
-import { clearAuth, completeAuth, CryptoNotSupportedError } from './auth.js';
-import { spotifySource, SOURCE_ID as SPOTIFY } from './sources/spotify.js';
+import { clearAuth, completeAuth, cryptoAvailable, getAccessToken, hasScopes, startAuth, CryptoNotSupportedError, PLAYLIST_SCOPE } from './auth.js';
+import { createApi, spotifySource, SOURCE_ID as SPOTIFY } from './sources/spotify.js';
+import { createPlaylist } from './sources/spotify-playlist.js';
 import { formatDate } from './utils.js';
 import { h, clear, announce } from './ui/dom.js';
 import { createCombobox } from './ui/combobox.js';
@@ -28,6 +35,7 @@ import { renderGenrePanel, renderGenreResults } from './ui/genre.js';
 import { copyShareLink } from './ui/share.js';
 import { artistRow } from './ui/rows.js';
 import { renderServicePicker } from './ui/service-picker.js';
+import { renderPlaylistFailure, renderPlaylistIntro, renderPlaylistOutcome, renderPlaylistProgress } from './ui/playlist.js';
 
 const YEAR = __FESTIVAL_YEAR__;
 const EXAMPLES = __EXAMPLE_ARTISTS__;
@@ -63,6 +71,27 @@ const el = {
   shareOutput: $('share-output'),
   shareUrl: $('share-url'),
   shareConfirm: $('share-confirm'),
+  playlistBtn: $('playlist-btn'),
+  playlistPanel: $('playlist-panel'),
+  playlistHeading: $('playlist-heading'),
+  playlistIntro: $('playlist-intro'),
+  playlistSummary: $('playlist-summary'),
+  playlistNotes: $('playlist-notes'),
+  playlistDetails: $('playlist-details'),
+  playlistForm: $('playlist-form'),
+  playlistClientSaved: $('playlist-client-saved'),
+  playlistClientChange: $('playlist-client-change'),
+  playlistClientFields: $('playlist-client-fields'),
+  playlistClientId: $('playlist-client-id'),
+  playlistClientIdError: $('playlist-client-id-error'),
+  playlistRemember: $('playlist-remember'),
+  playlistContinue: $('playlist-continue'),
+  playlistCancel: $('playlist-cancel'),
+  playlistError: $('playlist-error'),
+  playlistProgress: $('playlist-progress'),
+  playlistResult: $('playlist-result'),
+  playlistDone: $('playlist-done'),
+  playlistClose: $('playlist-close'),
   forgetBtn: $('forget-btn'),
   forgetFooter: $('forget-footer'),
   results: $('results'),
@@ -86,6 +115,9 @@ const app = {
   expanded: new Set(),
   genreSelected: new Set(),
   importing: false,
+  playlistBusy: false, // a playlist is being made: two createPlaylist calls at once would make two playlists
+  playlistMade: false, // a playlist was made (or may have been) in this visit; memory only, never stored
+  playlistVm: null, // the outcome on show, so a service change can redraw its listen links
 };
 
 // --- similarity (lazy) ---------------------------------------------------------------------------
@@ -143,6 +175,7 @@ function showNoData(name) {
 function setPool(next, { save = true, announceChange = true } = {}) {
   app.pool = next;
   if (save) store.savePool(next);
+  if (!next.entries.length && !app.playlistBusy) closePlaylistPanel();
   renderPool();
   // Recommendations need the similarity index. It is lazy, so any path that fills the pool (typing, a chip,
   // a Spotify import arriving on a fresh /callback page load) must make sure it is on its way.
@@ -152,7 +185,7 @@ function setPool(next, { save = true, announceChange = true } = {}) {
 
 function renderPool() {
   const chips = poolChips(app.pool);
-  el.pool.hidden = !app.pool.entries.length && !app.importing && el.importStatus.hidden;
+  el.pool.hidden = !app.pool.entries.length && !app.importing && el.importStatus.hidden && el.playlistPanel.hidden;
   renderPoolChips(el.poolChips, chips, {
     busy: app.importing,
     onRemove: (key) => {
@@ -204,6 +237,7 @@ function recompute({ announceChange = true } = {}) {
   if (!app.pool.entries.length) {
     app.results = null;
     renderResults(el.resultsBody, { status: 'empty' });
+    refreshPlaylistIntro();
     return;
   }
   const t = import.meta.env.DEV ? performance.now() : 0;
@@ -225,6 +259,7 @@ function recompute({ announceChange = true } = {}) {
   if (announceChange) {
     announce(el.announcer, `Results updated: ${app.results.matches.length} playing Treefort, ${app.results.recommendations.length} recommended.`);
   }
+  refreshPlaylistIntro();
 }
 
 // --- examples, service picker, genre panel --------------------------------------------------------
@@ -253,6 +288,7 @@ function rerenderLists() {
   recompute({ announceChange: false });
   if (!el.genrePanel.hidden) renderGenreResults(genreArgs());
   if (!el.sharedView.hidden) renderShared();
+  if (app.playlistVm && !el.playlistResult.hidden) renderPlaylistOutcome(el.playlistResult, app.playlistVm, { lineup: app.lineup, service: app.service });
 }
 
 const genreArgs = () => ({
@@ -300,6 +336,11 @@ function showSpotifyError(message) {
 }
 
 async function connectSpotify(clientId) {
+  if (app.playlistBusy) {
+    // A redirect now would abandon the playlist part-way, with no outcome shown.
+    showSpotifyError('A playlist is being made. Wait for it to finish, then connect.');
+    return;
+  }
   if (!spotifySource.isAvailable()) {
     showSpotifyError(new CryptoNotSupportedError().message);
     return;
@@ -378,17 +419,254 @@ async function runImport() {
 }
 
 async function handleCallback() {
+  let done;
   try {
-    const token = await completeAuth(store.loadClientId() ?? ENV_CLIENT_ID);
-    if (!token) {
-      showSpotifyError('The Spotify login was interrupted. Please connect again.');
-      return;
-    }
-    await runImport();
+    done = await completeAuth(store.loadClientId() ?? ENV_CLIENT_ID);
   } catch (err) {
     log.error('Callback error:', err.message);
-    showSpotifyError(err.message);
+    // err.purpose only decides which panel shows the message; it never starts anything.
+    if (err.purpose === 'playlist') showPlaylistError(err.message);
+    else showSpotifyError(err.message);
+    return;
   }
+  if (!done) {
+    showSpotifyError('The Spotify login was interrupted. Please connect again.');
+    return;
+  }
+  // completeAuth removed the state and cleaned the URL, so this runs once per login: a reload creates nothing.
+  if (done.purpose === 'playlist') await runPlaylist();
+  else await runImport();
+}
+
+// --- playlist ------------------------------------------------------------------------------------
+
+/** The Treefort picks in page order (matches, then recommendations), as the playlist engine wants them; capped at 100. */
+const currentPlan = () => playlistPlan(app.results ?? {}, app.lineup);
+
+/** A valid Client ID this device already has, or null. */
+const savedClientId = () => {
+  const id = store.loadClientId() ?? ENV_CLIENT_ID;
+  return isValidClientId(id) ? id : null;
+};
+
+const playlistIntroOpen = () => !el.playlistPanel.hidden && !el.playlistIntro.hidden && !app.playlistBusy;
+
+/** Show or hide the panel, keeping the button's aria-expanded in sync. The pool section must be visible to show it. */
+function setPlaylistPanel(open) {
+  el.playlistBtn.setAttribute('aria-expanded', String(open));
+  el.playlistPanel.hidden = !open;
+  if (open) el.pool.hidden = false;
+}
+
+function closePlaylistPanel() {
+  setPlaylistPanel(false);
+  renderPool();
+}
+
+/** Re-render the intro's numbers and button from the current results; returns whether a playlist login is in memory. */
+function renderIntroNumbers() {
+  const tokenReady = hasScopes(PLAYLIST_SCOPE);
+  const intro = playlistIntro(currentPlan(), { tokenReady, madeBefore: app.playlistMade });
+  renderPlaylistIntro({ summary: el.playlistSummary, notes: el.playlistNotes, details: el.playlistDetails, button: el.playlistContinue }, intro);
+  return tokenReady;
+}
+
+/** Results changed while the intro is showing: update its numbers without moving focus. */
+function refreshPlaylistIntro() {
+  if (playlistIntroOpen()) renderIntroNumbers();
+}
+
+/** The Client ID area: nothing when a playlist login is in memory, a "saved" line when one is stored, else the fields. */
+function showPlaylistClient({ tokenReady, fields = false }) {
+  const saved = savedClientId();
+  const showFields = !tokenReady && (fields || !saved);
+  el.playlistClientSaved.hidden = tokenReady || showFields;
+  el.playlistClientFields.hidden = !showFields;
+  if (showFields && !el.playlistClientId.value) el.playlistClientId.value = saved ?? '';
+}
+
+/** Open the panel on its intro (what will happen and what Spotify will ask). */
+function openPlaylistIntro({ focus = true } = {}) {
+  setPlaylistPanel(true);
+  el.playlistIntro.hidden = false;
+  el.playlistProgress.hidden = true;
+  clear(el.playlistProgress);
+  el.playlistResult.hidden = true;
+  el.playlistDone.hidden = true;
+  clear(el.playlistResult);
+  app.playlistVm = null;
+  el.playlistError.textContent = '';
+  const tokenReady = renderIntroNumbers();
+  showPlaylistClient({ tokenReady });
+  if (focus) el.playlistHeading.focus();
+}
+
+function onPlaylistButton() {
+  if (app.playlistBusy || !app.lineup) return;
+  if (playlistIntroOpen()) closePlaylistPanel();
+  else openPlaylistIntro({ focus: true });
+}
+
+/** A login for a playlist failed on /callback: show the message in the playlist panel. */
+function showPlaylistError(message) {
+  openPlaylistIntro({ focus: false });
+  el.playlistError.textContent = message;
+  el.playlistError.scrollIntoView({ block: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+}
+
+async function onPlaylistSubmit(e) {
+  e.preventDefault();
+  if (app.playlistBusy) return;
+  el.playlistError.textContent = '';
+  el.playlistClientIdError.textContent = '';
+  const plan = currentPlan();
+  if (!plan.artists.length) {
+    renderIntroNumbers();
+    return;
+  }
+  if (hasScopes(PLAYLIST_SCOPE)) {
+    runPlaylist();
+    return;
+  }
+  let id;
+  if (!el.playlistClientFields.hidden) {
+    id = el.playlistClientId.value.trim() || ENV_CLIENT_ID || '';
+    if (!isValidClientId(id)) {
+      el.playlistClientIdError.textContent = id ? 'That does not look like a Client ID. It is 32 letters and numbers (not the Client Secret).' : 'Paste your Client ID first.';
+      el.playlistClientId.setAttribute('aria-invalid', 'true');
+      el.playlistClientId.focus();
+      return;
+    }
+    el.playlistClientId.removeAttribute('aria-invalid');
+    // An unchanged Client ID stays where it was kept: the ticked-by-default checkbox must not quietly move a
+    // tab-only ID into localStorage.
+    if (id !== savedClientId()) store.saveClientId(id, { remember: el.playlistRemember.checked });
+  } else {
+    id = savedClientId();
+    if (!id) {
+      showPlaylistClient({ tokenReady: false, fields: true });
+      el.playlistClientId.focus();
+      return;
+    }
+  }
+  store.savePool(app.pool); // make sure the picks survive the round trip
+  if (!cryptoAvailable()) {
+    el.playlistError.textContent = new CryptoNotSupportedError().message;
+    return;
+  }
+  const label = el.playlistContinue.textContent;
+  el.playlistContinue.disabled = true;
+  el.playlistContinue.textContent = 'Connecting…';
+  try {
+    await startAuth(id, 'playlist'); // navigates away
+  } catch (err) {
+    log.error('Could not start the Spotify login:', err.message);
+    el.playlistContinue.disabled = false;
+    el.playlistContinue.textContent = label;
+    el.playlistError.textContent = err.message;
+  }
+}
+
+/** Show the panel in progress mode (intro and outcome hidden). */
+function showPlaylistProgress(text) {
+  setPlaylistPanel(true);
+  el.playlistIntro.hidden = true;
+  el.playlistResult.hidden = true;
+  el.playlistDone.hidden = true;
+  clear(el.playlistResult);
+  app.playlistVm = null;
+  renderPlaylistProgress(el.playlistProgress, text);
+  el.playlistPanel.scrollIntoView({ block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+}
+
+function showPlaylistFailure(err) {
+  const vm = playlistFailure(err);
+  const heading = renderPlaylistFailure(el.playlistResult, vm);
+  el.playlistDone.hidden = false;
+  announce(el.announcer, vm.announce);
+  heading.focus();
+}
+
+/** Leaving the page while a playlist is being made would lose the outcome, and the playlist may already exist. */
+const warnBeforeLeaving = (e) => {
+  e.preventDefault();
+  e.returnValue = '';
+};
+
+/**
+ * While a playlist is being made nothing may start a second one, send the visitor to Spotify or clear the login:
+ * the two playlist buttons and both "Forget my data" buttons are disabled, and leaving the page asks first.
+ */
+function setPlaylistBusy(busy) {
+  app.playlistBusy = busy;
+  for (const b of [el.playlistBtn, el.playlistContinue, el.forgetBtn, el.forgetFooter]) b.disabled = busy;
+  if (busy) window.addEventListener('beforeunload', warnBeforeLeaving);
+  else window.removeEventListener('beforeunload', warnBeforeLeaving);
+}
+
+/**
+ * The work of one run: what the picks need, the plan, then the lookups and the two writes.
+ * @returns {Promise<{ result: object, beyondCap: number }|{ failure: { kind: string } }|{ nothing: true }>} rejects as createPlaylist does
+ */
+async function makePlaylist(onProgress) {
+  if (!hasScopes(PLAYLIST_SCOPE)) return { failure: { kind: 'scope' } };
+  // Recommendations need the similarity index: without it the playlist would hold the matches only.
+  const sim = await ensureSimilarity();
+  if (!sim) return { failure: { kind: 'data' } };
+  recompute({ announceChange: false });
+  const plan = currentPlan();
+  if (!plan.artists.length) return { nothing: true };
+  const result = await createPlaylist({ api: createApi({ token: getAccessToken() }), plan, year: YEAR, now: new Date(), onProgress });
+  return { result, beyondCap: plan.beyondCap };
+}
+
+/**
+ * Make the playlist with the playlist login in memory: straight after the login on /callback, or from the panel
+ * when the token is still there. Never two at once: the busy flag is set before the first await.
+ */
+async function runPlaylist() {
+  if (app.playlistBusy) return;
+  setPlaylistBusy(true); // first, before any await
+  const starting = playlistProgressText({});
+  showPlaylistProgress(starting);
+  announce(el.announcer, starting);
+  el.playlistHeading.focus({ preventScroll: true }); // the control that started this is now hidden
+  let phase = null;
+  const onProgress = (p) => {
+    const text = playlistProgressText(p);
+    renderPlaylistProgress(el.playlistProgress, text, p);
+    if (p?.phase !== phase) { // speak phase changes only, not every artist
+      phase = p?.phase;
+      announce(el.announcer, text);
+    }
+  };
+  let outcome;
+  try {
+    outcome = await makePlaylist(onProgress);
+  } catch (err) {
+    log.error('Playlist failed:', err?.message);
+    if (err?.kind === 'auth') clearAuth();
+    outcome = { failure: err };
+  }
+  setPlaylistBusy(false);
+  el.playlistProgress.hidden = true;
+  clear(el.playlistProgress);
+  // Rendering is outside the try: a display error must never be reported as "nothing was created".
+  if (outcome.nothing) {
+    openPlaylistIntro({ focus: true }); // it explains why there is nothing to make
+    return;
+  }
+  if (outcome.failure) {
+    showPlaylistFailure(outcome.failure);
+    return;
+  }
+  const vm = playlistOutcome(outcome.result, { beyondCap: outcome.beyondCap });
+  if (vm.status !== 'empty') app.playlistMade = true; // made, or may have been
+  app.playlistVm = vm;
+  const heading = renderPlaylistOutcome(el.playlistResult, vm, { lineup: app.lineup, service: app.service });
+  el.playlistDone.hidden = false;
+  announce(el.announcer, vm.announce);
+  heading.focus();
 }
 
 // --- share ---------------------------------------------------------------------------------------
@@ -436,6 +714,21 @@ function showNormal({ focus = false } = {}) {
 // --- forget --------------------------------------------------------------------------------------
 
 function forgetEverything() {
+  if (app.playlistBusy) return; // the buttons are disabled meanwhile: clearing the login would not stop the playlist
+  setPlaylistPanel(false);
+  el.playlistIntro.hidden = false;
+  clear(el.playlistProgress);
+  el.playlistProgress.hidden = true;
+  clear(el.playlistResult);
+  el.playlistResult.hidden = true;
+  el.playlistDone.hidden = true;
+  app.playlistVm = null;
+  el.playlistClientId.value = '';
+  el.playlistClientId.removeAttribute('aria-invalid');
+  el.playlistClientIdError.textContent = '';
+  el.playlistError.textContent = '';
+  el.playlistRemember.checked = true;
+  app.playlistMade = false;
   store.forgetAll();
   clearAuth();
   app.service = DEFAULT_SERVICE;
@@ -500,8 +793,31 @@ function wireStaticControls() {
     el.input.scrollIntoView({ block: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   });
   el.shareBtn.addEventListener('click', onShare);
+  el.playlistBtn.addEventListener('click', onPlaylistButton);
+  el.playlistForm.addEventListener('submit', onPlaylistSubmit);
+  for (const b of [el.playlistCancel, el.playlistClose]) {
+    b.addEventListener('click', () => {
+      closePlaylistPanel();
+      el.playlistBtn.focus();
+    });
+  }
+  el.playlistClientChange.addEventListener('click', () => {
+    showPlaylistClient({ tokenReady: false, fields: true });
+    el.playlistClientId.focus();
+  });
   el.forgetBtn.addEventListener('click', forgetEverything);
   el.forgetFooter.addEventListener('click', forgetEverything);
+  // Back from Spotify's login screen without logging in: the browser may restore this page as it was left, with the
+  // button that started the login still disabled.
+  window.addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    el.connectBtn.disabled = false;
+    el.connectBtn.textContent = 'Connect Spotify';
+    if (!app.playlistBusy) {
+      el.playlistContinue.disabled = false;
+      el.playlistContinue.textContent = playlistIntro(currentPlan(), { tokenReady: hasScopes(PLAYLIST_SCOPE) }).buttonText;
+    }
+  });
   el.findOwn.addEventListener('click', () => {
     window.history.replaceState(null, document.title, window.location.pathname);
     showNormal({ focus: true });

@@ -1,6 +1,6 @@
 // Everything about the main page that can be decided without a DOM: pool -> matches -> recommendations -> what each
-// list shows, the wording of reasons, band grouping, autocomplete suggestions, example validation, share picks and
-// dev diagnostics. Pure functions over plain data, unit tested in tests/app-state.test.js. The UI modules in src/ui/
+// list shows, the wording of reasons, band grouping, autocomplete suggestions, example validation, share picks, the
+// wording of the playlist panel (before, during and after making a playlist) and dev diagnostics. Pure functions over plain data, unit tested in tests/app-state.test.js. The UI modules in src/ui/
 // only render what these return.
 
 import { normalizeName } from '../core/normalize.js';
@@ -9,6 +9,7 @@ import { matchPool } from '../core/match.js';
 import { recommend, BAND_GOOD, BAND_STRONG } from '../core/recommend.js';
 import { listenLinks } from '../core/links.js';
 import { decodeShare, encodeShare } from '../core/share.js';
+import { LEFT_OUT, MAX_PLAYLIST_ARTISTS, TRACKS_PER_ARTIST, planEstimate } from '../core/playlist.js';
 
 /** Sources the visitor adds one artist at a time; everything else is a library import shown as one summary chip. */
 export const MANUAL_SOURCES = [SOURCE_TYPED, SOURCE_PICKED];
@@ -280,3 +281,236 @@ export function diagnostics(pool, results) {
   };
 }
 
+
+// --- playlist ------------------------------------------------------------------------------------
+// Wording for the "Make a Spotify playlist" panel. The engine is src/sources/spotify-playlist.js. Two rules hold for
+// every string here (tested): an outcome where a playlist may already exist ('incomplete', 'unconfirmed') never says to
+// try again, and nothing calls what Spotifort makes a "private playlist" (the API cannot make one).
+
+/** Shown after a playlist was made: what Spotify does with its visibility, and how to change it. */
+export const PLAYLIST_VISIBILITY_NOTE = 'Spotify labels this playlist “Public Playlist”, and anyone who has its link can open it. It is not shown on your profile. To change that, open it in Spotify, open its ••• menu and choose Make private.';
+
+const plural = (n, one, many) => `${formatCount(n)} ${n === 1 ? one : many}`;
+
+/** How many picks were beyond the cap, from a plan's `beyondCap`; junk counts as none. */
+const picksBeyondCap = (n) => (Number.isInteger(n) && n > 0 ? n : 0);
+
+/**
+ * What the outcome says about picks beyond the cap, or null. They are not "left out": nothing is wrong with them, so
+ * they get a count and no list of names.
+ * @param {unknown} beyondCap from playlistPlan
+ * @returns {string|null}
+ */
+export function beyondCapText(beyondCap) {
+  const n = picksBeyondCap(beyondCap);
+  if (!n) return null;
+  return `A playlist takes tracks from ${formatCount(MAX_PLAYLIST_ARTISTS)} picks at most. ${formatCount(n)} of your picks ${n === 1 ? 'was' : 'were'} further down your lists and ${n === 1 ? 'is' : 'are'} not in it.`;
+}
+
+/**
+ * The panel before anything is made.
+ * @param {{ artists: object[], leftOut: object[], beyondCap?: number }} plan from playlistPlan
+ * @param {{ tokenReady?: boolean, madeBefore?: boolean }} [options] tokenReady: a playlist login is in memory (no
+ *   redirect needed); madeBefore: a playlist was made (or may have been) in this visit
+ * @returns {{ status: 'none'|'ready', summary: string, notes: string[], buttonText: string }}
+ */
+export function playlistIntro(plan, { tokenReady = false, madeBefore = false } = {}) {
+  const { artists, tracks } = planEstimate(plan);
+  const leftOut = Array.isArray(plan?.leftOut) ? plan.leftOut.length : 0;
+  const buttonText = tokenReady ? 'Make the playlist' : 'Continue to Spotify';
+  if (!artists) {
+    const summary = leftOut
+      ? 'None of your Treefort picks has a Spotify page we are sure of, so there is nothing to put in a playlist.'
+      : 'Nothing to make a playlist from yet. Add artists until something appears in your lists.';
+    return { status: 'none', summary, notes: [], buttonText };
+  }
+  const beyond = picksBeyondCap(plan?.beyondCap);
+  // Capped: say so in the first sentence. "The first 100 of your N" counts every pick, as the lists do.
+  const from = beyond
+    ? `the first ${formatCount(artists)} of your ${formatCount(artists + leftOut + beyond)} Treefort picks`
+    : `${formatCount(artists)} of your Treefort picks`;
+  const summary = `Spotifort will make one new playlist in your Spotify account, with about ${formatCount(tracks)} tracks: up to ${TRACKS_PER_ARTIST} each from ${from}, in the order they are listed. Nothing else in your account is changed.`;
+  const notes = [];
+  if (beyond) notes.push(`A playlist takes tracks from ${formatCount(MAX_PLAYLIST_ARTISTS)} picks at most, so the ${formatCount(beyond)} further down your lists ${beyond === 1 ? 'is' : 'are'} not included.`);
+  if (leftOut) notes.push(`${formatCount(leftOut)} of your picks ${leftOut === 1 ? 'has' : 'have'} no Spotify page we are sure of and will be left out. You will see which afterwards.`);
+  if (madeBefore) notes.push('You already made a playlist in this visit. This makes another one; it does not replace the first.');
+  return { status: 'ready', summary, notes, buttonText };
+}
+
+/**
+ * The visible progress line while a playlist is made.
+ * @param {{ phase?: string, done?: number, total?: number }} p a progress event from createPlaylist
+ * @returns {string}
+ */
+export function playlistProgressText(p) {
+  const done = formatCount(p?.done ?? 0);
+  const total = formatCount(p?.total ?? 0);
+  if (p?.phase === 'lookup') return `Looking up tracks… ${done} of ${total} artists`;
+  if (p?.phase === 'create') return 'Creating the playlist…';
+  if (p?.phase === 'add') return `Adding tracks… ${done} of ${total}`;
+  return 'Getting your picks ready…';
+}
+
+const LEFT_OUT_LABELS = [
+  [LEFT_OUT.UNVERIFIED, 'We are not sure which Spotify artist this is, so we did not guess:'],
+  [LEFT_OUT.NO_SPOTIFY, 'No Spotify page that we know of:'],
+  [LEFT_OUT.NO_TRACKS, 'No tracks of their own found on Spotify:'],
+  [LEFT_OUT.QUOTA, 'Spotify stopped answering lookups before we got to them:'],
+  [LEFT_OUT.LOOKUP_FAILED, 'The lookup failed for them:'],
+];
+
+/**
+ * Left-out artists grouped by reason, in a fixed order; empty groups are omitted, artists keep the order given.
+ * @param {unknown} leftOut [{ n, name, reason }] from createPlaylist
+ * @returns {{ reason: string, label: string, artists: { n: number, name: string }[] }[]}
+ */
+export function leftOutGroups(leftOut) {
+  const known = new Map(LEFT_OUT_LABELS.map(([reason]) => [reason, []]));
+  const other = [];
+  for (const a of Array.isArray(leftOut) ? leftOut : []) {
+    if (!a || typeof a !== 'object') continue;
+    const item = { n: a.n, name: typeof a.name === 'string' ? a.name : '' };
+    (known.get(a.reason) ?? other).push(item);
+  }
+  const groups = LEFT_OUT_LABELS.filter(([reason]) => known.get(reason).length).map(([reason, label]) => ({ reason, label, artists: known.get(reason) }));
+  if (other.length) groups.push({ reason: 'other', label: 'Left out:', artists: other });
+  return groups;
+}
+
+const SEARCH_STOP_TEXT = {
+  quota: 'Spotify’s daily search limit for your Client ID was reached part-way through, so for the remaining artists we looked at their newest releases instead. The limit can take up to a day to clear.',
+  rate: 'Spotify started refusing searches part-way through (too many requests), so for the remaining artists we looked at their newest releases instead. If that was a daily limit, it can take up to a day to clear.',
+  errors: 'Spotify’s search kept failing part-way through, so for the remaining artists we looked at their newest releases instead.',
+  network: 'A search got no answer part-way through, so for the remaining artists we looked at their newest releases instead.',
+};
+
+const RELEASES_STOP_TEXT = {
+  quota: 'Spotify’s daily limit for your Client ID was reached while we were looking at newest releases, so the artists not yet looked up were left out. The limit can take up to a day to clear.',
+  rate: 'Spotify started refusing requests (too many requests) while we were looking at newest releases, so the artists not yet looked up were left out. If that was a daily limit, it can take up to a day to clear.',
+};
+
+const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+const own = (table, key) => (typeof key === 'string' && hasOwn(table, key) ? table[key] : null);
+
+/** Why search was switched off part-way (createPlaylist's searchStopReason), or null. */
+export function searchStopText(reason) {
+  return own(SEARCH_STOP_TEXT, reason);
+}
+
+/** Why the newest-releases route stopped (createPlaylist's releasesStopReason), or null. */
+export function releasesStopText(reason) {
+  return own(RELEASES_STOP_TEXT, reason);
+}
+
+const nonNegative = (n) => (Number.isFinite(n) && n > 0 ? n : 0);
+
+/**
+ * What the panel says after createPlaylist resolved. Reads `status` first and never `error`.
+ * @param {object} result from createPlaylist
+ * @param {{ beyondCap?: number }} [options] the plan's count of picks beyond the cap
+ * @returns {{ status: string, heading: string, lines: string[], link: { url: string, text: string, label: string }|null,
+ *   visibility: boolean, notes: string[], capNote: string|null, newest: { label: string, names: string[] }|null,
+ *   leftOut: { reason: string, label: string, artists: { n: number, name: string }[] }[], announce: string }}
+ */
+export function playlistOutcome(result, { beyondCap = 0 } = {}) {
+  const status = result?.status;
+  const name = typeof result?.name === 'string' && result.name ? result.name : '';
+  const quoted = name ? `“${name}”` : 'the playlist';
+  if (status !== 'created' && status !== 'incomplete' && status !== 'empty') {
+    const look = `Look in your Spotify library for ${name ? quoted : 'it'} before you make another one.`;
+    return {
+      status: 'unconfirmed',
+      heading: 'We cannot tell whether your playlist was made',
+      lines: [
+        `Spotify did not confirm it. ${look}`,
+        'If it is there, it is empty: no tracks were added, and you can delete it in Spotify. If it is not there, nothing was created.',
+      ],
+      link: null,
+      visibility: false,
+      notes: [],
+      capNote: null,
+      newest: null,
+      leftOut: [],
+      announce: 'Spotify did not confirm that the playlist was made. Look in your Spotify library before making another.',
+    };
+  }
+  const notes = [searchStopText(result.searchStopReason), releasesStopText(result.releasesStopReason)].filter(Boolean);
+  const leftOut = leftOutGroups(result.leftOut);
+  const capNote = beyondCapText(beyondCap);
+  if (status === 'empty') {
+    return {
+      status,
+      heading: 'No playlist was made',
+      lines: ['No tracks were found on Spotify for your picks, so nothing was created in your account.'],
+      link: null,
+      visibility: false,
+      notes,
+      capNote,
+      newest: null,
+      leftOut,
+      announce: 'No playlist was made: no tracks were found.',
+    };
+  }
+  const trackCount = nonNegative(result.trackCount);
+  const artistCount = nonNegative(result.artistCount);
+  const plannedTracks = nonNegative(result.plannedTracks);
+  const url = typeof result.url === 'string' ? result.url : null;
+  const link = url ? { url, text: 'Open Spotify', label: 'Open Spotify to see your playlist' } : null;
+  const names = (Array.isArray(result.newestReleases) ? result.newestReleases : []).map((a) => (typeof a?.name === 'string' ? a.name : '')).filter(Boolean);
+  const newest = names.length ? { label: 'Tracks from newest releases were used for:', names } : null;
+  const tracks = plural(trackCount, 'track', 'tracks');
+  const artists = plural(artistCount, 'artist', 'artists');
+  if (status === 'incomplete') {
+    return {
+      status,
+      heading: 'Your playlist was made, but it is not complete',
+      lines: [
+        trackCount > 0
+          ? `Spotify stopped accepting tracks part-way. At least ${formatCount(trackCount)} of ${formatCount(plannedTracks)} tracks are in ${quoted}.`
+          : `Spotify stopped accepting tracks before any were confirmed, so ${quoted} may be empty.`,
+        'Open it in Spotify to see what it holds. Making a playlist again would create a second one; it would not finish this one.',
+      ],
+      link,
+      visibility: true,
+      notes,
+      capNote,
+      newest,
+      leftOut,
+      announce: 'Your playlist was made, but not every track was added.',
+    };
+  }
+  return {
+    status,
+    heading: 'Your playlist is ready',
+    lines: [`${tracks} from ${artists} ${trackCount === 1 ? 'is' : 'are'} in ${quoted}.`],
+    link,
+    visibility: true,
+    notes,
+    capNote,
+    newest,
+    leftOut,
+    announce: `Your playlist is ready: ${tracks} from ${artists}.`,
+  };
+}
+
+const FAILURE_TEXT = {
+  auth: 'Your Spotify login had expired before anything was created. Log in again to make the playlist.',
+  forbidden: 'Spotify refused the request, so nothing was created. Check that you approved the playlist permission, and that you logged in with the Spotify account your Client ID belongs to.',
+  quota: 'Spotify’s daily limit for your Client ID has been reached, so nothing was created. It can take up to a day to clear.',
+  rate: 'Spotify is refusing requests right now (too many requests), so nothing was created. Wait a while before trying again; if it is a daily limit, it can take up to a day to clear.',
+  http: 'Spotify returned an error, so nothing was created. You can try again.',
+  network: 'Spotify could not be reached, so nothing was created. Check your connection and try again.',
+  data: 'We could not load the artist data, so nothing was created. You can try again.',
+};
+FAILURE_TEXT.scope = FAILURE_TEXT.forbidden;
+
+/**
+ * What the panel says when createPlaylist rejected (nothing was created), or the run could not start.
+ * @param {{ kind?: string }|null|undefined} err
+ * @returns {{ kind: string, heading: string, text: string, announce: string }}
+ */
+export function playlistFailure(err) {
+  const kind = typeof err?.kind === 'string' && hasOwn(FAILURE_TEXT, err.kind) ? err.kind : 'other';
+  const text = FAILURE_TEXT[kind] ?? 'Something went wrong before the playlist was made, so nothing was created. You can try again.';
+  return { kind, heading: 'No playlist was made', text, announce: `No playlist was made. ${text}` };
+}

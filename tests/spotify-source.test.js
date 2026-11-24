@@ -67,7 +67,10 @@ describe('createApi', () => {
   });
   it('gives up after repeated 429s with a plain message', async () => {
     const fetch = vi.fn(async () => json({}, 429));
-    await expect(createApi({ token: 'tok', fetch, sleep: noSleep }).get('me')).rejects.toMatchObject({ kind: 'rate' });
+    await expect(createApi({ token: 'tok', fetch, sleep: noSleep }).get('me')).rejects.toMatchObject({
+      kind: 'rate',
+      message: 'Spotify is refusing requests right now (too many requests). Wait a while before trying again; if it is a daily limit, it can take up to a day to clear.',
+    });
     expect(fetch).toHaveBeenCalledTimes(5);
   });
   it('401 is an expired login, 403 forbidden, not retried', async () => {
@@ -140,7 +143,7 @@ describe('createApi', () => {
         const fetch = vi.fn(async () => json(QUOTA, 429, { 'Retry-After': '82000' }));
         const sleep = vi.fn(async () => {});
         const api = createApi({ token: 'tok', fetch, sleep });
-        await expect(method === 'get' ? api.get('search?q=x') : api.post('me/playlists', {})).rejects.toMatchObject({ kind: 'quota', status: 429, message: 'Spotify is busy right now. Please try again in a minute.' });
+        await expect(method === 'get' ? api.get('search?q=x') : api.post('me/playlists', {})).rejects.toMatchObject({ kind: 'quota', status: 429, message: 'Spotify’s daily limit for your Client ID has been reached. It can take up to a day to clear.' });
         expect(fetch).toHaveBeenCalledTimes(1);
         expect(sleep).not.toHaveBeenCalled();
       });

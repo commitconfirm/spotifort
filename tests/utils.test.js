@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { escapeHtml, statesMatch, formatDate } from '../src/utils.js';
+import { escapeHtml, statesMatch, formatDate, AUTH_PURPOSES, stateWithPurpose, purposeFromState } from '../src/utils.js';
 
 describe('escapeHtml', () => {
   it('escapes & < > " and \'', () => {
@@ -52,5 +52,34 @@ describe('formatDate', () => {
     expect(formatDate('2026-02-30')).toBe('2026-02-30');
     expect(formatDate('')).toBe('');
     expect(formatDate(undefined)).toBe('');
+  });
+});
+
+describe('login purpose in the OAuth state', () => {
+  it('lists the two purposes', () => expect(AUTH_PURPOSES).toEqual(['library', 'playlist']));
+  it('round-trips each purpose, including a random part that contains dots', () => {
+    for (const purpose of AUTH_PURPOSES) {
+      expect(stateWithPurpose('abc', purpose)).toBe(`abc.${purpose}`);
+      expect(purposeFromState(stateWithPurpose('abc', purpose))).toBe(purpose);
+      expect(purposeFromState(stateWithPurpose('a.b.c~-_', purpose))).toBe(purpose);
+      expect(purposeFromState(stateWithPurpose('a.playlist.', purpose))).toBe(purpose);
+    }
+  });
+  it('treats an old-format state (no purpose) as a library login', () => {
+    expect(purposeFromState('AbCdEfGh0123456789AbCdEfGh012345')).toBe('library');
+    expect(purposeFromState('ab.cd')).toBe('library');
+    expect(purposeFromState('abc.')).toBe('library');
+    expect(purposeFromState('playlist')).toBe('library');
+  });
+  it('only exactly "playlist" after the last dot means playlist', () => {
+    expect(purposeFromState('abc.Playlist')).toBe('library');
+    expect(purposeFromState('abc.playlist ')).toBe('library');
+    expect(purposeFromState('abc.playlists')).toBe('library');
+    expect(purposeFromState('abc.playlist.x')).toBe('library');
+    expect(purposeFromState('abc.xplaylist')).toBe('library');
+  });
+  it('tolerates junk', () => {
+    for (const v of [null, undefined, 42, {}, [], '', '.']) expect(purposeFromState(v)).toBe('library');
+    expect(purposeFromState('.playlist')).toBe('playlist');
   });
 });

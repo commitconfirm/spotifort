@@ -22,7 +22,7 @@ Spotifort helps you find your acts at [Treefort Music Fest](https://treefortmusi
 
 ## Privacy First
 
-All processing happens **client-side in your browser**. Spotifort has no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts are collected with Cloudflare Web Analytics. Your Spotify data never leaves your device, and the Spotify access token is held in memory only.
+All processing happens **client-side in your browser**. Spotifort has no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts are collected with Cloudflare Web Analytics. What Spotifort reads from Spotify never leaves your device; the only thing it changes in your Spotify account is to make a playlist when you ask for one. The Spotify access token is held in memory only.
 
 What is remembered, on your device only (`localStorage`): the artists you added, which listening service you chose, and your Spotify Client ID if you leave "Remember my Client ID on this device" ticked. "Forget my data" clears all of it.
 
@@ -32,6 +32,7 @@ What is remembered, on your device only (`localStorage`): the artists you added,
 2. Add a few more; results update as you go
 3. Pick where you listen; every row has a listen link and `[+]` for similar acts on the lineup
 4. Share your picks with a link, if you like
+5. Make a Spotify playlist of your picks, if you like (optional; needs the Spotify setup below)
 
 Recommendations come from [Last.fm](https://www.last.fm/) similar-artist data collected ahead of time for every lineup artist, so the site needs no server.
 
@@ -39,7 +40,7 @@ Recommendations come from [Last.fm](https://www.last.fm/) similar-artist data co
 
 1. Create a free Spotify Developer app ([setup guide](https://spotifort.com/setup))
 2. Paste your Client ID into Spotifort ("or connect your Spotify library")
-3. Authorize with Spotify (read-only access to your Liked Songs, top artists and followed artists)
+3. Authorize with Spotify (read-only access to your Liked Songs, top artists and followed artists; making a playlist asks separately, and only then, for permission to create playlists)
 
 ### Why Do I Need a Client ID?
 

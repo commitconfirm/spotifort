@@ -1,12 +1,17 @@
 // Spotify Authorization Code with PKCE (no client secret).
-// The access token lives in this module's memory only and is never written to any storage. The PKCE code verifier
-// and the OAuth `state` are kept in sessionStorage (this tab only) so they survive the redirect to Spotify and back.
+// The access token, and the scopes it was granted, live in this module's memory only and are never written to any
+// storage. The PKCE code verifier and the OAuth `state` are kept in sessionStorage (this tab only) so they survive the
+// redirect to Spotify and back. A login has a purpose ('library': import the library, read-only scopes; 'playlist':
+// make a playlist, `playlist-modify-private` only). The purpose rides inside the `state` value ("<random>.<purpose>"),
+// so it needs no storage of its own, and it is only believed after the returned state matched the stored one.
 // The Client ID is not stored here: src/store.js is the one place that persists it, and callers pass it in.
 
 import { log } from './log.js';
-import { statesMatch } from './utils.js';
+import { AUTH_PURPOSES, purposeFromState, stateWithPurpose, statesMatch } from './utils.js';
 
-export const SCOPES = 'user-library-read user-top-read user-follow-read';
+export const LIBRARY_SCOPES = 'user-library-read user-top-read user-follow-read';
+export const PLAYLIST_SCOPE = 'playlist-modify-private';
+const SCOPES_FOR = { library: LIBRARY_SCOPES, playlist: PLAYLIST_SCOPE };
 const REDIRECT_URI = import.meta.env.DEV ? 'http://127.0.0.1:9090/callback' : 'https://spotifort.com/callback';
 const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
@@ -14,6 +19,7 @@ const VERIFIER_KEY = 'spotifort_pkce_verifier';
 const STATE_KEY = 'spotifort_oauth_state';
 
 let accessToken = null;
+let grantedScopes = [];
 
 /** Thrown when the browser cannot do the PKCE hashing (some in-app browsers). */
 export class CryptoNotSupportedError extends Error {
@@ -86,12 +92,14 @@ function base64urlEncode(buffer) {
 /**
  * Start the login: store verifier and state for this tab, then send the browser to Spotify.
  * @param {string} clientId a valid Client ID (the caller validates and stores it first)
+ * @param {'library'|'playlist'} [purpose] decides the scopes asked for; carried back in `state`
  */
-export async function startAuth(clientId) {
+export async function startAuth(clientId, purpose = 'library') {
+  if (!AUTH_PURPOSES.includes(purpose)) throw new Error(`Unknown login purpose: ${String(purpose)}`);
   if (!clientId) throw new Error('Missing Spotify Client ID');
-  log.info('Starting Spotify login');
+  log.info('Starting Spotify login for', purpose);
   const codeVerifier = generateRandomString(64);
-  const state = generateRandomString(32);
+  const state = stateWithPurpose(generateRandomString(32), purpose);
   const codeChallenge = base64urlEncode(await sha256(codeVerifier)); // throws before anything is stored on bad browsers
   sessionStorage.setItem(VERIFIER_KEY, codeVerifier);
   sessionStorage.setItem(STATE_KEY, state);
@@ -100,7 +108,7 @@ export async function startAuth(clientId) {
     client_id: clientId,
     response_type: 'code',
     redirect_uri: REDIRECT_URI,
-    scope: SCOPES,
+    scope: SCOPES_FOR[purpose],
     code_challenge_method: 'S256',
     code_challenge: codeChallenge,
     state,
@@ -117,8 +125,10 @@ export async function startAuth(clientId) {
 /**
  * Finish the login on /callback: verify `state`, exchange the code for a token (kept in memory), and clean the URL.
  * @param {string|null} clientId the Client ID the login was started with
- * @returns {Promise<string|null>} the access token, or null when this is not a callback (or the login was interrupted)
- * @throws {Error} with a plain-language message
+ * @returns {Promise<{ token: string, purpose: 'library'|'playlist' }|null>} null when this is not a callback (or the
+ *   login was interrupted). `purpose` is read from the returned `state` only after it matched the stored one.
+ * @throws {Error} with a plain-language message and `purpose`: the purpose of the stored state when there is one,
+ *   else null. It only decides where the message is shown; it never starts anything.
  */
 export async function completeAuth(clientId) {
   const params = new URLSearchParams(window.location.search);
@@ -127,24 +137,31 @@ export async function completeAuth(clientId) {
   const cleanUrl = () => window.history.replaceState(null, document.title, '/');
   if (!code && !error) return null;
 
+  const storedState = sessionStorage.getItem(STATE_KEY);
+  const errorPurpose = storedState ? purposeFromState(storedState) : null;
+  const fail = (message, options) => Object.assign(new Error(message, options), { purpose: errorPurpose });
+
   if (error) {
     log.error('Spotify auth error:', error);
     sessionStorage.removeItem(STATE_KEY);
     cleanUrl();
-    throw new Error(error === 'access_denied' ? 'Spotify access was not allowed, so nothing was imported.' : 'Spotify could not complete the login. Please try again.');
+    if (error !== 'access_denied') throw fail('Spotify could not complete the login. Please try again.');
+    throw fail(errorPurpose === 'playlist' ? 'Spotify access was not allowed, so no playlist was made.' : 'Spotify access was not allowed, so nothing was imported.');
   }
 
   // Verify state before touching the verifier: on a mismatch both stay, so a forged callback cannot break a login in progress.
-  if (!statesMatch(sessionStorage.getItem(STATE_KEY), params.get('state'))) {
+  const returnedState = params.get('state');
+  if (!statesMatch(storedState, returnedState)) {
     log.error('OAuth state missing or mismatched — rejecting callback');
     cleanUrl();
-    throw new Error('The login could not be verified. Please connect again from this page.');
+    throw fail('The login could not be verified. Please connect again from this page.');
   }
   sessionStorage.removeItem(STATE_KEY);
+  const purpose = purposeFromState(returnedState);
 
   if (!clientId) {
     cleanUrl();
-    throw new Error('Your Client ID was lost during the login. Please enter it and connect again.');
+    throw fail('Your Client ID was lost during the login. Please enter it and connect again.');
   }
   const codeVerifier = sessionStorage.getItem(VERIFIER_KEY);
   sessionStorage.removeItem(VERIFIER_KEY);
@@ -163,15 +180,17 @@ export async function completeAuth(clientId) {
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
       log.error('Token exchange failed:', data.error, data.error_description);
-      throw new Error('Spotify did not accept the login. Check that your Client ID and redirect URI match the setup guide, then try again.');
+      throw fail('Spotify did not accept the login. Check that your Client ID and redirect URI match the setup guide, then try again.');
     }
     const data = await response.json();
     accessToken = typeof data.access_token === 'string' ? data.access_token : null;
-    if (!accessToken) throw new Error('Spotify did not return an access token. Please try again.');
-    log.info('Access token obtained; expires in', data.expires_in, 'seconds; scopes:', data.scope);
-    return accessToken;
+    if (!accessToken) throw fail('Spotify did not return an access token. Please try again.');
+    grantedScopes = typeof data.scope === 'string' && data.scope.trim() ? data.scope.trim().split(/\s+/) : SCOPES_FOR[purpose].split(' ');
+    log.info('Access token obtained; expires in', data.expires_in, 'seconds; scopes:', data.scope, '; purpose:', purpose);
+    return { token: accessToken, purpose };
   } catch (err) {
-    if (err instanceof TypeError) throw new Error('Could not reach Spotify. Check your connection and try again.', { cause: err });
+    if (err instanceof TypeError) throw fail('Could not reach Spotify. Check your connection and try again.', { cause: err });
+    if (err && typeof err === 'object' && !('purpose' in err)) err.purpose = errorPurpose;
     throw err;
   } finally {
     cleanUrl();
@@ -183,9 +202,20 @@ export function getAccessToken() {
   return accessToken;
 }
 
+/**
+ * @param {string} scopes space-separated
+ * @returns {boolean} true when a token is in memory and every listed scope was granted to it
+ */
+export function hasScopes(scopes) {
+  if (!accessToken) return false;
+  const wanted = String(scopes ?? '').split(/\s+/).filter(Boolean);
+  return wanted.every((s) => grantedScopes.includes(s));
+}
+
 /** Forget the token and any half-finished login in this tab. */
 export function clearAuth() {
   accessToken = null;
+  grantedScopes = [];
   try {
     sessionStorage.removeItem(VERIFIER_KEY);
     sessionStorage.removeItem(STATE_KEY);

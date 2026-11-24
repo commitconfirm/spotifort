@@ -102,6 +102,7 @@
             <div id="import-status" class="import-status" role="status" aria-live="polite" hidden></div>
             <p class="pool-actions">
               <button type="button" class="btn" id="share-btn">Share my picks</button>
+              <button type="button" class="btn" id="playlist-btn" aria-expanded="false" aria-controls="playlist-panel">Make a Spotify playlist</button>
               <button type="button" class="link-button forget-button" id="forget-btn">Forget my data</button>
             </p>
             <div id="share-output" class="share-output" hidden>
@@ -109,6 +110,36 @@
               <input id="share-url" type="text" readonly />
               <p id="share-confirm" class="share-confirm" role="status" aria-live="polite"></p>
             </div>
+            <section id="playlist-panel" class="sub-panel playlist-panel" aria-labelledby="playlist-heading" hidden>
+              <h3 id="playlist-heading" tabindex="-1">Make a Spotify playlist</h3>
+              <div id="playlist-intro">
+                <p id="playlist-summary"></p>
+                <ul id="playlist-notes" class="playlist-notes" hidden></ul>
+                <div id="playlist-details">
+                  <p><strong>What Spotify will ask.</strong> Spotify’s screen lists “View your Spotify account data” (your name, username, picture, followers and public playlists), which it shows even though Spotifort does not ask for it or read it, and one permission: “Create, edit, and follow private playlists”. That wording is Spotify’s. It is the only permission asked for here, and only because you chose this. Spotifort uses it to create this one playlist and add its tracks. It does not read your library, and it does not change or remove anything else.</p>
+                  <p><strong>Who can see the playlist.</strong> It is kept off your Spotify profile, but Spotify still labels it “Public Playlist” and anyone who has its link can open it. To change that, open the playlist in Spotify, open its ••• menu and choose <strong>Make private</strong>.</p>
+                  <p class="field-help">Importing your library is separate and asks for its own read-only permission. Your Spotify login stays in this tab’s memory, and Spotifort stores nothing about the playlist.</p>
+                  <form id="playlist-form" class="spotify-form" novalidate>
+                    <p id="playlist-client-saved" hidden>Your saved Client ID will be used. <button type="button" class="link-button" id="playlist-client-change">Use a different one</button></p>
+                    <div id="playlist-client-fields" class="playlist-client-fields">
+                      <p>Because of Spotify's rules this needs <strong>Spotify Premium</strong> and a one-time setup: your own free Spotify developer app and its Client ID. <a href="/setup">Setup guide</a> · <a href="/why">Why is this needed?</a></p>
+                      <label for="playlist-client-id">Your Spotify Client ID</label>
+                      <input id="playlist-client-id" name="playlist-client-id" type="text" inputmode="text" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="playlist-client-id-error" />
+                      <p id="playlist-client-id-error" class="field-error" role="alert"></p>
+                      <label class="checkbox"><input type="checkbox" id="playlist-remember" checked /> Remember my Client ID on this device</label>
+                    </div>
+                    <p class="playlist-buttons">
+                      <button type="submit" class="btn btn-primary" id="playlist-continue">Continue to Spotify</button>
+                      <button type="button" class="link-button" id="playlist-cancel">Cancel</button>
+                    </p>
+                  </form>
+                </div>
+                <p id="playlist-error" class="spotify-status" role="alert"></p>
+              </div>
+              <div id="playlist-progress" class="import-status" hidden></div>
+              <div id="playlist-result" class="playlist-result" hidden></div>
+              <p id="playlist-done" class="playlist-buttons" hidden><button type="button" class="link-button" id="playlist-close">Close</button></p>
+            </section>
           </section>
 
           <section id="results" class="results" aria-label="Your Treefort results">
@@ -131,7 +162,7 @@
         <p class="disclaimer">Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify.</p>
         <p class="disclaimer">Use at your own risk — no guarantees of accuracy. <span id="lineup-date"></span></p>
         <p class="disclaimer">Similar-artist data from <a href="https://www.last.fm/" target="_blank" rel="noopener noreferrer">Last.fm</a>.</p>
-        <p class="disclaimer">Privacy: your Spotify data stays in your browser. Page visits are counted with <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener noreferrer">Cloudflare Web Analytics</a>, which uses no cookies and does not identify you.</p>
+        <p class="disclaimer">Privacy: what Spotifort reads from Spotify stays in your browser. It changes nothing in your Spotify account, except to make a playlist when you ask for one. Page visits are counted with <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener noreferrer">Cloudflare Web Analytics</a>, which uses no cookies and does not identify you.</p>
         <p class="disclaimer">Your artists, your listening service and (if you choose) your Spotify Client ID are remembered on this device only. <button type="button" class="link-button" id="forget-footer">Forget my data</button></p>
         <p class="footer-links">
           <a href="/lineup">View full lineup data</a>

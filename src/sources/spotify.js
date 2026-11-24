@@ -10,7 +10,7 @@
 // GET /me/top/artists limit 1..50, time_range short_term|medium_term|long_term; GET /me/following?type=artist
 // limit 1..50, cursor paging via `artists.cursors.after`, response wrapped in `artists`.
 
-import { cryptoAvailable, getAccessToken, startAuth } from '../auth.js';
+import { cryptoAvailable, getAccessToken, hasScopes, startAuth } from '../auth.js';
 import { followedWeight, likedSongsWeight, topArtistWeight } from '../core/pool.js';
 import { log } from '../log.js';
 
@@ -23,6 +23,16 @@ export const TOP_RANGES = ['medium_term', 'long_term'];
 const MAX_ATTEMPTS = 5;
 const MAX_RETRY_AFTER_S = 30;
 const MAX_FOLLOWED_PAGES = 200;
+
+/** The message for a 429 whose body says the daily quota is used up (kind 'quota'). */
+export const QUOTA_MESSAGE = 'Spotify’s daily limit for your Client ID has been reached. It can take up to a day to clear.';
+/** The message for a 429 that survived its retries (kind 'rate'); it may be a daily limit the body did not name. */
+export const RATE_MESSAGE = 'Spotify is refusing requests right now (too many requests). Wait a while before trying again; if it is a daily limit, it can take up to a day to clear.';
+
+/** A request URL's path with the query string removed, for dev logs. */
+const pathOnly = (url) => {
+  try { return new URL(url).pathname; } catch { return ''; }
+};
 
 /** A Spotify call that failed. kind: 'auth' (token expired or revoked), 'forbidden', 'rate', 'quota' (daily quota used up), 'http', 'network'. */
 export class SpotifyError extends Error {
@@ -67,7 +77,6 @@ export function createApi({ token, fetch: fetchFn = (...a) => globalThis.fetch(.
       init.headers['Content-Type'] = 'application/json';
       init.body = JSON.stringify(body);
     }
-    const busy = 'Spotify is busy right now. Please try again in a minute.';
     for (let attempt = 1; ; attempt++) {
       let res;
       try {
@@ -86,7 +95,9 @@ export function createApi({ token, fetch: fetchFn = (...a) => globalThis.fetch(.
       if (res.status === 429) {
         let errBody = null;
         try { errBody = await res.json(); } catch { /* missing or not JSON */ }
-        if (errBody?.error?.reason === 'QUOTA_EXCEEDED') throw new SpotifyError(busy, { kind: 'quota', status: 429 });
+        // Dev-only diagnostics (log.warn is silent in production): what a 429 really carries in a browser.
+        log.warn('Spotify 429', { status: res.status, retryAfter: res.headers?.get?.('Retry-After') ?? null, body: errBody, request: `${method} ${pathOnly(url)}` });
+        if (errBody?.error?.reason === 'QUOTA_EXCEEDED') throw new SpotifyError(QUOTA_MESSAGE, { kind: 'quota', status: 429 });
       }
       if (attempt < MAX_ATTEMPTS && res.status === 429) {
         const wait = retryAfterSeconds(res.headers?.get?.('Retry-After'));
@@ -99,7 +110,7 @@ export function createApi({ token, fetch: fetchFn = (...a) => globalThis.fetch(.
         continue;
       }
       throw new SpotifyError(
-        res.status === 429 ? busy : `Spotify returned an error (${res.status}). Please try again.`,
+        res.status === 429 ? RATE_MESSAGE : `Spotify returned an error (${res.status}). Please try again.`,
         { kind: res.status === 429 ? 'rate' : 'http', status: res.status }
       );
     }
@@ -245,9 +256,12 @@ export const spotifySource = {
   /** @returns {boolean} whether this browser can log in (PKCE needs Web Crypto) */
   isAvailable: () => cryptoAvailable(),
   /** Redirects to Spotify. @param {string} clientId */
-  connect: (clientId) => startAuth(clientId),
-  /** @returns {boolean} whether a token from this page load is in memory (so a refresh needs no redirect) */
-  isConnected: () => getAccessToken() !== null,
+  connect: (clientId) => startAuth(clientId, 'library'),
+  /**
+   * @returns {boolean} whether a token from this page load that may read the library is in memory (so a refresh needs
+   *   no redirect). A token from a playlist login cannot read the library.
+   */
+  isConnected: () => hasScopes('user-library-read'),
   /**
    * @param {(p: object) => void} [onProgress]
    * @returns {Promise<{ items: { name: string, ids: object, weight: number }[], songs: number, missing: string[] }>}

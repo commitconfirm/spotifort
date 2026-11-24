@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Spotifort** is a client-side web application that tells a visitor who to see at Treefort Music Fest 2027 (March 31 – April 4, 2027, Boise, Idaho; year and dates live only in `festival.config.js`). With no account, the visitor types artists they like; optionally they connect their Spotify library. The app lists the lineup artists they already like ("Playing Treefort") and recommends other lineup artists from Last.fm similar-artist data ("Recommended for you"), with reasons and listen links.
+**Spotifort** is a client-side web application that tells a visitor who to see at Treefort Music Fest 2027 (March 31 – April 4, 2027, Boise, Idaho; year and dates live only in `festival.config.js`). With no account, the visitor types artists they like; optionally they connect their Spotify library. The app lists the lineup artists they already like ("Playing Treefort") and recommends other lineup artists from Last.fm similar-artist data ("Recommended for you"), with reasons and listen links. A visitor with a Spotify Client ID can also have the app make a Spotify playlist of those picks.
 
 - **Live site:** https://spotifort.com
 - **Repo:** https://github.com/commitconfirm/spotifort
@@ -12,12 +12,12 @@
 
 ### Client-Side Only — No Backend
 
-This is a **privacy-first** application. All processing happens in the browser. There is no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts come from Cloudflare Web Analytics (injected at the edge by Cloudflare Pages, not in the repo or `dist/`). Spotify data never leaves the browser. The Spotify access token lives in a JS variable in memory (`src/auth.js`) and is never written to any storage API. The PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify). `src/store.js` is the only module that persists anything, in localStorage under versioned keys: the artist pool (`spotifort:v1:pool`), the listen service (`spotifort:v1:service`), and the Client ID (`spotifort:v1:clientId`, localStorage only when "Remember my Client ID on this device" is ticked, otherwise sessionStorage). "Forget my data" clears all of it.
+This is a **privacy-first** application. All processing happens in the browser. There is no backend, no database, no cookies, and no advertising or cross-site tracking. Anonymous, cookieless page-visit counts come from Cloudflare Web Analytics (injected at the edge by Cloudflare Pages, not in the repo or `dist/`). What the app reads from Spotify never leaves the browser; the only thing it writes is a playlist in the visitor's own Spotify account, when they ask for one. The Spotify access token lives in a JS variable in memory (`src/auth.js`) and is never written to any storage API. The PKCE verifier and the OAuth `state` are kept in sessionStorage (they must survive the redirect to Spotify); the `state` value also says which login it is (`library` or `playlist`), so nothing else has to be stored for the round trip. `src/store.js` is the only module that persists anything, in localStorage under versioned keys: the artist pool (`spotifort:v1:pool`), the listen service (`spotifort:v1:service`), and the Client ID (`spotifort:v1:clientId`, localStorage only when "Remember my Client ID on this device" is ticked, otherwise sessionStorage). "Forget my data" clears all of it. Nothing about a playlist is stored.
 
 ### Spotify API — PKCE Auth Flow
 
 - **Auth method:** Authorization Code with PKCE (no client secret)
-- **Scopes requested:** `user-library-read user-top-read user-follow-read` (Liked Songs, top artists, followed artists). If top or followed fails (e.g. a 403), the import continues without it and says so.
+- **Scopes requested:** one set per login, never both. Library import: `user-library-read user-top-read user-follow-read` (Liked Songs, top artists, followed artists); if top or followed fails (e.g. a 403), the import continues without it and says so. Playlist creation: `playlist-modify-private` only, requested when the visitor continues from the playlist panel. `startAuth(clientId, purpose)` picks the set; `hasScopes` says whether the token in memory can be reused.
 - **Dev redirect URI:** `http://127.0.0.1:9090/callback`
 - **Prod redirect URI:** `https://spotifort.com/callback`
 - **Client ID:** each visitor brings their own (BYOCID). For local development only, `.env.local` may set `VITE_SPOTIFY_CLIENT_ID` (not committed; never used in a production build)
@@ -34,11 +34,11 @@ This app was created after February 11, 2026 and is subject to the new Dev Mode 
 | `GET /me/top/{type}` | User's top artists | `user-top-read`; medium_term and long_term, 50 each. Part of the library import. |
 | `GET /me/following` | User's followed artists | `user-follow-read`; `type=artist`, cursor paging (`artists.cursors.after`), 50/page. Part of the library import. |
 | `GET /artists/{id}` | Individual artist metadata | Works one at a time. Batch endpoint is blocked. `genres` is absent from the response (deprecated), as are `popularity` and `followers`; `images` is present. |
-| `GET /artists/{id}/albums` | Artist's albums | `limit` max 10 (default 5; 11 returns 400). Returned grouped by type (albums, then singles, each newest first), not newest first overall. Used by the playlist engine, which the site does not load yet. |
-| `GET /albums/{id}/tracks` | Tracks of one album | `limit` max 50. Live-tested 2026-11-23, every track carried the artist's id. Used by the playlist engine, which the site does not load yet. |
-| `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. `limit` max 10 (default 5; 11 returns 400). `type=track&q=artist:"Name"` works with a user token and with client credentials. Has its own quota: about 300 searches in a day from one developer account gave 429 `QUOTA_EXCEEDED` with a `Retry-After` of about 23 hours (live-tested 2026-11-23; the figure is one day's count). The scheduled lineup job's artist search shares that quota. The playlist engine uses track search, which the site does not load yet. |
-| `POST /me/playlists` | Create a playlist | Live-tested 2026-11-23 with `playlist-modify-private` alone: 201. `public:false` only keeps the playlist off the profile; the API then reports `public:true`, the Spotify app labels it "Public Playlist" and anyone with the link can open it. A private playlist cannot be made through the API. Used by the playlist engine, which the site does not load yet. |
-| `POST /playlists/{id}/items` | Add tracks to a playlist | Live-tested 2026-11-23: 201 with 13 URIs; max 100 per request. Used by the playlist engine, which the site does not load yet. |
+| `GET /artists/{id}/albums` | Artist's albums | `limit` max 10 (default 5; 11 returns 400). Returned grouped by type (albums, then singles, each newest first), not newest first overall. Used by playlist creation. |
+| `GET /albums/{id}/tracks` | Tracks of one album | `limit` max 50. Live-tested 2026-11-23, every track carried the artist's id. Used by playlist creation. |
+| `GET /search` | Search artists/tracks by name | Used by lineup script to find Spotify IDs. `limit` max 10 (default 5; 11 returns 400). `type=track&q=artist:"Name"` works with a user token and with client credentials. Has its own quota: about 300 searches in a day from one developer account gave 429 `QUOTA_EXCEEDED` with a `Retry-After` of about 23 hours (live-tested 2026-11-23; the figure is one day's count). The scheduled lineup job's artist search shares that quota. Playlist creation uses track search, one per artist. |
+| `POST /me/playlists` | Create a playlist | Live-tested 2026-11-23 with `playlist-modify-private` alone: 201. `public:false` only keeps the playlist off the profile; the API then reports `public:true`, the Spotify app labels it "Public Playlist" and anyone with the link can open it. A private playlist cannot be made through the API. Used by playlist creation. |
+| `POST /playlists/{id}/items` | Add tracks to a playlist | Live-tested 2026-11-23: 201 with 13 URIs; max 100 per request. Used by playlist creation. |
 | `GET /me/playlists` | User's own playlists | Returned 403 "Insufficient client scope" in every live test, even with `playlist-read-private` and `playlist-read-collaborative` granted (unexplained). Not currently used. |
 | `GET /me` | Current user profile | `country`, `email`, `explicit_content`, `followers` and `product` are deprecated or removed; `account_id` was added in May 2026. Works under `playlist-modify-private`. Not currently used. |
 | `GET /tracks/{id}` | Individual track metadata | Not currently used. |
@@ -129,13 +129,13 @@ spotifort/
 ├── src/
 │   ├── index.html               # The app page (the build copies it to callback.html for /callback)
 │   ├── main.js                  # Bootstrap and orchestration (normal / shared / callback states)
-│   ├── app/state.js             # Pure view-model logic: results, reasons, bands, suggestions, share, diagnostics
+│   ├── app/state.js             # Pure view-model logic: results, reasons, bands, suggestions, share, diagnostics, playlist messages
 │   ├── core/                    # Pure engine: normalize, pool, match, recommend, share, links, search, indexes, playlist
 │   ├── data/load.js             # Memoised loaders for the two data files
 │   ├── sources/spotify.js       # Spotify library source (paging, retries, weights; injected fetch)
-│   ├── sources/spotify-playlist.js # Playlist engine: track lookup and playlist creation (injected API client; not loaded by the site yet)
-│   ├── ui/                      # Rendering and events only (combobox, rows, results, pool, genre, share, service picker)
-│   ├── auth.js                  # Spotify PKCE flow; token in memory only
+│   ├── sources/spotify-playlist.js # Playlist engine: track lookup and playlist creation (injected API client)
+│   ├── ui/                      # Rendering and events only (combobox, rows, results, pool, genre, share, service picker, playlist)
+│   ├── auth.js                  # Spotify PKCE flow, one purpose per login (library or playlist); token in memory only
 │   ├── store.js                 # The only persistence: pool, service, Client ID
 │   ├── log.js                   # Dev-only logging
 │   ├── lineup.html / lineup.js  # /lineup transparency page
@@ -164,7 +164,8 @@ spotifort/
 4. Each row has a listen link for the chosen service ("I listen on: Spotify / Apple Music / Tidal / Bandcamp"; a search link when no verified link exists), a "more" control for the other services, and `[+]`
 5. The pool is saved on the device and restored on return. "Share my picks" copies a `#s=` link with the Treefort picks only; opening one shows a read-only "Shared picks" view with "Find your own"
 6. Optional Spotify: the visitor pastes their own Client ID (remembered on the device if they choose), logs in with PKCE, returns to /callback, and the app imports Liked Songs (parallel pages, progress shown), top artists and followed artists as one pool source, shown as one summary chip ("Spotify library · 1,341 artists") with Refresh and Remove
-7. "Forget my data" (near the pool and in the footer) clears the pool, Client ID and service preference
+7. Optional playlist: "Make a Spotify playlist" beside "Share my picks" opens a panel that says what will be made (up to 3 tracks for each Treefort pick with a Spotify page we are sure of, for the first 100 such picks in page order; the panel and the outcome say how many picks were beyond that cap), what Spotify's consent screen will say, and that the playlist is kept off the profile but Spotify labels it public and anyone with the link can open it (with how to choose "Make private"). Continue logs in with the visitor's Client ID asking only for `playlist-modify-private`; back on /callback the playlist is created once, with a progress line, then an "Open Spotify" link, the counts, which artists got newest releases and the left-out picks with their listen links. The words "private playlist" are never used for it. Not on the Shared picks view
+8. "Forget my data" (near the pool and in the footer) clears the pool, Client ID and service preference
 
 ### [+] Expansion Feature
 
@@ -186,7 +187,7 @@ spotifort/
 ### Required Disclaimers (visible on the page)
 
 - "Not affiliated with, endorsed by, or associated with Treefort Music Fest or Spotify"
-- "Privacy: your Spotify data stays in your browser. Page visits are counted with Cloudflare Web Analytics, which uses no cookies and does not identify you." (linked to https://www.cloudflare.com/web-analytics/)
+- "Privacy: what Spotifort reads from Spotify stays in your browser. It changes nothing in your Spotify account, except to make a playlist when you ask for one. Page visits are counted with Cloudflare Web Analytics, which uses no cookies and does not identify you." (linked to https://www.cloudflare.com/web-analytics/)
 - "Lineup data last updated: [date from lineup.json]"
 - "Similar-artist data from Last.fm" (main page footer) and each artist's Last.fm link on /lineup
 - "Use at your own risk — no guarantees of accuracy"
@@ -214,7 +215,7 @@ These are tracked in `docs/PLAN-2027.md` and should NOT be built without a decis
 
 - **Tidal** source (proof of concept first), as a sibling of `src/sources/spotify.js`
 - **Live Last.fm lookup** for typed names missing from the static index (optional Pages Function)
-- **Playlist creation** is decided and designed in `docs/PLAN-2027.md` (section "Playlist creation") and the engine is built (`src/core/playlist.js`, `src/sources/spotify-playlist.js`) but not loaded by the site; the interface is not yet built; research in `docs/research/spotify-playlist-live-tests-2026-11.md`
+- **A playlist control on the Shared picks view** (playlist creation itself is built; decisions in `docs/PLAN-2027.md`, section "Playlist creation"; research in `docs/research/spotify-playlist-live-tests-2026-11.md`)
 - **Schedule/venue data**
 
 ## Commands
@@ -255,3 +256,4 @@ npm run check:dist
 9. **No-login first** — the default experience needs no account; Spotify is an optional upgrade (PR 2.5)
 10. **BYOCID required for public launch** — Dev Mode 5-user limit has no workaround for individual developers
 11. **Old Spotify app deleted** — new app (created post-Feb 2026) has restricted permissions. Batch artist endpoint and related artists endpoint both return 403. Cannot be recovered.
+12. **Playlist creation in the browser** — tracks are looked up with the visitor's own token when they ask, nothing about tracks or playlists is shipped or stored, the write permission is requested only on click, and the playlist is described as off-profile, never as private (the API cannot make a private one)

@@ -4,7 +4,7 @@ import { prepareLineup } from '../src/core/lineup-index.js';
 import { realLineup } from './helpers/real-data.js';
 import {
   TRACKS_PER_ARTIST, MAX_RELEASES, ADD_BATCH_SIZE, LEFT_OUT, PLAYLIST_DESCRIPTION,
-  isSpotifyId, playlistPlan, planEstimate, songKey, isVersionTitle, chooseOwnTracks, newestReleases,
+  isSpotifyId, playlistPlan, planEstimate, MAX_PLAYLIST_ARTISTS, songKey, isVersionTitle, chooseOwnTracks, newestReleases,
   playlistName, trackUri, buildTrackList, batches, allocateTracks,
 } from '../src/core/playlist.js';
 
@@ -63,8 +63,46 @@ describe('playlistPlan', () => {
   });
   it('tolerates junk results', () => {
     for (const r of [undefined, null, {}, { matches: 'x', recommendations: 5 }, { matches: [null, {}, { n: 'x' }] }]) {
-      expect(playlistPlan(r, lineup)).toEqual({ artists: [], leftOut: [] });
+      expect(playlistPlan(r, lineup)).toEqual({ artists: [], leftOut: [], beyondCap: 0 });
     }
+  });
+});
+
+describe('playlistPlan: the cap', () => {
+  // n 1..3 are left out (unverified, no Spotify page, unverified); every later pick has a Spotify page.
+  const big = (count) => prepareLineup({
+    artists: Array.from({ length: count }, (_, i) => {
+      const n = i + 1;
+      if (n === 1 || n === 3) return { n, name: `U${n}`, spotifyIds: [`sp${n}`], unverified: true };
+      if (n === 2) return { n, name: `N${n}` };
+      return { n, name: `A${n}`, spotifyIds: [`sp${n}`] };
+    }),
+  });
+  const picks = (count) => ({ matches: [{ n: 1 }, { n: 2 }, { n: 4 }], recommendations: Array.from({ length: count }, (_, i) => ({ n: i + 1 })) });
+  it('is 100 picks', () => {
+    expect(MAX_PLAYLIST_ARTISTS).toBe(100);
+  });
+  it('99, 100 and 101 picks with a Spotify page: left-out picks do not use up places', () => {
+    for (const [withPage, artists, beyond] of [[99, 99, 0], [100, 100, 0], [101, 100, 1]]) {
+      const total = withPage + 3;
+      const plan = playlistPlan(picks(total), big(total));
+      expect(plan.artists.length, `${withPage}`).toBe(artists);
+      expect(plan.leftOut.map((a) => a.n), `${withPage}`).toEqual([1, 2, 3]);
+      expect(plan.beyondCap, `${withPage}`).toBe(beyond);
+      expect(plan.artists.length + plan.leftOut.length + plan.beyondCap).toBe(total);
+    }
+  });
+  it('takes the first 100 in page order: matches first, then recommendations', () => {
+    const plan = playlistPlan(picks(150), big(150));
+    expect(plan.artists.slice(0, 3).map((a) => a.n)).toEqual([4, 5, 6]);
+    expect(plan.artists[99].n).toBe(103);
+    expect(plan.beyondCap).toBe(47);
+  });
+  it('a pick beyond the cap is only counted, whatever it is, and never listed as left out', () => {
+    const lineup = prepareLineup({ artists: [{ n: 1, name: 'A', spotifyIds: ['a1'] }, { n: 2, name: 'U', spotifyIds: ['u1'], unverified: true }, { n: 3, name: 'B', spotifyIds: ['b1'] }] });
+    const plan = playlistPlan({ matches: [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 3 }, { n: 99 }] }, lineup, { limit: 1 });
+    expect(plan).toEqual({ artists: [{ n: 1, name: 'A', spotifyIds: ['a1'] }], leftOut: [], beyondCap: 2 });
+    for (const limit of [0, -1, 1.5, 'x', null]) expect(playlistPlan({ matches: [{ n: 1 }, { n: 3 }] }, lineup, { limit }).artists.length).toBe(2);
   });
 });
 
@@ -106,9 +144,40 @@ describe('songKey / isVersionTitle', () => {
     expect(isVersionTitle('Song - Demo')).toBe(true);
     expect(isVersionTitle('Song (feat. X)')).toBe(true);
   });
+  it('collapses piano, Spotify Singles, "recorded at" and a bare trailing featured credit', () => {
+    const key = songKey('Song');
+    for (const t of ['Song feat. Bob', 'Song Feat. Bob & Al', 'Song FEATURING Bob', 'Song (Piano)',
+      'Song - Piano Version', 'Song - Spotify Singles', 'Song - Recorded at Spotify Studios NYC', 'Song feat. Bob - Live', 'Song feat. Bob (Acoustic)']) {
+      expect(songKey(t), t).toBe(key);
+      expect(isVersionTitle(t), t).toBe(true);
+    }
+  });
+  it('keeps a featured phrase that is the whole title, or part of a word', () => {
+    expect(songKey('feat. Bob')).toBe(songKey('feat. Bob'));
+    expect(songKey('feat. Bob')).not.toBe('');
+    expect(isVersionTitle('feat. Bob')).toBe(false);
+    expect(songKey(' feat. Bob')).not.toBe('');
+    expect(isVersionTitle(' feat. Bob')).toBe(false);
+    expect(songKey('Gift ftw')).toBe(songKey('Gift ftw'));
+    expect(isVersionTitle('Left Behind')).toBe(false);
+    expect(isVersionTitle('Defeat Me')).toBe(false);
+    expect(songKey('(Piano)')).toBe('piano');
+  });
+  it('does not read "ft" (Fort, feet) or a bare "feat" as a featured credit', () => {
+    expect(songKey('Drive to Ft. Worth')).not.toBe(songKey('Drive to Ft. Myers'));
+    expect(songKey('Six Ft Under')).not.toBe(songKey('Six Ft Deep'));
+    expect(songKey('No Mean Feat Tonight')).not.toBe(songKey('No Mean'));
+    for (const t of ['Drive to Ft. Worth', 'Six Ft Under', 'No Mean Feat Tonight']) expect(isVersionTitle(t), t).toBe(false);
+    // Known limit, the price of the rule above: a credit written "ft." or "ft" with no brackets is not collapsed.
+    expect(songKey('Song ft. Bob')).not.toBe(songKey('Song'));
+  });
+  it('known limits: "Home - With Friends" merges with "Home"; "Song -Live" (no space after the dash) is not collapsed', () => {
+    expect(songKey('Home - With Friends')).toBe(songKey('Home'));
+    expect(songKey('Song -Live')).not.toBe(songKey('Song'));
+  });
   it('is quick on hostile titles', () => {
     const t0 = Date.now();
-    for (const s of ['('.repeat(100000), ' - '.repeat(33334), '['.repeat(100000), ('(a ' + 'live ').repeat(20000)]) songKey(s);
+    for (const s of ['('.repeat(100000), ' - '.repeat(33334), '['.repeat(100000), ('(a ' + 'live ').repeat(20000), ' feat'.repeat(60000), 'a feat '.repeat(40000), ' ft\n'.repeat(70000)]) songKey(s);
     expect(Date.now() - t0).toBeLessThan(1000);
   });
 });
@@ -388,8 +457,14 @@ describe('batches', () => {
 describe('real lineup', () => {
   it('plans every artist or leaves it out, never planning unverified or id-less ones', () => {
     const recommendations = realLineup.artists.map((a) => ({ n: a.n, name: a.name, score: 1 }));
-    const plan = playlistPlan({ matches: [], recommendations }, realLineup);
+    const plan = playlistPlan({ matches: [], recommendations }, realLineup, { limit: 10000 });
     expect(plan.artists.length + plan.leftOut.length).toBe(realLineup.artists.length);
+    expect(plan.beyondCap).toBe(0);
+    // With the cap, the whole lineup as picks gives 100 artists and the rest only counted.
+    const capped = playlistPlan({ matches: [], recommendations }, realLineup);
+    expect(capped.artists.length).toBe(MAX_PLAYLIST_ARTISTS);
+    expect(capped.artists.length + capped.leftOut.length + capped.beyondCap).toBe(realLineup.artists.length);
+    expect(capped.beyondCap).toBeGreaterThan(0);
     for (const p of plan.artists) {
       expect(p.spotifyIds.length).toBeGreaterThan(0);
       expect(p.spotifyIds.every(isSpotifyId)).toBe(true);
