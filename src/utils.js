@@ -25,6 +25,32 @@ export function statesMatch(stored, returned) {
   return typeof stored === 'string' && stored.length > 0 && stored === returned;
 }
 
+/** What a Spotify login is for. It rides in the OAuth `state` value, so it survives the redirect with no new storage. */
+export const AUTH_PURPOSES = ['library', 'playlist'];
+
+/**
+ * The OAuth `state` for a login: a random part, a dot, then the purpose.
+ * @param {string} random
+ * @param {string} purpose one of AUTH_PURPOSES
+ * @returns {string}
+ */
+export function stateWithPurpose(random, purpose) {
+  return `${random}.${purpose}`;
+}
+
+/**
+ * The purpose carried by an OAuth `state`: the text after its last dot when that is a known purpose, else 'library'
+ * (also for a state in the old format, from a login started before purposes existed, and for non-strings).
+ * Only exactly 'playlist' ever means a playlist login.
+ * @param {unknown} state
+ * @returns {'library'|'playlist'}
+ */
+export function purposeFromState(state) {
+  if (typeof state !== 'string') return 'library';
+  const tail = state.slice(state.lastIndexOf('.') + 1);
+  return state.includes('.') && tail === 'playlist' ? 'playlist' : 'library';
+}
+
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',

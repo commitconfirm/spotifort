@@ -68,12 +68,15 @@ const VERSION_WORDS = [
   'feat', 'ft', 'featuring', 'with', 'acoustic', 'remix', 'remixed', 'mix', 'remaster', 'remastered', 'live', 'version',
   'edit', 'edited', 'sped up', 'slowed', 'reverb', 'demo', 'instrumental', 'mono', 'stereo', 'deluxe', 'bonus', 'single',
   'album', 'radio', 'extended', 'original', 're-recorded', 'rerecorded', 'stripped', 'session', 'sessions', 'unplugged',
-  'explicit', 'clean',
+  'explicit', 'clean', 'piano', 'spotify singles', 'recorded at',
 ];
 // Whole words: not preceded or followed by a letter or digit. One alternation of literals, linear time.
 const VERSION_RE = new RegExp(`(?<![\\p{L}\\p{N}])(?:${VERSION_WORDS.map((w) => w.replace(/ /g, '\\s+')).join('|')})(?![\\p{L}\\p{N}])`, 'iu');
 const GROUP_RE = /\([^()]*\)|\[[^[\]]*\]/g;
 const DASH_RE = / [-\u2013\u2014] /g;
+// A bare trailing featured credit: "Song feat. Bob", "Song ft Bob & Al". No nested quantifiers: each start position
+// costs O(1) until the final [\s\S]* consumes the rest once.
+const FEAT_RE = /\s(?:feat\.?|ft\.?|featuring)\s[\s\S]*/i;
 
 function stripVersions(title) {
   let s = title.slice(0, MAX_TITLE);
@@ -90,6 +93,9 @@ function stripVersions(title) {
     DASH_RE.lastIndex = 0;
     for (let m = DASH_RE.exec(s); m; m = DASH_RE.exec(s)) { last = m.index; len = m[0].length; }
     if (last >= 0 && VERSION_RE.test(s.slice(last + len))) { s = s.slice(0, last); changed = true; }
+    // A featured credit with no brackets or dash, only when a title remains before it.
+    const feat = FEAT_RE.exec(s);
+    if (feat && s.slice(0, feat.index).trim()) { s = s.slice(0, feat.index); changed = true; }
     if (!changed) break;
     removed = true;
   }

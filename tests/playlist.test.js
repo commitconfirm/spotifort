@@ -106,9 +106,31 @@ describe('songKey / isVersionTitle', () => {
     expect(isVersionTitle('Song - Demo')).toBe(true);
     expect(isVersionTitle('Song (feat. X)')).toBe(true);
   });
+  it('collapses piano, Spotify Singles, "recorded at" and a bare trailing featured credit', () => {
+    const key = songKey('Song');
+    for (const t of ['Song feat. Bob', 'Song feat Bob', 'Song ft. Bob & Al', 'Song ft Bob', 'Song FEATURING Bob', 'Song (Piano)',
+      'Song - Piano Version', 'Song - Spotify Singles', 'Song - Recorded at Spotify Studios NYC', 'Song feat. Bob - Live', 'Song feat. Bob (Acoustic)']) {
+      expect(songKey(t), t).toBe(key);
+      expect(isVersionTitle(t), t).toBe(true);
+    }
+  });
+  it('keeps a featured phrase that is the whole title, or part of a word', () => {
+    expect(songKey('feat. Bob')).toBe(songKey('feat. Bob'));
+    expect(songKey('feat. Bob')).not.toBe('');
+    expect(isVersionTitle('feat. Bob')).toBe(false);
+    expect(songKey(' ft Bob')).not.toBe('');
+    expect(songKey('Gift ftw')).toBe(songKey('Gift ftw'));
+    expect(isVersionTitle('Left Behind')).toBe(false);
+    expect(isVersionTitle('Defeat Me')).toBe(false);
+    expect(songKey('(Piano)')).toBe('piano');
+  });
+  it('known limits: "Home - With Friends" merges with "Home"; "Song -Live" (no space after the dash) is not collapsed', () => {
+    expect(songKey('Home - With Friends')).toBe(songKey('Home'));
+    expect(songKey('Song -Live')).not.toBe(songKey('Song'));
+  });
   it('is quick on hostile titles', () => {
     const t0 = Date.now();
-    for (const s of ['('.repeat(100000), ' - '.repeat(33334), '['.repeat(100000), ('(a ' + 'live ').repeat(20000)]) songKey(s);
+    for (const s of ['('.repeat(100000), ' - '.repeat(33334), '['.repeat(100000), ('(a ' + 'live ').repeat(20000), ' feat'.repeat(60000), 'a feat '.repeat(40000), ' ft\n'.repeat(70000)]) songKey(s);
     expect(Date.now() - t0).toBeLessThan(1000);
   });
 });

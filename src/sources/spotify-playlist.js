@@ -209,6 +209,9 @@ export async function lookupTracks(api, plan, { onProgress = () => {}, concurren
         shared.searchErrors = 0;
         state.searched = true;
         state.searchItems = Array.isArray(res.data?.tracks?.items) ? res.data.tracks.items : [];
+        // Dev diagnostics only: which fields a search track carries (is_playable? available_markets?).
+        const first = state.searchItems.find((t) => t && typeof t === 'object');
+        if (!stats.trackFields && first) stats.trackFields = Object.keys(first).sort();
       }
     }
     if (state.searched) {
