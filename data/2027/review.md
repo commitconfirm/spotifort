@@ -29,8 +29,8 @@ The festival link wins. Check the earlier result was wrong, not the festival lin
 ## Fallback feed: not fetched (0); artists with neither a slug nor festival data (0)
 - none
 
-## Added (lineup update of 2026-11-23): 1
-- underscores
+## Added (lineup update of 2026-11-28): 0
+- none
 
 ## Removed from the festival lineup: 0
 - none
